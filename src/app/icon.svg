@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3252"/>
+      <stop offset="100%" stop-color="#ff0844"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#0a0a0f"/>
+  <!-- Heart shape -->
+  <path d="M256 430 C256 430 80 310 80 200 C80 140 130 90 190 90 C225 90 250 110 256 130 C262 110 287 90 322 90 C382 90 432 140 432 200 C432 310 256 430 256 430Z" fill="url(#heartGrad)" filter="url(#glow)" opacity="0.9"/>
+  <!-- Letter S -->
+  <text x="256" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="180" fill="#0a0a0f" opacity="0.85">S</text>
+  <!-- Subtle inner glow on S -->
+  <text x="256" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="180" fill="#e8e8e8" opacity="0.15">S</text>
+</svg>

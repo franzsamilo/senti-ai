@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
 import {
   generateFingerprint,
@@ -16,7 +16,6 @@ interface AnalysisLoaderProps {
   loveLanguage: LoveLanguage[];
   zodiac: string;
   personalContext?: string;
-  /** Called with the finished ProfileResult — also aliased as onComplete for compatibility */
   onResult?: (result: ProfileResult) => void;
   onComplete?: (result: ProfileResult) => void;
   onBlocked: () => void;
@@ -37,6 +36,12 @@ const MESSAGES = [
   "Final scan complete. You're not okay, bestie.",
 ];
 
+// Show messages faster at first (800ms), slow down mid-way (1200ms)
+// When API is done, rush remaining messages at 400ms each
+const NORMAL_SPEED = 900;
+const RUSH_SPEED = 350;
+const MIN_MESSAGES_BEFORE_EXIT = 6; // show at least 6 messages for dramatic effect
+
 export default function AnalysisLoader({
   songs,
   mbti,
@@ -48,64 +53,67 @@ export default function AnalysisLoader({
   onComplete,
   onBlocked,
 }: AnalysisLoaderProps) {
-  // Support both onResult and onComplete prop names; keep stable via ref
   const handleResultRef = useRef<(r: ProfileResult) => void>(onResult ?? onComplete ?? (() => {}));
   useEffect(() => {
     handleResultRef.current = onResult ?? onComplete ?? (() => {});
   });
-  const handleResult = (r: ProfileResult) => handleResultRef.current(r);
 
   const [visibleCount, setVisibleCount] = useState(1);
   const [completedCount, setCompletedCount] = useState(0);
+  const [apiDone, setApiDone] = useState(false);
 
-  const apiDoneRef = useRef(false);
   const resultRef = useRef<ProfileResult | null>(null);
   const firedRef = useRef(false);
 
-  // Advance visible messages every 1800ms
+  // Advance messages — speed up when API is done
   useEffect(() => {
-    const id = setInterval(() => {
-      setVisibleCount((prev) => {
-        if (prev >= MESSAGES.length) {
-          clearInterval(id);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 1800);
-    return () => clearInterval(id);
-  }, []);
+    if (visibleCount >= MESSAGES.length) return;
 
-  // Completed count follows visible with ~800ms delay
+    const speed = apiDone && visibleCount >= MIN_MESSAGES_BEFORE_EXIT
+      ? RUSH_SPEED
+      : NORMAL_SPEED;
+
+    const id = setTimeout(() => {
+      setVisibleCount((prev) => prev + 1);
+    }, speed);
+
+    return () => clearTimeout(id);
+  }, [visibleCount, apiDone]);
+
+  // Completed checkmarks follow visible with shorter delay
   useEffect(() => {
     if (completedCount >= visibleCount - 1) return;
     const id = setTimeout(() => {
       setCompletedCount((prev) => Math.min(prev + 1, visibleCount - 1));
-    }, 800);
+    }, 400);
     return () => clearTimeout(id);
   }, [visibleCount, completedCount]);
 
-  // Fire onResult when both animation and API are done
-  useEffect(() => {
+  // Fire result when ready
+  const tryFire = useCallback(() => {
     if (firedRef.current) return;
-    if (visibleCount >= MESSAGES.length && apiDoneRef.current && resultRef.current) {
-      firedRef.current = true;
-      const result = resultRef.current;
-      const timer = setTimeout(() => handleResult(result), 1000);
-      return () => clearTimeout(timer);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleCount]);
+    if (!resultRef.current) return;
+    // Need either all messages shown, or API done + minimum messages shown
+    const allShown = visibleCount >= MESSAGES.length;
+    const enoughShown = apiDone && visibleCount >= MIN_MESSAGES_BEFORE_EXIT;
+    if (!allShown && !enoughShown) return;
+
+    firedRef.current = true;
+    const result = resultRef.current;
+    setTimeout(() => handleResultRef.current(result), 600);
+  }, [visibleCount, apiDone]);
+
+  useEffect(() => {
+    tryFire();
+  }, [tryFire]);
 
   // API call on mount
   useEffect(() => {
     let cancelled = false;
 
     async function runAnalysis() {
-      // Client-side rate limit pre-check
       const fp = generateFingerprint();
-      const remaining = getRemainingAnalyses(fp);
-      if (remaining <= 0) {
+      if (getRemainingAnalyses(fp) <= 0) {
         if (!cancelled) onBlocked();
         return;
       }
@@ -126,12 +134,7 @@ export default function AnalysisLoader({
         });
 
         if (cancelled) return;
-
-        if (res.status === 429) {
-          onBlocked();
-          return;
-        }
-
+        if (res.status === 429) { onBlocked(); return; }
         if (!res.ok) throw new Error("API error");
 
         const data = await res.json();
@@ -139,31 +142,14 @@ export default function AnalysisLoader({
         resultRef.current = data.result as ProfileResult;
       } catch {
         if (cancelled) return;
-        // Fallback: always give a result
-        resultRef.current = generateFallback(
-          songs,
-          mbti,
-          attachmentStyle,
-          loveLanguage,
-          zodiac
-        );
+        resultRef.current = generateFallback(songs, mbti, attachmentStyle, loveLanguage, zodiac);
       }
 
-      apiDoneRef.current = true;
-
-      // If animation already finished, fire immediately after 1s
-      if (!firedRef.current && visibleCount >= MESSAGES.length && resultRef.current) {
-        firedRef.current = true;
-        setTimeout(() => {
-          if (resultRef.current) handleResult(resultRef.current);
-        }, 1000);
-      }
+      if (!cancelled) setApiDone(true);
     }
 
     runAnalysis();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -196,7 +182,7 @@ export default function AnalysisLoader({
               }`}
             >
               <span className="shrink-0 w-4">
-                {isDone ? "✓" : isActive ? "▶" : "·"}
+                {isDone ? "\u2713" : isActive ? "\u25B6" : "\u00B7"}
               </span>
               <span className="break-words min-w-0">{msg}</span>
             </div>
