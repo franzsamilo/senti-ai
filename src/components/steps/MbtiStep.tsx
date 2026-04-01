@@ -25,7 +25,7 @@ export default function MbtiStep({ selected, onSelect }: MbtiStepProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
         {MBTI_TYPES.map((type) => {
           const isSelected = selected === type;
           return (
@@ -33,7 +33,7 @@ export default function MbtiStep({ selected, onSelect }: MbtiStepProps) {
               key={type}
               onClick={() => onSelect(type)}
               className={[
-                "h-14 rounded-lg border font-mono font-semibold text-sm transition-all duration-150 cursor-pointer min-h-[44px]",
+                "h-12 sm:h-14 rounded-lg border font-mono font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer min-h-[44px]",
                 isSelected
                   ? "bg-accent border-accent text-white shadow-[0_0_12px_rgba(255,50,82,0.35)]"
                   : "bg-bg-card border-border-subtle text-text-secondary hover:border-accent/50 hover:text-text-primary",

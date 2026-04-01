@@ -211,7 +211,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
           <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
             Your top Spotify tracks
           </p>
-          <div className="max-h-64 overflow-y-auto flex flex-col gap-1 pr-1">
+          <div className="max-h-48 sm:max-h-64 overflow-y-auto flex flex-col gap-1 pr-1">
             {spotifyTracks.map((track, i) => {
               const song = spotifyTrackToSong(track);
               const alreadyAdded = songs.some(

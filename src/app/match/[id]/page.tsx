@@ -199,7 +199,7 @@ export default function MatchPage() {
               animate="animate"
               exit="exit"
               transition={transition}
-              className="flex flex-col items-center justify-center min-h-screen gap-6 px-4 text-center"
+              className="flex flex-col items-center justify-center min-h-screen gap-5 sm:gap-6 px-4 text-center"
             >
               <span
                 className="font-mono text-xs tracking-[0.2em] px-3 py-1 rounded-full"
@@ -239,7 +239,7 @@ export default function MatchPage() {
               animate="animate"
               exit="exit"
               transition={transition}
-              className="flex flex-col items-center justify-center min-h-screen gap-6 px-4 text-center py-16"
+              className="flex flex-col items-center justify-center min-h-screen gap-5 sm:gap-6 px-4 text-center py-10 sm:py-16"
             >
               <span
                 className="font-mono text-xs tracking-[0.2em] px-3 py-1 rounded-full"

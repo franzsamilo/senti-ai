@@ -78,7 +78,7 @@ function ScoreChangeBanner({ entries }: { entries: HistoryEntry[] }) {
 function BarChart({ entries }: { entries: HistoryEntry[] }) {
   return (
     <div
-      className="rounded-xl p-5 border"
+      className="rounded-xl p-4 sm:p-5 border overflow-hidden"
       style={{
         backgroundColor: "rgba(255,255,255,0.02)",
         borderColor: "rgba(255,255,255,0.06)",
@@ -87,19 +87,19 @@ function BarChart({ entries }: { entries: HistoryEntry[] }) {
       <p className="font-mono text-xs text-[#555555] uppercase tracking-widest mb-5">
         DAMAGE OVER TIME
       </p>
-      <div className="flex items-end gap-3 h-32">
+      <div className="flex items-end gap-1.5 sm:gap-3 h-32 overflow-x-auto pb-1">
         {entries.map((entry, i) => {
           const heightPct = (entry.score / 10) * 100;
           const color = THREAT_COLORS[entry.threat_level];
           return (
-            <div key={i} className="flex flex-col items-center gap-1 flex-1 min-w-0">
+            <div key={i} className="flex flex-col items-center gap-1 flex-1 min-w-[24px]">
               <span
-                className="font-mono text-[10px] font-bold"
+                className="font-mono text-[9px] sm:text-[10px] font-bold leading-none"
                 style={{ color }}
               >
                 {entry.score.toFixed(1)}
               </span>
-              <div className="w-full flex items-end" style={{ height: "96px" }}>
+              <div className="w-full flex items-end" style={{ height: "80px" }}>
                 <div
                   className="w-full rounded-t transition-all duration-700"
                   style={{
@@ -110,7 +110,7 @@ function BarChart({ entries }: { entries: HistoryEntry[] }) {
                   }}
                 />
               </div>
-              <span className="font-mono text-[10px] text-[#555555] truncate w-full text-center">
+              <span className="font-mono text-[8px] sm:text-[10px] text-[#555555] truncate w-full text-center">
                 {formatDate(entry.timestamp)}
               </span>
             </div>
@@ -137,7 +137,7 @@ function EntryCard({ entry }: { entry: HistoryEntry }) {
       }}
     >
       <p className="text-[#e8e8e8] text-sm leading-snug">{truncatedHeadline}</p>
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap">
         <span
           className="font-mono text-xs font-bold"
           style={{ color }}
@@ -155,7 +155,7 @@ function EntryCard({ entry }: { entry: HistoryEntry }) {
             {entry.mbti}
           </span>
         )}
-        <span className="font-mono text-[10px] text-[#555555] ml-auto">
+        <span className="font-mono text-[10px] text-[#555555]">
           {formatDateLong(entry.timestamp)}
         </span>
       </div>
@@ -182,12 +182,12 @@ export default function HistoryPage() {
     <main className="relative min-h-screen bg-[#0a0a0f] text-[#e8e8e8] overflow-x-hidden">
       <NeuralNetworkBg />
 
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-4 py-12 flex flex-col gap-8">
+      <div className="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 sm:py-12 flex flex-col gap-6 sm:gap-8">
         {/* Header */}
         <div className="flex flex-col items-center text-center gap-2">
           <GlitchText
             text="HISTORY"
-            className="text-5xl font-bold tracking-tight text-[#e8e8e8]"
+            className="text-4xl sm:text-5xl font-bold tracking-tight text-[#e8e8e8]"
             as="h1"
           />
           <p className="font-mono text-xs text-[#888888] uppercase tracking-widest">

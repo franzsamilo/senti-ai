@@ -60,7 +60,7 @@ function Section({
 function Card({ children, accentBorder = false }: { children: React.ReactNode; accentBorder?: boolean }) {
   return (
     <div
-      className={`bg-bg-card rounded-xl p-5 ${
+      className={`bg-bg-card rounded-xl p-4 sm:p-5 ${
         accentBorder
           ? "border border-accent/40"
           : "border border-border-subtle"
@@ -126,7 +126,7 @@ export default function ResultsDashboard({
   }, []);
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 pb-16 flex flex-col gap-6">
+    <div className="w-full max-w-2xl mx-auto px-4 pb-20 flex flex-col gap-6">
       {/* 1. Header */}
       <Section index={0}>
         <div className="flex flex-col items-center text-center gap-3 pt-6 pb-2">
@@ -150,7 +150,7 @@ export default function ResultsDashboard({
 
       {/* 2. Quick Stats Row */}
       <Section index={1}>
-        <div className="flex gap-3 overflow-x-auto pb-1 justify-center sm:justify-start">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 -mx-1 px-1">
           <StatBox
             label="Emotional Damage"
             value={result.emotional_damage_score}

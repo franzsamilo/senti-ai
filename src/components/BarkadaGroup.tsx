@@ -209,7 +209,7 @@ export default function BarkadaGroup({ members, groupId }: BarkadaGroupProps) {
               navigator.clipboard.writeText(shareUrl);
             }
           }}
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
+          className="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer min-h-[44px]"
           style={{
             background: "rgba(255,50,82,0.12)",
             border: "1px solid rgba(255,50,82,0.3)",
@@ -329,7 +329,7 @@ function RankRow({ rank, member }: { rank: number; member: BarkadaMember }) {
 
       {/* Threat badge */}
       <span
-        className="text-xs font-bold shrink-0 px-2 py-0.5 rounded"
+        className="text-[10px] sm:text-xs font-bold shrink-0 px-1.5 sm:px-2 py-0.5 rounded"
         style={{
           color,
           background: `${color}18`,

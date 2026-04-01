@@ -98,14 +98,14 @@ function ProfileCard({ profile, label, isWinner }: ProfileCardProps) {
           </span>
         </div>
         <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs" style={{ color: "#555555" }}>Attachment</span>
-          <span className="font-mono text-xs" style={{ color: "#888888" }}>
+          <span className="text-xs shrink-0" style={{ color: "#555555" }}>Attachment</span>
+          <span className="font-mono text-xs text-right" style={{ color: "#888888" }}>
             {ATTACHMENT_LABELS[profile.attachmentStyle] ?? profile.attachmentStyle}
           </span>
         </div>
         <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs" style={{ color: "#555555" }}>Love Language</span>
-          <span className="font-mono text-xs" style={{ color: "#888888" }}>
+          <span className="text-xs shrink-0" style={{ color: "#555555" }}>Love Language</span>
+          <span className="font-mono text-xs text-right leading-tight" style={{ color: "#888888" }}>
             {LOVE_LANGUAGE_LABELS[profile.loveLanguage] ?? profile.loveLanguage}
           </span>
         </div>
@@ -186,7 +186,7 @@ export default function MatchReport({ matchResult, profileA, profileB }: MatchRe
     compatScore >= 70 ? "#ffd000" : compatScore >= 40 ? "#ff8c00" : "#ff3252";
 
   return (
-    <div className="flex flex-col gap-6 px-4 py-8 max-w-[680px] mx-auto w-full">
+    <div className="flex flex-col gap-5 sm:gap-6 px-4 py-8 max-w-[680px] mx-auto w-full overflow-hidden">
       {/* Header */}
       <div className="flex flex-col items-center gap-3 text-center">
         <span
@@ -263,8 +263,8 @@ export default function MatchReport({ matchResult, profileA, profileB }: MatchRe
         </p>
       </div>
 
-      {/* Side-by-side profiles */}
-      <div className="flex gap-3">
+      {/* Side-by-side profiles — stacked on mobile, side-by-side on sm+ */}
+      <div className="flex flex-col sm:flex-row gap-3">
         <ProfileCard profile={profileA} label="PERSON A" isWinner={aIsMoreSawi} />
         <ProfileCard profile={profileB} label="PERSON B" isWinner={!aIsMoreSawi} />
       </div>

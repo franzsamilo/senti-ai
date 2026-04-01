@@ -168,10 +168,10 @@ export default function AnalysisLoader({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 w-full max-w-xl mx-auto gap-8">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-8 w-full max-w-xl mx-auto gap-6 sm:gap-8">
       {/* Spinner */}
       <div
-        className="w-16 h-16 rounded-full border-2 border-transparent animate-spin"
+        className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-transparent animate-spin shrink-0"
         style={{
           borderTopColor: "#ff3252",
           borderRightColor: "rgba(255,50,82,0.4)",
@@ -179,7 +179,7 @@ export default function AnalysisLoader({
       />
 
       {/* Loading messages */}
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col gap-2 w-full overflow-hidden">
         {MESSAGES.slice(0, visibleCount).map((msg, i) => {
           const isDone = i < completedCount;
           const isActive = i === completedCount && i < visibleCount;
@@ -187,7 +187,7 @@ export default function AnalysisLoader({
           return (
             <div
               key={i}
-              className={`font-mono text-sm flex items-start gap-2 transition-opacity duration-300 ${
+              className={`font-mono text-xs sm:text-sm flex items-start gap-2 transition-opacity duration-300 ${
                 isDone
                   ? "text-accent-success opacity-100"
                   : isActive
@@ -198,7 +198,7 @@ export default function AnalysisLoader({
               <span className="shrink-0 w-4">
                 {isDone ? "✓" : isActive ? "▶" : "·"}
               </span>
-              <span>{msg}</span>
+              <span className="break-words min-w-0">{msg}</span>
             </div>
           );
         })}

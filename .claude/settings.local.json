@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --src-dir --eslint --import-alias \"@/*\" --use-npm)",
+      "Bash(npx create-next-app@latest temp-scaffold --typescript --tailwind --app --src-dir --eslint --import-alias \"@/*\" --use-npm)",
+      "Bash(cp -r temp-scaffold/src .)",
+      "Bash(cp temp-scaffold/package.json .)",
+      "Bash(cp temp-scaffold/package-lock.json .)",
+      "Bash(cp temp-scaffold/postcss.config.mjs .)",
+      "Bash(cp temp-scaffold/eslint.config.mjs .)",
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

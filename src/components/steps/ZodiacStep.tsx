@@ -39,7 +39,7 @@ export default function ZodiacStep({ selected, onSelect }: ZodiacStepProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
         {ZODIACS.map((z) => {
           const isSelected = selected === z.value;
           return (
@@ -47,16 +47,16 @@ export default function ZodiacStep({ selected, onSelect }: ZodiacStepProps) {
               key={z.value}
               onClick={() => onSelect(z.value)}
               className={[
-                "flex flex-col items-center justify-center gap-1 rounded-lg border py-4 transition-all duration-150 cursor-pointer min-h-[44px]",
+                "flex flex-col items-center justify-center gap-1 rounded-lg border py-3 sm:py-4 transition-all duration-150 cursor-pointer min-h-[56px]",
                 isSelected
                   ? "bg-accent/10 border-accent shadow-[0_0_12px_rgba(255,50,82,0.25)]"
                   : "bg-bg-card border-border-subtle hover:border-accent/50",
               ].join(" ")}
             >
-              <span className={`text-xl ${isSelected ? "text-accent" : "text-text-secondary"}`}>
+              <span className={`text-lg sm:text-xl ${isSelected ? "text-accent" : "text-text-secondary"}`}>
                 {z.symbol}
               </span>
-              <span className={`text-xs font-mono ${isSelected ? "text-accent" : "text-text-muted"}`}>
+              <span className={`text-[10px] sm:text-xs font-mono leading-tight text-center ${isSelected ? "text-accent" : "text-text-muted"}`}>
                 {z.label}
               </span>
             </button>

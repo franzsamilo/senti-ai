@@ -70,7 +70,7 @@ function EntryCard({
 
   return (
     <div
-      className="flex items-center gap-4 px-4 py-3 rounded-lg"
+      className="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 rounded-lg"
       style={{
         backgroundColor: "rgba(255,255,255,0.02)",
         border: accentColor
@@ -81,20 +81,20 @@ function EntryCard({
     >
       <RankBadge rank={rank} />
 
-      <div className="flex-1 min-w-0 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 items-center">
-        <div>
+      <div className="flex-1 min-w-0 grid grid-cols-2 sm:grid-cols-4 gap-x-2 sm:gap-x-4 gap-y-1 items-center">
+        <div className="min-w-0">
           <p className="text-[#888] text-[10px] font-mono uppercase tracking-widest">MBTI</p>
           <p className="text-[#e8e8e8] text-sm font-bold font-mono">{entry.mbti}</p>
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-[#888] text-[10px] font-mono uppercase tracking-widest">Attachment</p>
-          <p className="text-[#e8e8e8] text-sm font-mono capitalize">{entry.attachmentStyle}</p>
+          <p className="text-[#e8e8e8] text-xs sm:text-sm font-mono capitalize truncate">{entry.attachmentStyle}</p>
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-[#888] text-[10px] font-mono uppercase tracking-widest">Zodiac</p>
-          <p className="text-[#e8e8e8] text-sm font-mono capitalize">{entry.zodiac}</p>
+          <p className="text-[#e8e8e8] text-xs sm:text-sm font-mono capitalize">{entry.zodiac}</p>
         </div>
-        <div className="flex flex-col items-start gap-1">
+        <div className="flex flex-col items-start gap-1 min-w-0">
           <ThreatBadge level={entry.threat_level} />
           <p className="text-[#555] text-[10px] font-mono">{date}</p>
         </div>
@@ -103,7 +103,7 @@ function EntryCard({
       <div className="text-right flex-shrink-0">
         <p className="text-[#888] text-[10px] font-mono uppercase tracking-widest">Score</p>
         <p
-          className="text-lg font-bold font-mono"
+          className="text-base sm:text-lg font-bold font-mono"
           style={{ color: THREAT_COLORS[entry.threat_level] }}
         >
           {entry.score.toFixed(1)}
@@ -139,7 +139,7 @@ export default function LeaderboardPage() {
     <div className="relative min-h-screen bg-[#0a0a0f] text-[#e8e8e8] overflow-x-hidden">
       <NeuralNetworkBg />
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-12">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 sm:py-12">
         {/* Header */}
         <div className="text-center mb-10">
           <p className="text-[#555] font-mono text-xs tracking-[0.3em] uppercase mb-3">

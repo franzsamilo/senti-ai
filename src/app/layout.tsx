@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     "Psychoanalyzing Filipinos through their OPM listening habits since 2026.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
