@@ -11,6 +11,18 @@ interface ShareActionsProps {
   songs: Song[];
 }
 
+function shareToMessenger(result: ProfileResult) {
+  const text = encodeURIComponent(
+    `I just got psychoanalyzed by Senti.AI 😭 My Emotional Damage Score is ${result.emotional_damage_score}/10 — Threat Level: ${result.threat_level}. Take yours → senti.ai`
+  );
+  // fb-messenger deep link on mobile, fallback to messenger.com on desktop
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  const url = isMobile
+    ? `fb-messenger://share?link=${encodeURIComponent("https://senti.ai")}&app_id=0`
+    : `https://www.facebook.com/dialog/send?link=${encodeURIComponent("https://senti.ai")}&app_id=0&redirect_uri=${encodeURIComponent(window.location.href)}`;
+  window.open(url, "_blank");
+}
+
 export default function ShareActions({ result, songs }: ShareActionsProps) {
   const storyRef = useRef<HTMLDivElement>(null);
   const postRef = useRef<HTMLDivElement>(null);
@@ -81,6 +93,16 @@ export default function ShareActions({ result, songs }: ShareActionsProps) {
           )}
         </Button>
       </div>
+
+      {/* Messenger share */}
+      <Button
+        variant="ghost"
+        className="w-full text-sm gap-2"
+        onClick={() => shareToMessenger(result)}
+      >
+        <span>💬</span>
+        Share via Messenger
+      </Button>
     </>
   );
 }

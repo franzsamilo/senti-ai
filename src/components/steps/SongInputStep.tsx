@@ -9,8 +9,8 @@ import { searchSongs, songDatabase } from "@/data/songs";
 import { Song } from "@/lib/types";
 import type { SpotifyTrack } from "@/lib/spotify";
 
-const MAX_SONGS = 5;
-const MIN_SONGS = 3;
+const MAX_SONGS = 10;
+const MIN_SONGS = 5;
 const MAX_RESULTS = 8;
 
 interface SongInputStepProps {
@@ -179,7 +179,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
         <StepIndicator current={1} />
         <h2 className="text-2xl font-bold text-text-primary">Your Hugot Playlist</h2>
         <p className="text-sm text-text-secondary">
-          Select 3–5 songs that define your emotional state rn
+          Select 5–10 songs that define your emotional state rn
         </p>
       </div>
 
@@ -198,7 +198,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
             <SongChip
               key={`${song.title}-${song.artist}-${i}`}
               song={song}
-              showPainIndex
+              showPainIndex={false}
               onRemove={() => removeSong(i)}
             />
           ))}
@@ -286,7 +286,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
 
         {/* Dropdown */}
         {open && results.length > 0 && (
-          <ul className="absolute z-50 mt-1 w-full bg-[#0f0f18] border border-border-subtle rounded-lg overflow-hidden shadow-xl">
+          <ul className="absolute z-50 mt-1 w-full bg-[#0f0f18] border border-border-subtle rounded-lg overflow-y-auto max-h-[300px] shadow-xl">
             {results.map((song, i) => (
               <li key={i}>
                 <button
@@ -303,9 +303,9 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
                     <span className="text-accent font-medium truncate">{song.title}</span>
                     <span className="text-text-muted text-xs truncate">{song.artist}</span>
                   </div>
-                  <span className="font-mono text-xs text-text-muted ml-4 shrink-0">
-                    {song.painIndex.toFixed(1)}
-                  </span>
+                  {isDuplicate(song) && (
+                    <span className="text-xs text-text-muted ml-4 shrink-0">added</span>
+                  )}
                 </button>
               </li>
             ))}
@@ -387,7 +387,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
       )}
 
       <p className="text-xs text-text-muted font-mono">
-        Press Enter to add the top result, or click a suggestion. Custom songs get a default pain index.
+        Press Enter to add the top result, or click a suggestion.
       </p>
 
       {/* Next button */}
