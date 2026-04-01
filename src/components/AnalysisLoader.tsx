@@ -15,6 +15,7 @@ interface AnalysisLoaderProps {
   attachmentStyle: AttachmentStyle;
   loveLanguage: LoveLanguage;
   zodiac: string;
+  personalContext?: string;
   /** Called with the finished ProfileResult — also aliased as onComplete for compatibility */
   onResult?: (result: ProfileResult) => void;
   onComplete?: (result: ProfileResult) => void;
@@ -42,6 +43,7 @@ export default function AnalysisLoader({
   attachmentStyle,
   loveLanguage,
   zodiac,
+  personalContext,
   onResult,
   onComplete,
   onBlocked,
@@ -119,6 +121,7 @@ export default function AnalysisLoader({
             loveLanguage,
             zodiac,
             fingerprint: fp,
+            ...(personalContext ? { personalContext } : {}),
           }),
         });
 

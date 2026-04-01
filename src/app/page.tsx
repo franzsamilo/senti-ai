@@ -260,6 +260,7 @@ export default function Home() {
                   setAttachmentStyle("anxious");
                   setLoveLanguage("words");
                   setZodiac("");
+                  setPersonalContext("");
                   setResult(null);
                   setStep("landing");
                 }}

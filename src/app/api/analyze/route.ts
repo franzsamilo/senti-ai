@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { songs, mbti, attachmentStyle, loveLanguage, zodiac, fingerprint } = body;
+  const { songs, mbti, attachmentStyle, loveLanguage, zodiac, fingerprint, personalContext } = body as AnalysisRequest & { personalContext?: string };
 
   if (
     !songs ||
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { system, user } = buildPrompt(songs, mbti, attachmentStyle, loveLanguage, zodiac);
+    const { system, user } = buildPrompt(songs, mbti, attachmentStyle, loveLanguage, zodiac, personalContext);
 
     const anthropic = new Anthropic();
 
