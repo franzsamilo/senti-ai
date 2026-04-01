@@ -93,11 +93,27 @@ export default function ResultsDashboard({
     setDownloading(true);
     try {
       const blob = await captureCard(captureRef.current);
+      const file = new File([blob], `senti-ai-results-${Date.now()}.png`, { type: "image/png" });
+
+      // On mobile, use Web Share API to open native share sheet (supports IG/FB stories directly)
+      if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: "Senti.AI Results" });
+          return;
+        } catch (shareErr) {
+          // User cancelled or share failed — fall through to download
+          if ((shareErr as DOMException)?.name === "AbortError") return;
+        }
+      }
+
+      // Fallback: trigger download via anchor click
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `senti-ai-results-${Date.now()}.png`;
+      a.download = file.name;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download failed:", err);
@@ -239,7 +255,7 @@ export default function ResultsDashboard({
             {downloading ? (
               <><span className="animate-pulse">⏳</span> Generating image...</>
             ) : (
-              <><span>📸</span> Download Results Image</>
+              <><span>📸</span> Share / Download Results Image</>
             )}
           </Button>
 
