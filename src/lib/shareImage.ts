@@ -29,7 +29,7 @@ export async function shareOrDownload(
       await navigator.share({
         files: [file],
         title: "My Senti.AI Results",
-        text: "Check out my emotional damage assessment",
+        text: "Check out my emotional damage assessment 😭 Take yours → https://senti-ai-iota.vercel.app",
       });
       return;
     } catch (err) {

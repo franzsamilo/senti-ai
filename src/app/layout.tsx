@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const SITE_URL = "https://senti-ai-iota.vercel.app";
+
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
@@ -15,7 +17,23 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Senti.AI — Emotional Damage Assessment System",
   description:
-    "Psychoanalyzing Filipinos through their OPM listening habits since 2026.",
+    "Psychoanalyzing Filipinos through their OPM listening habits since 2026. Find out your emotional damage score, threat level, and get roasted in Taglish.",
+  metadataBase: new URL(SITE_URL),
+  openGraph: {
+    title: "Senti.AI — Emotional Damage Assessment System",
+    description:
+      "Psychoanalyzing Filipinos through their OPM listening habits. How emotionally damaged are you? Take the scan. 😭",
+    url: SITE_URL,
+    siteName: "Senti.AI",
+    type: "website",
+    locale: "en_PH",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Senti.AI — Emotional Damage Assessment System",
+    description:
+      "Psychoanalyzing Filipinos through their OPM listening habits. How emotionally damaged are you? 😭",
+  },
 };
 
 export const viewport = {

@@ -280,7 +280,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(
         {/* Bottom branding */}
         <div style={bottomStyle}>
           <span style={brandingStyle}>—— SENTI.AI ——</span>
-          <span style={ctaStyle}>Take yours → senti.ai</span>
+          <span style={ctaStyle}>Take yours → senti-ai-iota.vercel.app</span>
         </div>
       </div>
     );
