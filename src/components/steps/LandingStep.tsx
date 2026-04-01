@@ -19,7 +19,7 @@ export default function LandingStep({ onStart }: LandingStepProps) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center gap-8">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center gap-6 sm:gap-8">
       {/* CLASSIFIED badge */}
       <div className="inline-flex items-center gap-2 border border-accent/60 rounded-full px-4 py-1.5 text-xs font-mono text-accent tracking-widest uppercase">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
@@ -29,7 +29,7 @@ export default function LandingStep({ onStart }: LandingStepProps) {
       {/* Main title */}
       <GlitchText
         text="SENTI.AI"
-        className="text-6xl sm:text-8xl font-bold text-text-primary"
+        className="text-5xl sm:text-8xl font-bold text-text-primary"
         as="h1"
       />
 
@@ -50,22 +50,24 @@ export default function LandingStep({ onStart }: LandingStepProps) {
       </div>
 
       {/* CTA */}
-      <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-        <Button
-          onClick={() => initiateSpotifyAuth()}
-          disabled={remaining === 0}
-          className="w-full text-base py-4"
-        >
-          Connect Spotify
-        </Button>
+      <div className="flex flex-col items-center gap-3 w-full max-w-xs px-0">
         <Button
           onClick={onStart}
           disabled={remaining === 0}
-          variant="secondary"
           className="w-full text-base py-4"
         >
-          Manual Input
+          Start Emotional Assessment
         </Button>
+        <button
+          onClick={() => initiateSpotifyAuth()}
+          disabled={remaining === 0}
+          className="text-sm text-text-muted hover:text-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+        >
+          or connect Spotify for auto-import
+        </button>
+        <p className="text-xs text-text-muted font-mono opacity-50">
+          Limited to invited testers only
+        </p>
       </div>
 
       {/* Warning */}
