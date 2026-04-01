@@ -267,7 +267,7 @@ export default function ResultsDashboard({
             variant="ghost"
             className="w-full text-sm"
             onClick={async () => {
-              const nickname = prompt("Enter your nickname for the barkada group:");
+              const nickname = prompt("Enter your nickname for the barkada:");
               if (!nickname) return;
               const res = await fetch("/api/barkada", {
                 method: "POST",
@@ -281,7 +281,7 @@ export default function ResultsDashboard({
               window.open(`/barkada/${data.id}`, "_blank");
             }}
           >
-            Create Barkada Group
+            Create Barkada
           </Button>
 
           <Button

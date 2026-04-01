@@ -83,7 +83,7 @@ export default function LandingStep({ onStart }: LandingStepProps) {
           href="/barkada"
           className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2 min-h-[36px] inline-flex items-center"
         >
-          Join a Barkada Group
+          Join a Barkada
         </Link>
       </div>
 

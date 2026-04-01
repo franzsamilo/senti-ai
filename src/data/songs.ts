@@ -147,6 +147,7 @@ export const songDatabase: Song[] = [
   { title: "Fortnight", artist: "Taylor Swift ft. Post Malone", mood: "yearning", painIndex: 7.0 },
   { title: "So Long London", artist: "Taylor Swift", mood: "heartbreak", painIndex: 9.2 },
   { title: "I Can Do It With a Broken Heart", artist: "Taylor Swift", mood: "denial", painIndex: 7.5 },
+  { title: "Don't Blame Me", artist: "Taylor Swift", mood: "obsession", painIndex: 7.0 },
 
   // ───────────────────────────────────────────────
   // International — beabadoobee
@@ -247,6 +248,7 @@ export const songDatabase: Song[] = [
   { title: "needy", artist: "Ariana Grande", mood: "anxiety", painIndex: 7.0 },
   { title: "One Last Time", artist: "Ariana Grande", mood: "heartbreak", painIndex: 8.0 },
   { title: "imagine", artist: "Ariana Grande", mood: "yearning", painIndex: 7.5 },
+  { title: "Into You", artist: "Ariana Grande", mood: "infatuation", painIndex: 5.0 },
 
   // ───────────────────────────────────────────────
   // International — Cigarettes After Sex
@@ -733,6 +735,7 @@ export const songDatabase: Song[] = [
   { title: "It's Not Living (If It's Not with You)", artist: "The 1975", mood: "obsession", painIndex: 7.0 },
   { title: "Chocolate", artist: "The 1975", mood: "nostalgia", painIndex: 5.0 },
   { title: "Me & You Together Song", artist: "The 1975", mood: "kilig", painIndex: 3.5 },
+  { title: "I'm In Love With You", artist: "The 1975", mood: "devotion", painIndex: 8.0 },
 
   // === Sabrina Carpenter ===
   { title: "Espresso", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.5 },
@@ -882,6 +885,22 @@ export const songDatabase: Song[] = [
 
   // === Roselle Nava ===
   { title: "Bakit Nga Ba Mahal Kita", artist: "Roselle Nava", mood: "yearning", painIndex: 8.0 },
+
+  // === Paramore ===
+  { title: "The Only Exception", artist: "Paramore", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Still Into You", artist: "Paramore", mood: "devotion", painIndex: 4.5 },
+  { title: "Decode", artist: "Paramore", mood: "yearning", painIndex: 7.0 },
+  { title: "Misery Business", artist: "Paramore", mood: "toxic", painIndex: 6.0 },
+  { title: "crushcrushcrush", artist: "Paramore", mood: "infatuation", painIndex: 5.5 },
+  { title: "That's What You Get", artist: "Paramore", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Brick by Boring Brick", artist: "Paramore", mood: "denial", painIndex: 6.5 },
+  { title: "Ignorance", artist: "Paramore", mood: "letting_go", painIndex: 6.5 },
+  { title: "All I Wanted", artist: "Paramore", mood: "yearning", painIndex: 8.5 },
+  { title: "Last Hope", artist: "Paramore", mood: "tragic_hope", painIndex: 7.5 },
+  { title: "Fake Happy", artist: "Paramore", mood: "denial", painIndex: 7.0 },
+  { title: "Hard Times", artist: "Paramore", mood: "existential", painIndex: 6.0 },
+  { title: "Running Out of Time", artist: "Paramore", mood: "anxiety", painIndex: 6.5 },
+  { title: "This Is Why", artist: "Paramore", mood: "anxiety", painIndex: 6.0 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs

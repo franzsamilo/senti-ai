@@ -70,7 +70,7 @@ export default function BarkadaPage() {
               className="text-sm max-w-xs"
               style={{ color: "#888888", fontFamily: "var(--font-mono, monospace)" }}
             >
-              This barkada group does not exist or has expired (groups last 7 days).
+              This barkada does not exist or has expired (barkadas last 7 days).
             </p>
             <Link
               href="/"

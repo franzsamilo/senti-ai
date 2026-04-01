@@ -292,7 +292,7 @@ export default function AdminPage() {
                 animate
               />
               <StatBox
-                label="Barkada Groups"
+                label="Barkadas"
                 value={data.totalBarkadaGroups}
                 animate
               />
