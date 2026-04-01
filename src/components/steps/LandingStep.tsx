@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import GlitchText from "@/components/GlitchText";
 import Button from "@/components/ui/Button";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
+import { initiateSpotifyAuth } from "@/lib/spotify";
 
 interface LandingStepProps {
   onStart: () => void;
@@ -51,11 +52,19 @@ export default function LandingStep({ onStart }: LandingStepProps) {
       {/* CTA */}
       <div className="flex flex-col items-center gap-3 w-full max-w-xs">
         <Button
-          onClick={onStart}
+          onClick={() => initiateSpotifyAuth()}
           disabled={remaining === 0}
           className="w-full text-base py-4"
         >
-          Start Emotional Scan
+          Connect Spotify
+        </Button>
+        <Button
+          onClick={onStart}
+          disabled={remaining === 0}
+          variant="secondary"
+          className="w-full text-base py-4"
+        >
+          Manual Input
         </Button>
       </div>
 

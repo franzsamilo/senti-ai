@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import StepIndicator from "@/components/StepIndicator";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
-import { searchSongs } from "@/data/songs";
+import { searchSongs, songDatabase } from "@/data/songs";
 import { Song } from "@/lib/types";
+import type { SpotifyTrack } from "@/lib/spotify";
 
 const MAX_SONGS = 5;
 const MIN_SONGS = 3;
@@ -17,12 +19,47 @@ interface SongInputStepProps {
   onNext: () => void;
 }
 
+function spotifyTrackToSong(track: SpotifyTrack): Song {
+  const title = track.name;
+  const artist = track.artists.map((a) => a.name).join(", ");
+
+  // Try to cross-reference against the built-in database (case-insensitive)
+  const match = songDatabase.find(
+    (s) =>
+      s.title.toLowerCase() === title.toLowerCase() &&
+      s.artist.toLowerCase().includes(artist.split(",")[0].toLowerCase())
+  );
+
+  if (match) return match;
+
+  return {
+    title,
+    artist,
+    mood: "unknown",
+    painIndex: 5.5,
+  };
+}
+
 export default function SongInputStep({ songs, onSongsChange, onNext }: SongInputStepProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Song[]>([]);
   const [open, setOpen] = useState(false);
+  const [spotifyTracks, setSpotifyTracks] = useState<SpotifyTrack[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Read Spotify tracks from sessionStorage on mount
+  useEffect(() => {
+    const raw = sessionStorage.getItem("spotify_tracks");
+    if (!raw) return;
+    try {
+      const parsed: SpotifyTrack[] = JSON.parse(raw);
+      setSpotifyTracks(parsed);
+    } catch {
+      // malformed data — ignore silently
+    }
+    sessionStorage.removeItem("spotify_tracks");
+  }, []);
 
   // Update dropdown results whenever query changes
   useEffect(() => {
@@ -126,6 +163,63 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
               onRemove={() => removeSong(i)}
             />
           ))}
+        </div>
+      )}
+
+      {/* Spotify track list */}
+      {spotifyTracks.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
+            Your top Spotify tracks
+          </p>
+          <div className="max-h-64 overflow-y-auto flex flex-col gap-1 pr-1">
+            {spotifyTracks.map((track, i) => {
+              const song = spotifyTrackToSong(track);
+              const alreadyAdded = songs.some(
+                (s) =>
+                  s.title.toLowerCase() === song.title.toLowerCase() &&
+                  s.artist.toLowerCase() === song.artist.toLowerCase()
+              );
+              const albumArt = track.album.images[track.album.images.length - 1]?.url;
+
+              return (
+                <button
+                  key={i}
+                  onClick={() => !alreadyAdded && canAdd && addSong(song)}
+                  disabled={alreadyAdded || !canAdd}
+                  className={[
+                    "flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors duration-100 border",
+                    alreadyAdded || !canAdd
+                      ? "border-border-subtle opacity-40 cursor-not-allowed"
+                      : "border-border-subtle hover:border-accent/40 hover:bg-accent/5 cursor-pointer",
+                  ].join(" ")}
+                >
+                  {albumArt ? (
+                    <Image
+                      src={albumArt}
+                      alt={track.name}
+                      width={32}
+                      height={32}
+                      className="rounded shrink-0 object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded bg-bg-card shrink-0" />
+                  )}
+                  <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                    <span className="text-sm text-text-primary font-medium truncate">
+                      {track.name}
+                    </span>
+                    <span className="text-xs text-text-muted truncate">
+                      {track.artists.map((a) => a.name).join(", ")}
+                    </span>
+                  </div>
+                  {alreadyAdded && (
+                    <span className="font-mono text-xs text-accent-success shrink-0">added</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
