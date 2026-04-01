@@ -131,9 +131,9 @@ export default function AnalysisLoader({
 
         if (!res.ok) throw new Error("API error");
 
-        const data: ProfileResult = await res.json();
+        const data = await res.json();
         recordAnalysis(fp);
-        resultRef.current = data;
+        resultRef.current = data.result as ProfileResult;
       } catch {
         if (cancelled) return;
         // Fallback: always give a result

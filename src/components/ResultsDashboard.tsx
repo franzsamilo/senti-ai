@@ -8,6 +8,8 @@ import StatBox from "@/components/ui/StatBox";
 import ThreatMeter from "@/components/ui/ThreatMeter";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
+import ShareActions from "@/components/ShareActions";
+import MatchChallenge from "@/components/MatchChallenge";
 
 interface ResultsDashboardProps {
   result: ProfileResult;
@@ -277,9 +279,76 @@ export default function ResultsDashboard({
 
       {/* 9. Actions */}
       <Section index={8}>
-        <Button variant="secondary" className="w-full" onClick={onRunAgain}>
-          Run Again
-        </Button>
+        <div className="flex flex-col gap-3">
+          <ShareActions result={result} songs={songs} />
+
+          <MatchChallenge
+            profile={{
+              songs,
+              mbti,
+              attachmentStyle,
+              loveLanguage,
+              zodiac,
+              result,
+              timestamp: Date.now(),
+            }}
+          />
+
+          <Button
+            variant="ghost"
+            className="w-full text-sm"
+            onClick={async () => {
+              const nickname = prompt("Enter your nickname for the barkada group:");
+              if (!nickname) return;
+              const res = await fetch("/api/barkada", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "create",
+                  nickname,
+                  profile: { songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp: Date.now() },
+                }),
+              });
+              const data = await res.json();
+              window.open(`/barkada/${data.id}`, "_blank");
+            }}
+          >
+            Create Barkada Group
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full text-sm"
+            onClick={async () => {
+              const res = await fetch("/api/leaderboard", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  score: result.emotional_damage_score,
+                  mbti,
+                  attachmentStyle,
+                  zodiac,
+                  threat_level: result.threat_level,
+                }),
+              });
+              const data = await res.json();
+              alert(`Submitted! You're ranked #${data.rank} out of ${data.total}`);
+            }}
+          >
+            Post to Leaderboard
+          </Button>
+
+          <Button variant="secondary" className="w-full" onClick={onRunAgain}>
+            Run Again
+          </Button>
+
+          <a
+            href="/history"
+            className="block text-center text-text-muted font-mono text-xs hover:text-accent transition-colors"
+          >
+            View History →
+          </a>
+        </div>
       </Section>
     </div>
   );

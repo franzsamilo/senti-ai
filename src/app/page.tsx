@@ -33,7 +33,7 @@ const variants = {
   exit: { opacity: 0, y: -12 },
 };
 
-const transition = { type: "spring", stiffness: 320, damping: 30 };
+const transition = { type: "spring" as const, stiffness: 320, damping: 30 };
 
 export default function Home() {
   const [step, setStep] = useState<Step>("landing");
