@@ -747,6 +747,50 @@ export const songDatabase: Song[] = [
   { title: "Slim Pickins", artist: "Sabrina Carpenter", mood: "existential", painIndex: 5.5 },
   { title: "Don't Smile", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.0 },
   { title: "Coincidence", artist: "Sabrina Carpenter", mood: "sweet_pining", painIndex: 5.0 },
+
+  // === Shawn Mendes (additions) ===
+  { title: "Fallin' All in You", artist: "Shawn Mendes", mood: "devotion", painIndex: 4.0 },
+
+  // === Love Me Not (Filipino artist) ===
+  { title: "Love Me Not", artist: "Love Me Not", mood: "heartbreak", painIndex: 7.0 },
+
+  // === Radiohead ===
+  { title: "Creep", artist: "Radiohead", mood: "yearning", painIndex: 8.0 },
+  { title: "No Surprises", artist: "Radiohead", mood: "existential", painIndex: 7.5 },
+  { title: "Fake Plastic Trees", artist: "Radiohead", mood: "existential", painIndex: 7.0 },
+  { title: "Exit Music (For a Film)", artist: "Radiohead", mood: "heartbreak", painIndex: 9.0 },
+  { title: "High and Dry", artist: "Radiohead", mood: "letting_go", painIndex: 7.0 },
+  { title: "Karma Police", artist: "Radiohead", mood: "existential", painIndex: 6.5 },
+  { title: "How to Disappear Completely", artist: "Radiohead", mood: "existential", painIndex: 9.0 },
+  { title: "Street Spirit (Fade Out)", artist: "Radiohead", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Let Down", artist: "Radiohead", mood: "tragic_hope", painIndex: 7.5 },
+  { title: "True Love Waits", artist: "Radiohead", mood: "yearning", painIndex: 9.5 },
+  { title: "Nude", artist: "Radiohead", mood: "yearning", painIndex: 7.0 },
+  { title: "Videotape", artist: "Radiohead", mood: "letting_go", painIndex: 8.0 },
+
+  // === Suki Waterhouse ===
+  { title: "Good Looking", artist: "Suki Waterhouse", mood: "kilig", painIndex: 3.5 },
+  { title: "Moves", artist: "Suki Waterhouse", mood: "infatuation", painIndex: 4.0 },
+  { title: "Melrose Meltdown", artist: "Suki Waterhouse", mood: "existential", painIndex: 6.5 },
+  { title: "Blackout Drunk", artist: "Suki Waterhouse", mood: "toxic", painIndex: 7.0 },
+  { title: "My Mind", artist: "Suki Waterhouse", mood: "anxiety", painIndex: 6.5 },
+  { title: "Nostalgia", artist: "Suki Waterhouse", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Nonchalant", artist: "Suki Waterhouse", mood: "letting_go", painIndex: 5.5 },
+  { title: "To Love", artist: "Suki Waterhouse", mood: "devotion", painIndex: 5.0 },
+
+  // === Rex Orange County ===
+  { title: "Loving is Easy", artist: "Rex Orange County", mood: "kilig", painIndex: 2.5 },
+  { title: "Best Friend", artist: "Rex Orange County", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Pluto Projector", artist: "Rex Orange County", mood: "yearning", painIndex: 7.5 },
+  { title: "Sunflower", artist: "Rex Orange County", mood: "warmth", painIndex: 3.0 },
+  { title: "Corduroy Dreams", artist: "Rex Orange County", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Television / So Far So Good", artist: "Rex Orange County", mood: "existential", painIndex: 6.5 },
+  { title: "It's Not the Same Anymore", artist: "Rex Orange County", mood: "heartbreak", painIndex: 7.5 },
+  { title: "10/10", artist: "Rex Orange County", mood: "warmth", painIndex: 3.5 },
+  { title: "Face to Face", artist: "Rex Orange County", mood: "letting_go", painIndex: 6.0 },
+  { title: "Amazing", artist: "Rex Orange County", mood: "nostalgia", painIndex: 5.5 },
+  { title: "One in a Million", artist: "Rex Orange County", mood: "devotion", painIndex: 4.5 },
+  { title: "Open a Window", artist: "Rex Orange County", mood: "anxiety", painIndex: 7.0 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs
