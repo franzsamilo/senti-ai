@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg-primary: #0a0a0f;
+  --color-bg-card: rgba(255, 255, 255, 0.02);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-accent: #ff3252;
+  --color-accent-secondary: #ff0844;
+  --color-accent-success: #22aa55;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #888888;
+  --color-text-muted: #555555;
+  --color-threat-critical: #ff0040;
+  --color-threat-severe: #ff3252;
+  --color-threat-elevated: #ff8c00;
+  --color-threat-moderate: #ffd000;
+  --color-threat-low: #00cc88;
+  --font-display: var(--font-outfit);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-display), sans-serif;
+}
+
+/* Glitch text effect */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.glitch::before {
+  color: #ff3252;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  transform: translate(-2px, -2px);
+  animation: glitch-top 3s infinite linear;
+}
+
+.glitch::after {
+  color: #00e5ff;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  transform: translate(2px, 2px);
+  animation: glitch-bottom 3s infinite linear;
+}
+
+@keyframes glitch-top {
+  0%, 90%, 100% {
+    transform: translate(-2px, -2px);
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  92% {
+    transform: translate(3px, -1px);
+    clip-path: polygon(0 5%, 100% 5%, 100% 40%, 0 40%);
+  }
+  94% {
+    transform: translate(-1px, 2px);
+    clip-path: polygon(0 15%, 100% 15%, 100% 25%, 0 25%);
+  }
+  96% {
+    transform: translate(2px, -3px);
+    clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+  }
+}
+
+@keyframes glitch-bottom {
+  0%, 90%, 100% {
+    transform: translate(2px, 2px);
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  92% {
+    transform: translate(-3px, 1px);
+    clip-path: polygon(0 60%, 100% 60%, 100% 95%, 0 95%);
+  }
+  94% {
+    transform: translate(1px, -2px);
+    clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
+  }
+  96% {
+    transform: translate(-2px, 3px);
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+}
+
+/* Dark scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 50, 82, 0.4) rgba(255, 255, 255, 0.04);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 50, 82, 0.4);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 50, 82, 0.7);
 }
