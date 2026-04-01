@@ -18,6 +18,11 @@ export function generateFingerprint(): string {
 }
 
 export function getRemainingAnalyses(fingerprint: string): number {
+  // No limits on localhost
+  if (typeof window !== "undefined" && window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return 999;
+  }
+
   const key = `senti_usage_${fingerprint}`;
   const today = new Date().toDateString();
   try {
