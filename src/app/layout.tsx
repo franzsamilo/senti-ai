@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const SITE_URL = "https://senti-ai-iota.vercel.app";
+const SITE_URL = "https://senti-ai-sooty.vercel.app";
 
 const outfit = Outfit({
   variable: "--font-outfit",

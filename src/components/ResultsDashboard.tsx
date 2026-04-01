@@ -222,7 +222,7 @@ export default function ResultsDashboard({
         {/* Branding footer (visible in screenshot) */}
         <div className="text-center py-4">
           <p className="font-mono text-xs text-text-muted tracking-widest">—— SENTI.AI ——</p>
-          <p className="font-mono text-xs mt-1" style={{ color: threatColor }}>Take yours → senti-ai-iota.vercel.app</p>
+          <p className="font-mono text-xs mt-1" style={{ color: threatColor }}>Take yours → senti-ai-sooty.vercel.app</p>
         </div>
       </div>
       {/* === CAPTURABLE AREA END === */}
