@@ -693,11 +693,8 @@ export const songDatabase: Song[] = [
   { title: "Never Say Never", artist: "The Fray", mood: "tragic_hope", painIndex: 6.5 },
   { title: "Heartbeat", artist: "The Fray", mood: "sweet_pining", painIndex: 5.5 },
 
-  // === Homewrecker ===
-  { title: "Mabagal", artist: "Homewrecker", mood: "sweet_pining", painIndex: 5.5 },
-  { title: "Kalawakan", artist: "Homewrecker", mood: "yearning", painIndex: 6.5 },
-  { title: "Isa Ka", artist: "Homewrecker", mood: "devotion", painIndex: 5.0 },
-  { title: "Hindi Na", artist: "Homewrecker", mood: "letting_go", painIndex: 7.0 },
+  // === sombr — Homewrecker EP ===
+  { title: "homewrecker", artist: "sombr", mood: "toxic", painIndex: 7.0 },
 
   // === Shawn Mendes ===
   { title: "Stitches", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 7.5 },

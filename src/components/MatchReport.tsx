@@ -106,7 +106,9 @@ function ProfileCard({ profile, label, isWinner }: ProfileCardProps) {
         <div className="flex justify-between items-baseline gap-2">
           <span className="text-xs shrink-0" style={{ color: "#555555" }}>Love Language</span>
           <span className="font-mono text-xs text-right leading-tight" style={{ color: "#888888" }}>
-            {LOVE_LANGUAGE_LABELS[profile.loveLanguage] ?? profile.loveLanguage}
+            {Array.isArray(profile.loveLanguage)
+                ? profile.loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l] || l).join(", ")
+                : LOVE_LANGUAGE_LABELS[profile.loveLanguage] ?? profile.loveLanguage}
           </span>
         </div>
         <div className="flex justify-between items-baseline gap-2">

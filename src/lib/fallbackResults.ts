@@ -59,11 +59,11 @@ function getBehavioralPredictions(
   topSong: Song,
   mbti: string,
   attachmentStyle: AttachmentStyle,
-  loveLanguage: LoveLanguage,
+  loveLanguage: LoveLanguage[],
   zodiac: string
 ): string[] {
   const attachLabel = ATTACHMENT_LABELS[attachmentStyle];
-  const llLabel = LOVE_LANGUAGE_LABELS[loveLanguage];
+  const llLabel = loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(" + ");
 
   const predictions: string[] = [
     // Prediction 1 — song-based
@@ -75,15 +75,7 @@ function getBehavioralPredictions(
       : `Bilang ${mbti} na may ${attachLabel} attachment, sinesend mo sa barkada GC ang bawat screenshot ng kausap mo para sa collective analysis. Ang barkada mo ay tired na pero hindi nila kaya sabihin sa'yo dahil mahal ka nila.`,
 
     // Prediction 3 — love language
-    loveLanguage === "words"
-      ? `Ang love language mo ay Words of Affirmation, kaya nagre-replay ka ng bawat "okay" at "haha" nila para hanapin ang hidden meaning. Spoiler: wala. "Haha okay" ay "haha okay" lang. Pero alam mong hindi mo sila papaniwalaan dito.`
-      : loveLanguage === "acts"
-      ? `Ang love language mo ay Acts of Service, kaya nagse-serbisyo ka nang walang kapalit — nagco-commute para sa kanya, nag-aayos ng wifi nila, nagdadrive kahit pagod ka. Sabi mo "gusto ko lang tumulong." Hindi. Nagbabayad ka ng emotional rent para sa isang bahay na hindi mo hawak ang susi.`
-      : loveLanguage === "gifts"
-      ? `Ang love language mo ay Receiving Gifts, pero sa totoo lang ang gusto mo lang ay isang malinaw na "mahal kita" — hindi isang Chatime. Problema lang ay mas madaling tanggap ang milk tea kaysa sa DTR conversation, so nandito tayo.`
-      : loveLanguage === "time"
-      ? `Quality Time ang love language mo, kaya ang pakiramdam mo kapag hindi niya inuna ang oras niya ay personal na atake. Spoiler: hindi siya nagbabago — ikaw lang ang nagbabago ng interpretation ng "busy" niya.`
-      : `Physical Touch ang love language mo, which means ang "hug na lang natin iyan" ay puso ng relasyon mo. Problema: hindi naman lahat ng mahilig sa hawak ay ready mag-commit. Naconfuse ka sa physical intimacy at emotional availability at iyan ang buong issue.`,
+    `Ang love language mo ay ${llLabel} — ${loveLanguage.length > 1 ? `${loveLanguage.length} love languages? Over naman. Hindi mo alam kung ano talaga gusto mo, kaya lahat gusto mo. Classic.` : loveLanguage.includes("words") ? `nagre-replay ka ng bawat "okay" at "haha" para hanapin ang hidden meaning. Spoiler: wala.` : loveLanguage.includes("acts") ? `nagse-serbisyo ka nang walang kapalit. Sabi mo "gusto ko lang tumulong." Hindi. Nagbabayad ka ng emotional rent.` : loveLanguage.includes("gifts") ? `ang gusto mo lang ay malinaw na "mahal kita" — hindi isang Chatime.` : loveLanguage.includes("time") ? `kapag hindi niya inuna ang oras niya, personal na atake agad. Classic.` : `"hug na lang natin iyan" ang puso ng relasyon mo. Naconfuse ka sa physical intimacy at emotional availability.`}`,
 
     // Prediction 4 — zodiac
     `Bilang ${zodiac}, alam ng universe na may tendency kang romanticize yung sitwasyon hanggang sa mas maganda na ang version sa isip mo kaysa sa katotohanan. Ang talking stage mo ay may cinematic score na. Sa totoong buhay walang background music, bestie.`,
@@ -98,7 +90,7 @@ function getBehavioralPredictions(
 function getToxicTraits(
   mbti: string,
   attachmentStyle: AttachmentStyle,
-  loveLanguage: LoveLanguage
+  loveLanguage: LoveLanguage[]
 ): string[] {
   const traits: string[] = [];
 
@@ -130,25 +122,17 @@ function getToxicTraits(
     );
   }
 
-  if (loveLanguage === "words") {
+  if (loveLanguage.includes("words")) {
     traits.push(
       "Nagbibigay ng unsolicited affirmations bilang love bombing lite — sincere nga, pero overwhelming para sa taong hindi pa ready"
     );
-  } else if (loveLanguage === "acts") {
+  } else if (loveLanguage.includes("touch")) {
     traits.push(
-      "Nagse-serbisyo para mag-earn ng pagmamahal imbes na tanggapin na hindi lahat ng tao gusto ng ganyang klase ng pagmamahal"
-    );
-  } else if (loveLanguage === "gifts") {
-    traits.push(
-      "Nagbibigay ng regalo bilang apology currency — hindi iyan grand gesture, iyan ay emotional debt management"
-    );
-  } else if (loveLanguage === "time") {
-    traits.push(
-      "Nag-aasahan ng reciprocal na quality time nang hindi sinasabi — tapos nagtatampo kapag hindi nagbigay ang tao ng oras niya"
+      "Gumagamit ng physical closeness para maiwasan ang emotional intimacy — mas madaling humalik kaysa mag-'mahal kita'"
     );
   } else {
     traits.push(
-      "Gumagamit ng physical closeness para maiwasan ang emotional intimacy — mas madaling humalik kaysa mag-'mahal kita'"
+      "Nag-aasahan ng reciprocal effort nang hindi sinasabi — tapos nagtatampo kapag hindi nagbigay ang tao ng expected response"
     );
   }
 
@@ -184,7 +168,7 @@ export function generateFallback(
   songs: Song[],
   mbti: string,
   attachmentStyle: AttachmentStyle,
-  loveLanguage: LoveLanguage,
+  loveLanguage: LoveLanguage[],
   zodiac: string
 ): ProfileResult {
   const avgPain =
@@ -201,7 +185,7 @@ export function generateFallback(
   const drunk_text_probability = computeDrunkTextProbability(avgPain, attachmentStyle);
   const emotional_damage_score = computeEmotionalDamageScore(avgPain, attachmentStyle, mbti);
   const attachLabel = ATTACHMENT_LABELS[attachmentStyle];
-  const llLabel = LOVE_LANGUAGE_LABELS[loveLanguage];
+  const llLabel = loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(" + ");
 
   const headline = `${mbti} na may ${attachLabel} attachment nakikinig ng "${topSong.title}" — nasa atin na tayo, bestie.`;
 

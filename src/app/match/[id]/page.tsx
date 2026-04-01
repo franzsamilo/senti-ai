@@ -67,7 +67,7 @@ export default function MatchPage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [mbti, setMbti] = useState<string>("");
   const [attachmentStyle, setAttachmentStyle] = useState<AttachmentStyle>("anxious");
-  const [loveLanguage, setLoveLanguage] = useState<LoveLanguage>("words");
+  const [loveLanguage, setLoveLanguage] = useState<LoveLanguage[]>([]);
   const [zodiac, setZodiac] = useState<string>("");
   const [userBResult, setUserBResult] = useState<ProfileResult | null>(null);
 
@@ -390,10 +390,8 @@ export default function MatchPage() {
             >
               <LoveLanguageStep
                 selected={loveLanguage}
-                onSelect={(value) => {
-                  setLoveLanguage(value);
-                  setStep("zodiac");
-                }}
+                onSelect={setLoveLanguage}
+                onNext={() => setStep("zodiac")}
               />
             </motion.div>
           )}

@@ -43,7 +43,7 @@ export default function Home() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [mbti, setMbti] = useState<string>("");
   const [attachmentStyle, setAttachmentStyle] = useState<AttachmentStyle>("anxious");
-  const [loveLanguage, setLoveLanguage] = useState<LoveLanguage>("words");
+  const [loveLanguage, setLoveLanguage] = useState<LoveLanguage[]>([]);
   const [zodiac, setZodiac] = useState<string>("");
   const [personalContext, setPersonalContext] = useState<string>("");
   const [result, setResult] = useState<ProfileResult | null>(null);
@@ -58,8 +58,7 @@ export default function Home() {
     setStep("love-language");
   }
 
-  function handleLoveLanguageSelect(value: LoveLanguage) {
-    setLoveLanguage(value);
+  function handleLoveLanguageNext() {
     setStep("zodiac");
   }
 
@@ -171,7 +170,8 @@ export default function Home() {
             >
               <LoveLanguageStep
                 selected={loveLanguage}
-                onSelect={handleLoveLanguageSelect}
+                onSelect={setLoveLanguage}
+                onNext={handleLoveLanguageNext}
               />
             </motion.div>
           )}
@@ -258,7 +258,7 @@ export default function Home() {
                   setSongs([]);
                   setMbti("");
                   setAttachmentStyle("anxious");
-                  setLoveLanguage("words");
+                  setLoveLanguage([]);
                   setZodiac("");
                   setPersonalContext("");
                   setResult(null);

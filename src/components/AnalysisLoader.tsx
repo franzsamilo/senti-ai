@@ -13,7 +13,7 @@ interface AnalysisLoaderProps {
   songs: Song[];
   mbti: string;
   attachmentStyle: AttachmentStyle;
-  loveLanguage: LoveLanguage;
+  loveLanguage: LoveLanguage[];
   zodiac: string;
   personalContext?: string;
   /** Called with the finished ProfileResult — also aliased as onComplete for compatibility */

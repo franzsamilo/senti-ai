@@ -38,7 +38,7 @@ export interface AnalysisRequest {
   songs: Song[];
   mbti: string;
   attachmentStyle: AttachmentStyle;
-  loveLanguage: LoveLanguage;
+  loveLanguage: LoveLanguage[];
   zodiac: string;
   fingerprint: string;
 }
@@ -75,7 +75,7 @@ export interface UserProfile {
   songs: Song[];
   mbti: string;
   attachmentStyle: AttachmentStyle;
-  loveLanguage: LoveLanguage;
+  loveLanguage: LoveLanguage[];
   zodiac: string;
   result: ProfileResult;
   timestamp: number;

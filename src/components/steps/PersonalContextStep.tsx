@@ -47,7 +47,7 @@ export default function PersonalContextStep({
           <p className="text-sm" style={{ color: "#888888" }}>
             Tell us what you&apos;re going through rn.{" "}
             <span style={{ color: "#555555" }}>
-              (This makes the roast more personal.)
+              (Optional — the AI will factor this in.)
             </span>
           </p>
         </div>

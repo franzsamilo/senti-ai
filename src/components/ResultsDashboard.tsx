@@ -16,7 +16,7 @@ interface ResultsDashboardProps {
   songs: Song[];
   mbti: string;
   attachmentStyle: AttachmentStyle;
-  loveLanguage: LoveLanguage;
+  loveLanguage: LoveLanguage[];
   zodiac: string;
   onRunAgain: () => void;
 }

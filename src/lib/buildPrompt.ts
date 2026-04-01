@@ -162,7 +162,7 @@ export function buildPrompt(
   songs: Song[],
   mbti: string,
   attachmentStyle: AttachmentStyle,
-  loveLanguage: LoveLanguage,
+  loveLanguage: LoveLanguage[],
   zodiac: string,
   personalContext?: string
 ): { system: string; user: string } {
@@ -188,7 +188,7 @@ Average Pain Index: ${avgPain.toFixed(1)}/10
 PERSONALITY PROFILE:
 - MBTI: ${mbti}
 - Attachment Style: ${ATTACHMENT_LABELS[attachmentStyle]}
-- Love Language: ${LOVE_LANGUAGE_LABELS[loveLanguage]}
+- Love Language(s): ${loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(", ")}
 - Zodiac Sign: ${zodiac}
 
 Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.${

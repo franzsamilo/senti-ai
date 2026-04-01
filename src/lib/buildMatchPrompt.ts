@@ -8,7 +8,7 @@ function formatProfile(profile: UserProfile, label: string): string {
   return `${label}:
   MBTI: ${profile.mbti}
   Attachment Style: ${profile.attachmentStyle}
-  Love Language: ${profile.loveLanguage}
+  Love Language(s): ${Array.isArray(profile.loveLanguage) ? profile.loveLanguage.join(", ") : profile.loveLanguage}
   Zodiac: ${profile.zodiac}
   Emotional Damage Score: ${profile.result.emotional_damage_score}/10
   Threat Level: ${profile.result.threat_level}
