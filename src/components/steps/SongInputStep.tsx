@@ -11,7 +11,7 @@ import type { SpotifyTrack } from "@/lib/spotify";
 
 const MAX_SONGS = 10;
 const MIN_SONGS = 5;
-const MAX_RESULTS = 8;
+const MAX_RESULTS = 12;
 
 interface SongInputStepProps {
   songs: Song[];

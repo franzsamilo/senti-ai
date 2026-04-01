@@ -670,17 +670,116 @@ export const songDatabase: Song[] = [
   { title: "Jamie All Over", artist: "Mayday Parade", mood: "nostalgia", painIndex: 7.0 },
   { title: "Miserable at Best", artist: "Mayday Parade", mood: "heartbreak", painIndex: 9.0 },
   { title: "Terrible Things", artist: "Mayday Parade", mood: "heartbreak", painIndex: 9.5 },
+
+  // === LANY ===
+  { title: "ILYSB", artist: "LANY", mood: "devotion", painIndex: 4.0 },
+  { title: "Malibu Nights", artist: "LANY", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Thick and Thin", artist: "LANY", mood: "devotion", painIndex: 5.0 },
+  { title: "13", artist: "LANY", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Super Far", artist: "LANY", mood: "yearning", painIndex: 7.0 },
+  { title: "Mean It", artist: "LANY", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Thru These Tears", artist: "LANY", mood: "letting_go", painIndex: 7.5 },
+  { title: "Good Girls", artist: "LANY", mood: "infatuation", painIndex: 4.5 },
+  { title: "If You See Her", artist: "LANY", mood: "yearning", painIndex: 7.0 },
+  { title: "You!", artist: "LANY", mood: "kilig", painIndex: 3.5 },
+  { title: "Dancing in the Kitchen", artist: "LANY", mood: "warmth", painIndex: 3.0 },
+  { title: "Somebody Else", artist: "LANY", mood: "heartbreak", painIndex: 7.5 },
+
+  // === The Fray ===
+  { title: "How to Save a Life", artist: "The Fray", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Over My Head (Cable Car)", artist: "The Fray", mood: "heartbreak", painIndex: 7.5 },
+  { title: "You Found Me", artist: "The Fray", mood: "existential", painIndex: 7.5 },
+  { title: "Look After You", artist: "The Fray", mood: "devotion", painIndex: 5.0 },
+  { title: "Never Say Never", artist: "The Fray", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "Heartbeat", artist: "The Fray", mood: "sweet_pining", painIndex: 5.5 },
+
+  // === Homewrecker ===
+  { title: "Mabagal", artist: "Homewrecker", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Kalawakan", artist: "Homewrecker", mood: "yearning", painIndex: 6.5 },
+  { title: "Isa Ka", artist: "Homewrecker", mood: "devotion", painIndex: 5.0 },
+  { title: "Hindi Na", artist: "Homewrecker", mood: "letting_go", painIndex: 7.0 },
+
+  // === Shawn Mendes ===
+  { title: "Stitches", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Treat You Better", artist: "Shawn Mendes", mood: "yearning", painIndex: 6.5 },
+  { title: "If I Can't Have You", artist: "Shawn Mendes", mood: "yearning", painIndex: 7.0 },
+  { title: "In My Blood", artist: "Shawn Mendes", mood: "anxiety", painIndex: 7.5 },
+  { title: "Mercy", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Wonder", artist: "Shawn Mendes", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "It'll Be Okay", artist: "Shawn Mendes", mood: "letting_go", painIndex: 7.0 },
+  { title: "When You're Gone", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 8.0 },
+  { title: "There's Nothing Holdin' Me Back", artist: "Shawn Mendes", mood: "infatuation", painIndex: 4.0 },
+  { title: "Señorita", artist: "Shawn Mendes & Camila Cabello", mood: "infatuation", painIndex: 4.0 },
+
+  // === Arctic Monkeys ===
+  { title: "Do I Wanna Know?", artist: "Arctic Monkeys", mood: "yearning", painIndex: 7.0 },
+  { title: "505", artist: "Arctic Monkeys", mood: "yearning", painIndex: 8.0 },
+  { title: "Why'd You Only Call Me When You're High?", artist: "Arctic Monkeys", mood: "toxic", painIndex: 7.0 },
+  { title: "I Wanna Be Yours", artist: "Arctic Monkeys", mood: "devotion", painIndex: 6.5 },
+  { title: "R U Mine?", artist: "Arctic Monkeys", mood: "infatuation", painIndex: 5.5 },
+  { title: "Fluorescent Adolescent", artist: "Arctic Monkeys", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Snap Out of It", artist: "Arctic Monkeys", mood: "denial", painIndex: 6.5 },
+  { title: "There'd Better Be a Mirrorball", artist: "Arctic Monkeys", mood: "letting_go", painIndex: 7.0 },
+  { title: "Body Paint", artist: "Arctic Monkeys", mood: "yearning", painIndex: 6.5 },
+  { title: "Mardy Bum", artist: "Arctic Monkeys", mood: "nostalgia", painIndex: 5.5 },
+
+  // === The 1975 ===
+  { title: "Somebody Else", artist: "The 1975", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Robbers", artist: "The 1975", mood: "toxic", painIndex: 7.5 },
+  { title: "fallingforyou", artist: "The 1975", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "The Sound", artist: "The 1975", mood: "infatuation", painIndex: 4.5 },
+  { title: "If You're Too Shy (Let Me Know)", artist: "The 1975", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Be My Mistake", artist: "The 1975", mood: "heartbreak", painIndex: 8.0 },
+  { title: "A Change of Heart", artist: "The 1975", mood: "letting_go", painIndex: 7.0 },
+  { title: "About You", artist: "The 1975", mood: "yearning", painIndex: 8.0 },
+  { title: "I Always Wanna Die (Sometimes)", artist: "The 1975", mood: "existential", painIndex: 7.5 },
+  { title: "It's Not Living (If It's Not with You)", artist: "The 1975", mood: "obsession", painIndex: 7.0 },
+  { title: "Chocolate", artist: "The 1975", mood: "nostalgia", painIndex: 5.0 },
+  { title: "Me & You Together Song", artist: "The 1975", mood: "kilig", painIndex: 3.5 },
 ];
 
 /**
- * Search songs by partial, case-insensitive match on title or artist.
+ * Search songs with ranked results.
+ * Prioritizes: exact title match > title starts with > title contains > artist match.
+ * Supports multi-word queries (all words must match somewhere in title or artist).
  */
 export function searchSongs(query: string): Song[] {
   if (!query || query.trim() === "") return [];
-  const normalized = query.toLowerCase().trim();
-  return songDatabase.filter(
-    (song) =>
-      song.title.toLowerCase().includes(normalized) ||
-      song.artist.toLowerCase().includes(normalized)
-  );
+  const q = query.toLowerCase().trim();
+  const words = q.split(/\s+/).filter(Boolean);
+
+  // Filter: every word must appear in title or artist
+  const matches = songDatabase.filter((song) => {
+    const title = song.title.toLowerCase();
+    const artist = song.artist.toLowerCase();
+    return words.every((w) => title.includes(w) || artist.includes(w));
+  });
+
+  // Score and rank
+  return matches
+    .map((song) => {
+      const title = song.title.toLowerCase();
+      const artist = song.artist.toLowerCase();
+      let score = 0;
+
+      // Exact title match
+      if (title === q) score += 100;
+      // Title starts with query
+      else if (title.startsWith(q)) score += 80;
+      // Title contains full query
+      else if (title.includes(q)) score += 60;
+      // Artist exact match
+      if (artist === q) score += 50;
+      // Artist starts with query
+      else if (artist.startsWith(q)) score += 40;
+      // Artist contains full query
+      else if (artist.includes(q)) score += 30;
+
+      // Bonus for shorter titles (more relevant matches)
+      score += Math.max(0, 20 - title.length);
+
+      return { song, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map((r) => r.song);
 }
