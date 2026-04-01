@@ -74,7 +74,7 @@ export const songDatabase: Song[] = [
   // OPM — Maki
   // ───────────────────────────────────────────────
   { title: "Dilaw", artist: "Maki", mood: "sweet_pining", painIndex: 5.5 },
-  { title: "Saan Man Ako Magpunta", artist: "Maki", mood: "devotion", painIndex: 5.0 },
+  { title: "Saan Man Ako Magpunta", artist: "Maki", mood: "devotion", painIndex: 5.5 },
 
   // ───────────────────────────────────────────────
   // OPM — Dilaw (band)
@@ -122,14 +122,14 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Eraserheads
   // ───────────────────────────────────────────────
-  { title: "Ang Huling El Bimbo", artist: "Eraserheads", mood: "nostalgia", painIndex: 8.5 },
-  { title: "With A Smile", artist: "Eraserheads", mood: "warmth", painIndex: 4.0 },
+  { title: "Ang Huling El Bimbo", artist: "Eraserheads", mood: "nostalgia", painIndex: 9.0 },
+  { title: "With A Smile", artist: "Eraserheads", mood: "tragic_hope", painIndex: 6.5 },
 
   // ───────────────────────────────────────────────
   // OPM — Parokya ni Edgar
   // ───────────────────────────────────────────────
-  { title: "Harana", artist: "Parokya ni Edgar", mood: "sweet_pining", painIndex: 5.0 },
-  { title: "Your Song", artist: "Parokya ni Edgar", mood: "devotion", painIndex: 4.5 },
+  { title: "Harana", artist: "Parokya ni Edgar", mood: "adoration", painIndex: 3.0 },
+  { title: "Your Song (One and Only You)", artist: "Parokya ni Edgar", mood: "devotion", painIndex: 4.0 },
 
   // ───────────────────────────────────────────────
   // International — Taylor Swift
@@ -380,6 +380,296 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   { title: "XO (Only If You Say Yes)", artist: "ENHYPEN", mood: "sweet_pining", painIndex: 5.0 },
   { title: "Polaroid Love", artist: "ENHYPEN", mood: "kilig", painIndex: 3.5 },
+
+  // ───────────────────────────────────────────────
+  // K-Pop — BTS ARIRANG (March 2026)
+  // ───────────────────────────────────────────────
+  { title: "Swim", artist: "BTS", mood: "letting_go", painIndex: 6.0 },
+  { title: "Merry Go Round", artist: "BTS", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Please", artist: "BTS", mood: "yearning", painIndex: 8.0 },
+  { title: "Into the Sun", artist: "BTS", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "Normal", artist: "BTS", mood: "existential", painIndex: 6.0 },
+  { title: "they don't know 'bout us", artist: "BTS", mood: "devotion", painIndex: 5.0 },
+  { title: "2.0", artist: "BTS", mood: "loyalty", painIndex: 4.5 },
+  { title: "Body to Body", artist: "BTS", mood: "infatuation", painIndex: 4.0 },
+  { title: "Hooligan", artist: "BTS", mood: "toxic", painIndex: 5.5 },
+  { title: "One More Night", artist: "BTS", mood: "yearning", painIndex: 7.0 },
+  { title: "Like Animals", artist: "BTS", mood: "infatuation", painIndex: 4.5 },
+  { title: "FYA", artist: "BTS", mood: "devotion", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // K-Pop — BLACKPINK / Rosé / Jennie (new)
+  // ───────────────────────────────────────────────
+  { title: "JUMP", artist: "BLACKPINK", mood: "infatuation", painIndex: 3.5 },
+  { title: "number one girl", artist: "Rosé", mood: "anxiety", painIndex: 7.5 },
+  { title: "toxic till the end", artist: "Rosé", mood: "toxic", painIndex: 8.0 },
+  { title: "like JENNIE", artist: "Jennie", mood: "infatuation", painIndex: 3.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — fitterkarma
+  // ───────────────────────────────────────────────
+  { title: "Pag-Ibig ay Kanibalismo II", artist: "fitterkarma", mood: "toxic", painIndex: 8.0 },
+  { title: "Kalapastangan", artist: "fitterkarma", mood: "existential", painIndex: 7.0 },
+  { title: "Sumpa", artist: "fitterkarma", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Pag-Ibig ay Kanibalismo I", artist: "fitterkarma", mood: "obsession", painIndex: 7.5 },
+  { title: "Aswang sa Maynila", artist: "fitterkarma", mood: "existential", painIndex: 7.0 },
+  { title: "Multo, Pt. 1", artist: "fitterkarma", mood: "nostalgia", painIndex: 6.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Cup of Joe (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Multo", artist: "Cup of Joe", mood: "yearning", painIndex: 7.5 },
+  { title: "Sandali", artist: "Cup of Joe", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Buhay Ka Pa Naman", artist: "Cup of Joe", mood: "devotion", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Maki (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Bughaw", artist: "Maki", mood: "sweet_pining", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Dionela
+  // ───────────────────────────────────────────────
+  { title: "Sining", artist: "Dionela", mood: "adoration", painIndex: 4.0 },
+  { title: "Nang Dahil Sa'yo", artist: "Dionela", mood: "devotion", painIndex: 5.0 },
+  { title: "Marilag", artist: "Dionela", mood: "adoration", painIndex: 3.5 },
+  { title: "Oksihina", artist: "Dionela", mood: "devotion", painIndex: 4.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Any Name's Okay
+  // ───────────────────────────────────────────────
+  { title: "Sige", artist: "Any Name's Okay", mood: "letting_go", painIndex: 7.0 },
+  { title: "Magkabilang Mundo", artist: "Any Name's Okay", mood: "heartbreak", painIndex: 8.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — sombr
+  // ───────────────────────────────────────────────
+  { title: "back to friends", artist: "sombr", mood: "letting_go", painIndex: 7.0 },
+  { title: "undressed", artist: "sombr", mood: "yearning", painIndex: 7.5 },
+  { title: "we never dated", artist: "sombr", mood: "denial", painIndex: 6.5 },
+  { title: "12 to 12", artist: "sombr", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Caroline", artist: "sombr", mood: "nostalgia", painIndex: 6.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Eraserheads (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Ligaya", artist: "Eraserheads", mood: "kilig", painIndex: 3.0 },
+  { title: "Pare Ko", artist: "Eraserheads", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Huwag Mo Nang Itanong", artist: "Eraserheads", mood: "letting_go", painIndex: 7.5 },
+  { title: "Alapaap", artist: "Eraserheads", mood: "existential", painIndex: 5.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Rivermaya
+  // ───────────────────────────────────────────────
+  { title: "214", artist: "Rivermaya", mood: "devotion", painIndex: 5.0 },
+  { title: "Kisapmata", artist: "Rivermaya", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Hinahanap-Hanap Kita", artist: "Rivermaya", mood: "yearning", painIndex: 7.0 },
+  { title: "You'll Be Safe Here", artist: "Rivermaya", mood: "devotion", painIndex: 4.5 },
+  { title: "Himala", artist: "Rivermaya", mood: "tragic_hope", painIndex: 6.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Parokya ni Edgar (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Halaga", artist: "Parokya ni Edgar", mood: "devotion", painIndex: 5.0 },
+  { title: "Gitara", artist: "Parokya ni Edgar", mood: "hopeless_crush", painIndex: 6.0 },
+  { title: "Pangarap Lang Kita", artist: "Parokya ni Edgar", mood: "yearning", painIndex: 7.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM — 2000s Bands
+  // ───────────────────────────────────────────────
+  { title: "The Day You Said Goodnight", artist: "Hale", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Blue Sky", artist: "Hale", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Kahit Pa", artist: "Hale", mood: "devotion", painIndex: 5.0 },
+  { title: "Jeepney", artist: "Spongecola", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Tuliro", artist: "Spongecola", mood: "infatuation", painIndex: 4.5 },
+  { title: "Kay Tagal Kitang Hinintay", artist: "Spongecola", mood: "yearning", painIndex: 7.0 },
+  { title: "Torete", artist: "Moonstar88", mood: "kilig", painIndex: 3.5 },
+  { title: "Migraine", artist: "Moonstar88", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Narda", artist: "Kamikazee", mood: "devotion", painIndex: 4.5 },
+  { title: "Huling Sayaw", artist: "Kamikazee", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Magbalik", artist: "Callalily", mood: "yearning", painIndex: 7.5 },
+  { title: "Stars", artist: "Callalily", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Mariposa", artist: "Sugarfree", mood: "obsession", painIndex: 7.5 },
+  { title: "Telepono", artist: "Sugarfree", mood: "yearning", painIndex: 7.0 },
+  { title: "Burnout", artist: "Sugarfree", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Rainbow", artist: "South Border", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Kahit Kailan", artist: "South Border", mood: "devotion", painIndex: 5.0 },
+  { title: "Sundo", artist: "Imago", mood: "devotion", painIndex: 4.5 },
+  { title: "Tadhana", artist: "Up Dharma Down", mood: "tragic_hope", painIndex: 7.0 },
+  { title: "Oo", artist: "Up Dharma Down", mood: "yearning", painIndex: 6.5 },
+  { title: "Indak", artist: "Up Dharma Down", mood: "kilig", painIndex: 4.0 },
+  { title: "Mga Awit Kay Aisa", artist: "Typecast", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Sandalan", artist: "6cyclemind", mood: "devotion", painIndex: 5.0 },
+  { title: "Prinsesa", artist: "6cyclemind", mood: "adoration", painIndex: 4.0 },
+  { title: "Especially for You", artist: "MYMP", mood: "devotion", painIndex: 4.0 },
+  { title: "A Little Bit", artist: "MYMP", mood: "sweet_pining", painIndex: 5.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Classic Balladeers
+  // ───────────────────────────────────────────────
+  { title: "Bituing Walang Ningning", artist: "Sharon Cuneta", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Basang-Basa Sa Ulan", artist: "Aegis", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Halik", artist: "Aegis", mood: "yearning", painIndex: 8.0 },
+  { title: "Luha", artist: "Aegis", mood: "heartbreak", painIndex: 9.0 },
+  { title: "Bakit Ngayon Ka Lang", artist: "Freestyle", mood: "yearning", painIndex: 7.0 },
+  { title: "Iniibig Kita", artist: "Roel Cortez", mood: "devotion", painIndex: 5.0 },
+  { title: "Natutulog Ba Ang Diyos?", artist: "Gary Valenciano", mood: "existential", painIndex: 7.5 },
+  { title: "Kahit Maputi Na Ang Buhok Ko", artist: "Noel Cabangon", mood: "devotion", painIndex: 6.0 },
+  { title: "Ikaw", artist: "Yeng Constantino", mood: "devotion", painIndex: 4.5 },
+  { title: "Hawak Kamay", artist: "Yeng Constantino", mood: "warmth", painIndex: 3.5 },
+  { title: "Panalangin", artist: "APO Hiking Society", mood: "yearning", painIndex: 6.5 },
+  { title: "When I Met You", artist: "APO Hiking Society", mood: "kilig", painIndex: 3.0 },
+  { title: "Kung Ako Na Lang Sana", artist: "Bituin Escalante", mood: "yearning", painIndex: 8.0 },
+  { title: "Tuloy Pa Rin", artist: "Neocolours", mood: "tragic_hope", painIndex: 5.5 },
+
+  // ───────────────────────────────────────────────
+  // OPM — Charting (March 2026)
+  // ───────────────────────────────────────────────
+  { title: "Tahanan", artist: "El Manu", mood: "belonging", painIndex: 5.0 },
+  { title: "Libu-Libong Buwan (Uuwian)", artist: "Kyle Raphael", mood: "devotion", painIndex: 5.5 },
+  { title: "Panaginip", artist: "nicole", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Since Day One", artist: "Skusta Clee & Flow G", mood: "loyalty", painIndex: 4.0 },
+  { title: "Rosas", artist: "Yuridope", mood: "adoration", painIndex: 4.0 },
+  { title: "My Day", artist: "HELLMERRY", mood: "warmth", painIndex: 3.5 },
+  { title: "4:AM", artist: "HELLMERRY", mood: "yearning", painIndex: 6.5 },
+  { title: "Tibok", artist: "Earl Agustin", mood: "kilig", painIndex: 3.5 },
+  { title: "Dalangin", artist: "Earl Agustin", mood: "yearning", painIndex: 7.0 },
+  { title: "Sa Bawat Sandali", artist: "Amiel Sol", mood: "devotion", painIndex: 5.0 },
+  { title: "Amatz", artist: "Shanti Dope", mood: "existential", painIndex: 5.5 },
+  { title: "Norem", artist: "Shanti Dope", mood: "loyalty", painIndex: 4.5 },
+  { title: "Dominga", artist: "La Mave & Nateman", mood: "nostalgia", painIndex: 5.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Taylor Swift (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Opalite", artist: "Taylor Swift", mood: "yearning", painIndex: 7.0 },
+
+  // ───────────────────────────────────────────────
+  // International — Bruno Mars (expanded)
+  // ───────────────────────────────────────────────
+  { title: "Risk It All", artist: "Bruno Mars", mood: "devotion", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // International — Olivia Dean
+  // ───────────────────────────────────────────────
+  { title: "So Easy (To Fall In Love)", artist: "Olivia Dean", mood: "kilig", painIndex: 3.0 },
+
+  // ───────────────────────────────────────────────
+  // International — Avril Lavigne
+  // ───────────────────────────────────────────────
+  { title: "Complicated", artist: "Avril Lavigne", mood: "existential", painIndex: 5.5 },
+  { title: "I'm With You", artist: "Avril Lavigne", mood: "yearning", painIndex: 7.0 },
+  { title: "When You're Gone", artist: "Avril Lavigne", mood: "heartbreak", painIndex: 8.0 },
+  { title: "My Happy Ending", artist: "Avril Lavigne", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Sk8er Boi", artist: "Avril Lavigne", mood: "nostalgia", painIndex: 4.0 },
+  { title: "Nobody's Home", artist: "Avril Lavigne", mood: "existential", painIndex: 7.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Adele
+  // ───────────────────────────────────────────────
+  { title: "Someone Like You", artist: "Adele", mood: "letting_go", painIndex: 9.0 },
+  { title: "Hello", artist: "Adele", mood: "nostalgia", painIndex: 8.0 },
+  { title: "Easy On Me", artist: "Adele", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Set Fire to the Rain", artist: "Adele", mood: "toxic", painIndex: 7.5 },
+  { title: "Rolling in the Deep", artist: "Adele", mood: "heartbreak", painIndex: 7.0 },
+  { title: "All I Ask", artist: "Adele", mood: "letting_go", painIndex: 8.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Ed Sheeran
+  // ───────────────────────────────────────────────
+  { title: "Photograph", artist: "Ed Sheeran", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Perfect", artist: "Ed Sheeran", mood: "devotion", painIndex: 3.0 },
+  { title: "Thinking Out Loud", artist: "Ed Sheeran", mood: "devotion", painIndex: 3.5 },
+  { title: "Happier", artist: "Ed Sheeran", mood: "letting_go", painIndex: 8.0 },
+  { title: "Castle on the Hill", artist: "Ed Sheeran", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Supermarket Flowers", artist: "Ed Sheeran", mood: "heartbreak", painIndex: 9.5 },
+
+  // ───────────────────────────────────────────────
+  // International — One Direction / Harry Styles
+  // ───────────────────────────────────────────────
+  { title: "Night Changes", artist: "One Direction", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Story of My Life", artist: "One Direction", mood: "heartbreak", painIndex: 6.5 },
+  { title: "What Makes You Beautiful", artist: "One Direction", mood: "kilig", painIndex: 2.5 },
+  { title: "Sign of the Times", artist: "Harry Styles", mood: "existential", painIndex: 7.5 },
+  { title: "Falling", artist: "Harry Styles", mood: "heartbreak", painIndex: 8.5 },
+  { title: "As It Was", artist: "Harry Styles", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Matilda", artist: "Harry Styles", mood: "heartbreak", painIndex: 8.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Maroon 5
+  // ───────────────────────────────────────────────
+  { title: "She Will Be Loved", artist: "Maroon 5", mood: "devotion", painIndex: 6.0 },
+  { title: "Sunday Morning", artist: "Maroon 5", mood: "warmth", painIndex: 3.0 },
+  { title: "Memories", artist: "Maroon 5", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Payphone", artist: "Maroon 5", mood: "heartbreak", painIndex: 6.5 },
+
+  // ───────────────────────────────────────────────
+  // International — The Script
+  // ───────────────────────────────────────────────
+  { title: "The Man Who Can't Be Moved", artist: "The Script", mood: "yearning", painIndex: 8.0 },
+  { title: "Breakeven", artist: "The Script", mood: "heartbreak", painIndex: 8.5 },
+  { title: "For the First Time", artist: "The Script", mood: "tragic_hope", painIndex: 7.0 },
+  { title: "If You Could See Me Now", artist: "The Script", mood: "nostalgia", painIndex: 8.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Westlife / Backstreet Boys / *NSYNC / Aerosmith
+  // ───────────────────────────────────────────────
+  { title: "My Love", artist: "Westlife", mood: "devotion", painIndex: 5.0 },
+  { title: "I Don't Wanna Miss a Thing", artist: "Aerosmith", mood: "devotion", painIndex: 5.5 },
+  { title: "I Want It That Way", artist: "Backstreet Boys", mood: "yearning", painIndex: 5.5 },
+  { title: "As Long As You Love Me", artist: "Backstreet Boys", mood: "devotion", painIndex: 4.5 },
+  { title: "Bye Bye Bye", artist: "*NSYNC", mood: "letting_go", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // International — Sam Smith
+  // ───────────────────────────────────────────────
+  { title: "Stay With Me", artist: "Sam Smith", mood: "yearning", painIndex: 8.0 },
+  { title: "I'm Not the Only One", artist: "Sam Smith", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Too Good at Goodbyes", artist: "Sam Smith", mood: "letting_go", painIndex: 7.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Conan Gray
+  // ───────────────────────────────────────────────
+  { title: "Heather", artist: "Conan Gray", mood: "jealousy", painIndex: 8.0 },
+  { title: "Astronomy", artist: "Conan Gray", mood: "letting_go", painIndex: 8.0 },
+  { title: "People Watching", artist: "Conan Gray", mood: "yearning", painIndex: 6.5 },
+  { title: "Wish You Were Sober", artist: "Conan Gray", mood: "yearning", painIndex: 7.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Lana Del Rey
+  // ───────────────────────────────────────────────
+  { title: "Summertime Sadness", artist: "Lana Del Rey", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Video Games", artist: "Lana Del Rey", mood: "devotion", painIndex: 6.5 },
+  { title: "Born to Die", artist: "Lana Del Rey", mood: "toxic", painIndex: 7.5 },
+  { title: "Young and Beautiful", artist: "Lana Del Rey", mood: "yearning", painIndex: 7.0 },
+  { title: "Say Yes to Heaven", artist: "Lana Del Rey", mood: "sweet_pining", painIndex: 6.0 },
+
+  // ───────────────────────────────────────────────
+  // International — Coldplay
+  // ───────────────────────────────────────────────
+  { title: "Fix You", artist: "Coldplay", mood: "tragic_hope", painIndex: 8.0 },
+  { title: "The Scientist", artist: "Coldplay", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Yellow", artist: "Coldplay", mood: "devotion", painIndex: 5.0 },
+  { title: "Sparks", artist: "Coldplay", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Everglow", artist: "Coldplay", mood: "nostalgia", painIndex: 7.0 },
+
+  // ───────────────────────────────────────────────
+  // International — My Chemical Romance
+  // ───────────────────────────────────────────────
+  { title: "Welcome to the Black Parade", artist: "My Chemical Romance", mood: "existential", painIndex: 7.0 },
+  { title: "I Don't Love You", artist: "My Chemical Romance", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Famous Last Words", artist: "My Chemical Romance", mood: "tragic_hope", painIndex: 7.5 },
+  { title: "Helena", artist: "My Chemical Romance", mood: "heartbreak", painIndex: 8.5 },
+
+  // ───────────────────────────────────────────────
+  // International — Dashboard Confessional / Neck Deep / Mayday Parade
+  // ───────────────────────────────────────────────
+  { title: "Vindicated", artist: "Dashboard Confessional", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Stolen", artist: "Dashboard Confessional", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "December", artist: "Neck Deep", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Jamie All Over", artist: "Mayday Parade", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Miserable at Best", artist: "Mayday Parade", mood: "heartbreak", painIndex: 9.0 },
+  { title: "Terrible Things", artist: "Mayday Parade", mood: "heartbreak", painIndex: 9.5 },
 ];
 
 /**
