@@ -901,6 +901,230 @@ export const songDatabase: Song[] = [
   { title: "Hard Times", artist: "Paramore", mood: "existential", painIndex: 6.0 },
   { title: "Running Out of Time", artist: "Paramore", mood: "anxiety", painIndex: 6.5 },
   { title: "This Is Why", artist: "Paramore", mood: "anxiety", painIndex: 6.0 },
+
+  // ═══════════════════════════════════════════════
+  // Sabrina Carpenter — Man's Best Friend (2025)
+  // ═══════════════════════════════════════════════
+  { title: "Manchild", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 6.5 },
+  { title: "Tears", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
+  { title: "My Man on Willpower", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.0 },
+  { title: "Sugar Talking", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.5 },
+  { title: "We Almost Broke Up Again Last Night", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 7.0 },
+  { title: "Nobody's Son", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Never Getting Laid", artist: "Sabrina Carpenter", mood: "existential", painIndex: 5.0 },
+  { title: "When Did You Get Hot?", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.0 },
+  { title: "Go Go Juice", artist: "Sabrina Carpenter", mood: "kilig", painIndex: 3.0 },
+  { title: "Don't Worry I'll Make You Worry", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.5 },
+  { title: "House Tour", artist: "Sabrina Carpenter", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Goodbye", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 7.0 },
+
+  // ═══════════════════════════════════════════════
+  // Aerosmith (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Crazy", artist: "Aerosmith", mood: "obsession", painIndex: 6.5 },
+  { title: "Cryin'", artist: "Aerosmith", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Amazing", artist: "Aerosmith", mood: "tragic_hope", painIndex: 6.0 },
+  { title: "Angel", artist: "Aerosmith", mood: "devotion", painIndex: 5.0 },
+  { title: "Dream On", artist: "Aerosmith", mood: "existential", painIndex: 7.0 },
+  { title: "Janie's Got a Gun", artist: "Aerosmith", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Walk This Way", artist: "Aerosmith", mood: "infatuation", painIndex: 3.5 },
+  { title: "Sweet Emotion", artist: "Aerosmith", mood: "nostalgia", painIndex: 5.0 },
+  { title: "Livin' on the Edge", artist: "Aerosmith", mood: "existential", painIndex: 6.5 },
+  { title: "What It Takes", artist: "Aerosmith", mood: "heartbreak", painIndex: 8.5 },
+
+  // ═══════════════════════════════════════════════
+  // Juan Karlos (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Ilang Araw", artist: "Juan Karlos", mood: "yearning", painIndex: 7.5 },
+  { title: "Kunwari", artist: "Juan Karlos", mood: "denial", painIndex: 7.0 },
+  { title: "Medyo", artist: "Juan Karlos", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Hindi Na Nga", artist: "Juan Karlos", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Ganyan Talaga", artist: "Juan Karlos", mood: "letting_go", painIndex: 7.0 },
+  { title: "Bikini", artist: "Juan Karlos", mood: "infatuation", painIndex: 4.0 },
+  { title: "Pragmatic", artist: "Juan Karlos", mood: "existential", painIndex: 6.0 },
+
+  // ═══════════════════════════════════════════════
+  // Camila Cabello
+  // ═══════════════════════════════════════════════
+  { title: "Havana", artist: "Camila Cabello", mood: "infatuation", painIndex: 4.0 },
+  { title: "Crying in the Club", artist: "Camila Cabello", mood: "letting_go", painIndex: 7.0 },
+  { title: "Never Be the Same", artist: "Camila Cabello", mood: "obsession", painIndex: 6.5 },
+  { title: "Consequences", artist: "Camila Cabello", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Real Friends", artist: "Camila Cabello", mood: "anxiety", painIndex: 7.0 },
+  { title: "Something's Gotta Give", artist: "Camila Cabello", mood: "yearning", painIndex: 7.0 },
+  { title: "Liar", artist: "Camila Cabello", mood: "denial", painIndex: 6.5 },
+  { title: "Shameless", artist: "Camila Cabello", mood: "infatuation", painIndex: 5.5 },
+  { title: "First Man", artist: "Camila Cabello", mood: "warmth", painIndex: 4.0 },
+  { title: "Bam Bam", artist: "Camila Cabello ft. Ed Sheeran", mood: "letting_go", painIndex: 5.5 },
+  { title: "I LUV IT", artist: "Camila Cabello", mood: "infatuation", painIndex: 3.5 },
+  { title: "June Gloom", artist: "Camila Cabello", mood: "nostalgia", painIndex: 6.5 },
+
+  // ═══════════════════════════════════════════════
+  // Taylor Swift (expanded — more albums)
+  // ═══════════════════════════════════════════════
+  { title: "Back to December", artist: "Taylor Swift", mood: "heartbreak", painIndex: 8.0 },
+  { title: "You Belong With Me", artist: "Taylor Swift", mood: "hopeless_crush", painIndex: 6.0 },
+  { title: "Blank Space", artist: "Taylor Swift", mood: "toxic", painIndex: 5.5 },
+  { title: "Style", artist: "Taylor Swift", mood: "infatuation", painIndex: 5.0 },
+  { title: "Wildest Dreams", artist: "Taylor Swift", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Delicate", artist: "Taylor Swift", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Lover", artist: "Taylor Swift", mood: "devotion", painIndex: 3.5 },
+  { title: "Cornelia Street", artist: "Taylor Swift", mood: "anxiety", painIndex: 7.0 },
+  { title: "august", artist: "Taylor Swift", mood: "nostalgia", painIndex: 7.5 },
+  { title: "betty", artist: "Taylor Swift", mood: "yearning", painIndex: 6.5 },
+  { title: "the lakes", artist: "Taylor Swift", mood: "yearning", painIndex: 6.0 },
+  { title: "champagne problems", artist: "Taylor Swift", mood: "heartbreak", painIndex: 9.0 },
+  { title: "tolerate it", artist: "Taylor Swift", mood: "heartbreak", painIndex: 9.0 },
+  { title: "ivy", artist: "Taylor Swift", mood: "forbidden", painIndex: 7.0 },
+  { title: "right where you left me", artist: "Taylor Swift", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Guilty as Sin?", artist: "Taylor Swift", mood: "forbidden", painIndex: 6.5 },
+  { title: "The Smallest Man Who Ever Lived", artist: "Taylor Swift", mood: "letting_go", painIndex: 8.0 },
+  { title: "Down Bad", artist: "Taylor Swift", mood: "yearning", painIndex: 7.5 },
+  { title: "loml", artist: "Taylor Swift", mood: "heartbreak", painIndex: 9.5 },
+  { title: "Fresh Out the Slammer", artist: "Taylor Swift", mood: "letting_go", painIndex: 6.5 },
+
+  // ═══════════════════════════════════════════════
+  // Hale (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Waltz", artist: "Hale", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Kung Wala Ka", artist: "Hale", mood: "yearning", painIndex: 8.0 },
+  { title: "Broken Sonnet", artist: "Hale", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Take No", artist: "Hale", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Leap of Faith", artist: "Hale", mood: "tragic_hope", painIndex: 6.0 },
+  { title: "Over and Over", artist: "Hale", mood: "devotion", painIndex: 5.5 },
+  { title: "Simula", artist: "Hale", mood: "kilig", painIndex: 3.5 },
+  { title: "Pitong Araw", artist: "Hale", mood: "nostalgia", painIndex: 6.5 },
+
+  // ═══════════════════════════════════════════════
+  // Eraserheads (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Magasin", artist: "Eraserheads", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Toyang", artist: "Eraserheads", mood: "adoration", painIndex: 4.0 },
+  { title: "Overdrive", artist: "Eraserheads", mood: "infatuation", painIndex: 4.5 },
+  { title: "Spolarium", artist: "Eraserheads", mood: "existential", painIndex: 7.0 },
+  { title: "Minsan", artist: "Eraserheads", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Julie Tearjerky", artist: "Eraserheads", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Wag Ka Nang Umiyak", artist: "Eraserheads", mood: "warmth", painIndex: 5.0 },
+  { title: "Torpedo", artist: "Eraserheads", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Maselang Bahaghari", artist: "Eraserheads", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Kung Ayaw Mo Huwag Mo", artist: "Eraserheads", mood: "letting_go", painIndex: 6.5 },
+  { title: "Kailan", artist: "Eraserheads", mood: "yearning", painIndex: 7.5 },
+
+  // ═══════════════════════════════════════════════
+  // Rivermaya (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Liwanag sa Dilim", artist: "Rivermaya", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "Elesi", artist: "Rivermaya", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Awit ng Kabataan", artist: "Rivermaya", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Umaaraw Umuulan", artist: "Rivermaya", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Balisong", artist: "Rivermaya", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Panahon Na Naman", artist: "Rivermaya", mood: "letting_go", painIndex: 6.5 },
+  { title: "Kung Ayaw Mo Na Sa Akin", artist: "Rivermaya", mood: "heartbreak", painIndex: 8.0 },
+
+  // ═══════════════════════════════════════════════
+  // Laufey — Typical of Me (2022)
+  // ═══════════════════════════════════════════════
+  { title: "Street by Street", artist: "Laufey", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Best Friend", artist: "Laufey", mood: "hopeless_crush", painIndex: 6.0 },
+  { title: "Like the Movies", artist: "Laufey", mood: "yearning", painIndex: 6.5 },
+  { title: "Valentine", artist: "Laufey", mood: "kilig", painIndex: 3.0 },
+  { title: "Night Light", artist: "Laufey", mood: "warmth", painIndex: 3.5 },
+  { title: "I Wish You Love", artist: "Laufey", mood: "letting_go", painIndex: 7.0 },
+
+  // ═══════════════════════════════════════════════
+  // Laufey — Bewitched (2023)
+  // ═══════════════════════════════════════════════
+  { title: "Bewitched", artist: "Laufey", mood: "kilig", painIndex: 3.5 },
+  { title: "Haunted", artist: "Laufey", mood: "yearning", painIndex: 6.5 },
+  { title: "Lovesick", artist: "Laufey", mood: "obsession", painIndex: 6.0 },
+  { title: "Second Best", artist: "Laufey", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Must Be Love", artist: "Laufey", mood: "kilig", painIndex: 3.0 },
+  { title: "California and Me", artist: "Laufey", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Serendipity", artist: "Laufey", mood: "sweet_pining", painIndex: 4.5 },
+  { title: "Nocturne (Interlude)", artist: "Laufey", mood: "existential", painIndex: 5.0 },
+
+  // ═══════════════════════════════════════════════
+  // Laufey — A Night at the Symphony (2024)
+  // ═══════════════════════════════════════════════
+  { title: "Thin Air", artist: "Laufey", mood: "yearning", painIndex: 7.0 },
+  { title: "This Is How It Feels", artist: "Laufey", mood: "heartbreak", painIndex: 7.5 },
+
+  // ═══════════════════════════════════════════════
+  // Up Dharma Down (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Pag-Agos", artist: "Up Dharma Down", mood: "letting_go", painIndex: 7.0 },
+  { title: "Sigurado", artist: "Up Dharma Down", mood: "devotion", painIndex: 5.0 },
+  { title: "Turn It Well", artist: "Up Dharma Down", mood: "existential", painIndex: 6.0 },
+  { title: "Silid", artist: "Up Dharma Down", mood: "yearning", painIndex: 7.5 },
+  { title: "Feelings", artist: "Up Dharma Down", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Parks", artist: "Up Dharma Down", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Sana", artist: "Up Dharma Down", mood: "yearning", painIndex: 7.0 },
+  { title: "Every First Second", artist: "Up Dharma Down", mood: "anxiety", painIndex: 6.5 },
+
+  // ═══════════════════════════════════════════════
+  // Moonstar88 (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Sulat", artist: "Moonstar88", mood: "yearning", painIndex: 7.5 },
+  { title: "Ang Pag-ibig Kong Ito", artist: "Moonstar88", mood: "devotion", painIndex: 5.5 },
+  { title: "Gilid", artist: "Moonstar88", mood: "hopeless_crush", painIndex: 7.0 },
+  { title: "Sa Langit", artist: "Moonstar88", mood: "devotion", painIndex: 5.0 },
+  { title: "Priceless", artist: "Moonstar88", mood: "warmth", painIndex: 4.0 },
+  { title: "Two Trick Pony", artist: "Moonstar88", mood: "existential", painIndex: 6.0 },
+  { title: "Tara", artist: "Moonstar88", mood: "kilig", painIndex: 3.5 },
+
+  // ═══════════════════════════════════════════════
+  // Parokya ni Edgar (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Bagsakan", artist: "Parokya ni Edgar ft. Gloc-9 & Frank Magalona", mood: "loyalty", painIndex: 4.0 },
+  { title: "Buloy", artist: "Parokya ni Edgar", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Para Sa'yo", artist: "Parokya ni Edgar", mood: "devotion", painIndex: 4.5 },
+  { title: "The Yes Yes Show", artist: "Parokya ni Edgar", mood: "kilig", painIndex: 3.0 },
+  { title: "Salamat", artist: "Parokya ni Edgar", mood: "warmth", painIndex: 4.0 },
+  { title: "Inuman Na", artist: "Parokya ni Edgar", mood: "nostalgia", painIndex: 5.0 },
+  { title: "Mr. Suave", artist: "Parokya ni Edgar", mood: "infatuation", painIndex: 3.0 },
+  { title: "Picha Pie", artist: "Parokya ni Edgar", mood: "kilig", painIndex: 2.5 },
+  { title: "One Thing Leads to Another", artist: "Parokya ni Edgar", mood: "nostalgia", painIndex: 5.5 },
+
+  // ═══════════════════════════════════════════════
+  // December Avenue (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Bulong", artist: "December Avenue", mood: "sweet_pining", painIndex: 6.5 },
+  { title: "Huling Sandali", artist: "December Avenue", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Kahit Di Mo Alam", artist: "December Avenue", mood: "hopeless_crush", painIndex: 7.0 },
+  { title: "Dahan", artist: "December Avenue", mood: "yearning", painIndex: 7.5 },
+  { title: "Langit Sana", artist: "December Avenue", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Sa Dulo Ng Walang Hanggan", artist: "December Avenue", mood: "devotion", painIndex: 6.0 },
+  { title: "Magkunwari", artist: "December Avenue", mood: "denial", painIndex: 7.5 },
+  { title: "Sleep Tonight", artist: "December Avenue", mood: "letting_go", painIndex: 7.0 },
+  { title: "Fallin'", artist: "December Avenue", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "If Ever", artist: "December Avenue", mood: "tragic_hope", painIndex: 6.5 },
+
+  // ═══════════════════════════════════════════════
+  // Silent Sanctuary (expanded)
+  // ═══════════════════════════════════════════════
+  { title: "Ikaw Lamang", artist: "Silent Sanctuary", mood: "devotion", painIndex: 5.5 },
+  { title: "Kundiman", artist: "Silent Sanctuary", mood: "yearning", painIndex: 7.0 },
+  { title: "Bumalik Ka Na Sa Akin", artist: "Silent Sanctuary", mood: "yearning", painIndex: 8.0 },
+  { title: "Meron Ka Nang Iba", artist: "Silent Sanctuary", mood: "heartbreak", painIndex: 8.5 },
+  { title: "14", artist: "Silent Sanctuary", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Paalam", artist: "Silent Sanctuary", mood: "letting_go", painIndex: 8.0 },
+  { title: "Walang Kapalit", artist: "Silent Sanctuary", mood: "devotion", painIndex: 5.0 },
+  { title: "Kismet", artist: "Silent Sanctuary", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Summer Song", artist: "Silent Sanctuary", mood: "nostalgia", painIndex: 5.0 },
+  { title: "Hiling", artist: "Silent Sanctuary", mood: "yearning", painIndex: 7.5 },
+
+  // ═══════════════════════════════════════════════
+  // Kitchie Nadal
+  // ═══════════════════════════════════════════════
+  { title: "Wag Na Wag Mong Sasabihin", artist: "Kitchie Nadal", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Huwag Na Huwag", artist: "Kitchie Nadal", mood: "letting_go", painIndex: 7.5 },
+  { title: "Same Ground", artist: "Kitchie Nadal", mood: "tragic_hope", painIndex: 7.0 },
+  { title: "Bulong", artist: "Kitchie Nadal", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Ligaya", artist: "Kitchie Nadal", mood: "warmth", painIndex: 4.0 },
+  { title: "Saklay", artist: "Kitchie Nadal", mood: "existential", painIndex: 6.5 },
+  { title: "Kaleidoscope World", artist: "Kitchie Nadal", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Makapiling Ka", artist: "Kitchie Nadal", mood: "yearning", painIndex: 7.0 },
+  { title: "Playground", artist: "Kitchie Nadal", mood: "nostalgia", painIndex: 6.0 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs

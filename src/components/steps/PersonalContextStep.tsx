@@ -4,20 +4,19 @@ interface PersonalContextStepProps {
   context: string;
   onContextChange: (context: string) => void;
   onNext: () => void;
-  onSkip: () => void;
 }
 
-const MAX_CHARS = 150;
+const MAX_CHARS = 500;
+const MIN_CHARS = 20;
 
 export default function PersonalContextStep({
   context,
   onContextChange,
   onNext,
-  onSkip,
 }: PersonalContextStepProps) {
   const remaining = MAX_CHARS - context.length;
   const isOverLimit = context.length > MAX_CHARS;
-  const isEmpty = context.trim().length === 0;
+  const isTooShort = context.trim().length < MIN_CHARS;
 
   return (
     <div className="min-h-screen flex flex-col justify-center px-4 py-12">
@@ -27,12 +26,18 @@ export default function PersonalContextStep({
           <span
             className="font-mono text-xs tracking-widest px-2 py-1 rounded border"
             style={{
-              color: "#ffd000",
-              borderColor: "rgba(255,208,0,0.35)",
-              background: "rgba(255,208,0,0.06)",
+              color: "#ff3252",
+              borderColor: "rgba(255,50,82,0.35)",
+              background: "rgba(255,50,82,0.06)",
             }}
           >
-            OPTIONAL
+            REQUIRED
+          </span>
+          <span
+            className="font-mono text-xs tracking-widest"
+            style={{ color: "#555555" }}
+          >
+            STEP 06 / 06
           </span>
         </div>
 
@@ -45,9 +50,11 @@ export default function PersonalContextStep({
             Ano nangyari sa&apos;yo?
           </h1>
           <p className="text-sm" style={{ color: "#888888" }}>
-            Tell us what you&apos;re going through rn.{" "}
-            <span style={{ color: "#555555" }}>
-              (Optional — the AI will factor this in.)
+            Dito magaling yung AI — the more context you give, the more
+            devastatingly accurate the roast.{" "}
+            <span style={{ color: "#aaaaaa" }}>
+              Spill everything. Situationship drama, breakup lore, 3AM thoughts,
+              the whole mess.
             </span>
           </p>
         </div>
@@ -57,9 +64,9 @@ export default function PersonalContextStep({
           <textarea
             value={context}
             onChange={(e) => onContextChange(e.target.value)}
-            maxLength={MAX_CHARS + 10} // small buffer; enforce via counter
-            rows={4}
-            placeholder={`e.g., "nag-break kami after 3 years" or "MU kami for 2 years walang label"`}
+            maxLength={MAX_CHARS + 10}
+            rows={7}
+            placeholder={`e.g., "nag-break kami after 3 years tapos nakita ko siya sa Spotify ng ex niya na may shared playlist called 'us <3'... ayoko na talaga. MU kami for 2 years walang label, tapos biglang may bago. Ngayon every gabi Pagsamo on repeat habang ini-scroll ko yung old convos namin. I keep typing 'kumusta ka na' then deleting it. Ang gago ko."`}
             className="w-full resize-none rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors placeholder:opacity-40"
             style={{
               background: "rgba(255,255,255,0.03)",
@@ -84,13 +91,23 @@ export default function PersonalContextStep({
           />
 
           {/* Character counter */}
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            {isTooShort && context.trim().length > 0 ? (
+              <span
+                className="font-mono text-xs"
+                style={{ color: "#ff8c00" }}
+              >
+                {MIN_CHARS - context.trim().length} more characters needed
+              </span>
+            ) : (
+              <span />
+            )}
             <span
               className="font-mono text-xs tabular-nums"
               style={{
                 color: isOverLimit
                   ? "#ff3252"
-                  : remaining <= 20
+                  : remaining <= 50
                   ? "#ff8c00"
                   : "#555555",
               }}
@@ -115,13 +132,12 @@ export default function PersonalContextStep({
 
         {/* Actions */}
         <div className="flex flex-col gap-3 mt-2">
-          {/* Primary — Include & Analyze */}
           <button
             onClick={onNext}
-            disabled={isEmpty || isOverLimit}
+            disabled={isTooShort || isOverLimit}
             className="w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-150"
             style={
-              isEmpty || isOverLimit
+              isTooShort || isOverLimit
                 ? {
                     background: "rgba(255,255,255,0.04)",
                     color: "#555555",
@@ -137,29 +153,7 @@ export default function PersonalContextStep({
                   }
             }
           >
-            Include &amp; Analyze →
-          </button>
-
-          {/* Secondary — Skip */}
-          <button
-            onClick={onSkip}
-            className="w-full py-3 px-6 rounded-lg font-medium text-sm transition-all duration-150"
-            style={{
-              background: "transparent",
-              color: "#888888",
-              border: "1px solid rgba(255,255,255,0.08)",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#e8e8e8";
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#888888";
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-            }}
-          >
-            Skip — Analyze without context
+            Analyze My Emotional Damage →
           </button>
         </div>
       </div>

@@ -205,10 +205,6 @@ export default function Home() {
                   setPersonalContext(sanitizePersonalContext(personalContext));
                   setStep("loading");
                 }}
-                onSkip={() => {
-                  setPersonalContext("");
-                  setStep("loading");
-                }}
               />
             </motion.div>
           )}

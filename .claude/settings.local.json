@@ -12,7 +12,9 @@
       "Bash(cd:*)",
       "Bash(npm run:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(npx tsc:*)",
+      "WebSearch"
     ]
   }
 }
