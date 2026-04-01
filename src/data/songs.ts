@@ -318,9 +318,9 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // K-Pop — BTS solo acts
   // ───────────────────────────────────────────────
-  { title: "Don't Say You Love Me", artist: "Jin", mood: "heartbreak", painIndex: 7.5 },
-  { title: "Who", artist: "Jimin", mood: "yearning", painIndex: 7.0 },
-  { title: "Winter Ahead", artist: "V", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Don't Say You Love Me", artist: "Jin (BTS)", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Who", artist: "Jimin (BTS)", mood: "yearning", painIndex: 7.0 },
+  { title: "Winter Ahead", artist: "V (BTS)", mood: "nostalgia", painIndex: 6.5 },
 
   // ───────────────────────────────────────────────
   // K-Pop — BLACKPINK / solos
@@ -733,23 +733,65 @@ export const songDatabase: Song[] = [
   { title: "It's Not Living (If It's Not with You)", artist: "The 1975", mood: "obsession", painIndex: 7.0 },
   { title: "Chocolate", artist: "The 1975", mood: "nostalgia", painIndex: 5.0 },
   { title: "Me & You Together Song", artist: "The 1975", mood: "kilig", painIndex: 3.5 },
+
+  // === Sabrina Carpenter ===
+  { title: "Espresso", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.5 },
+  { title: "Please Please Please", artist: "Sabrina Carpenter", mood: "anxiety", painIndex: 6.0 },
+  { title: "Feather", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 5.5 },
+  { title: "Nonsense", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.0 },
+  { title: "because i liked a boy", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Skin", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.5 },
+  { title: "Taste", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.0 },
+  { title: "Bed Chem", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.0 },
+  { title: "Lie to Girls", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Slim Pickins", artist: "Sabrina Carpenter", mood: "existential", painIndex: 5.5 },
+  { title: "Don't Smile", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Coincidence", artist: "Sabrina Carpenter", mood: "sweet_pining", painIndex: 5.0 },
 ];
+
+// Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs
+const GROUP_ALIASES: Record<string, string[]> = {
+  bts: ["jin (bts)", "jimin (bts)", "v (bts)", "rm", "suga", "j-hope", "jungkook"],
+  blackpink: ["rosé", "rose", "jennie", "lisa", "jisoo"],
+  "rose": ["rosé"],
+  "rosé": ["rose"],
+};
 
 /**
  * Search songs with ranked results.
  * Prioritizes: exact title match > title starts with > title contains > artist match.
- * Supports multi-word queries (all words must match somewhere in title or artist).
+ * Supports multi-word queries, group aliases (BTS finds solo members too).
  */
 export function searchSongs(query: string): Song[] {
   if (!query || query.trim() === "") return [];
   const q = query.toLowerCase().trim();
   const words = q.split(/\s+/).filter(Boolean);
 
-  // Filter: every word must appear in title or artist
+  // Expand search terms with group aliases
+  const expandedArtistTerms = new Set<string>();
+  for (const w of words) {
+    expandedArtistTerms.add(w);
+    const aliases = GROUP_ALIASES[w];
+    if (aliases) {
+      for (const alias of aliases) expandedArtistTerms.add(alias);
+    }
+  }
+
+  // Filter: every word must appear in title or artist (with alias expansion for artist)
   const matches = songDatabase.filter((song) => {
     const title = song.title.toLowerCase();
     const artist = song.artist.toLowerCase();
-    return words.every((w) => title.includes(w) || artist.includes(w));
+
+    return words.every((w) => {
+      // Direct match in title or artist
+      if (title.includes(w) || artist.includes(w)) return true;
+      // Check if any alias of this word matches the artist
+      const aliases = GROUP_ALIASES[w];
+      if (aliases) {
+        return aliases.some((alias) => artist.includes(alias));
+      }
+      return false;
+    });
   });
 
   // Score and rank
@@ -771,6 +813,8 @@ export function searchSongs(query: string): Song[] {
       else if (artist.startsWith(q)) score += 40;
       // Artist contains full query
       else if (artist.includes(q)) score += 30;
+      // Alias match (still relevant but lower priority)
+      else if ([...expandedArtistTerms].some((t) => artist.includes(t))) score += 25;
 
       // Bonus for shorter titles (more relevant matches)
       score += Math.max(0, 20 - title.length);
