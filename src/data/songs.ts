@@ -791,6 +791,97 @@ export const songDatabase: Song[] = [
   { title: "Amazing", artist: "Rex Orange County", mood: "nostalgia", painIndex: 5.5 },
   { title: "One in a Million", artist: "Rex Orange County", mood: "devotion", painIndex: 4.5 },
   { title: "Open a Window", artist: "Rex Orange County", mood: "anxiety", painIndex: 7.0 },
+
+  // === Lola Amour ===
+  { title: "Raining in Manila", artist: "Lola Amour", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Fallen", artist: "Lola Amour", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Pwede Ba", artist: "Lola Amour", mood: "yearning", painIndex: 6.5 },
+  { title: "Sayo", artist: "Lola Amour", mood: "devotion", painIndex: 5.0 },
+
+  // === Charlie Puth ===
+  { title: "Attention", artist: "Charlie Puth", mood: "toxic", painIndex: 6.5 },
+  { title: "We Don't Talk Anymore", artist: "Charlie Puth ft. Selena Gomez", mood: "letting_go", painIndex: 7.5 },
+  { title: "One Call Away", artist: "Charlie Puth", mood: "devotion", painIndex: 4.0 },
+  { title: "That's Hilarious", artist: "Charlie Puth", mood: "heartbreak", painIndex: 7.0 },
+  { title: "Left and Right", artist: "Charlie Puth ft. Jung Kook", mood: "infatuation", painIndex: 4.5 },
+  { title: "How Long", artist: "Charlie Puth", mood: "toxic", painIndex: 6.0 },
+  { title: "Light Switch", artist: "Charlie Puth", mood: "infatuation", painIndex: 3.5 },
+  { title: "See You Again", artist: "Wiz Khalifa ft. Charlie Puth", mood: "nostalgia", painIndex: 8.5 },
+
+  // === Sam Smith (additions) ===
+  { title: "Unholy", artist: "Sam Smith ft. Kim Petras", mood: "toxic", painIndex: 5.5 },
+  { title: "Lay Me Down", artist: "Sam Smith", mood: "heartbreak", painIndex: 9.0 },
+  { title: "I Know I'm Not the Only One", artist: "Sam Smith", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Like I Can", artist: "Sam Smith", mood: "devotion", painIndex: 5.0 },
+  { title: "Dancing with a Stranger", artist: "Sam Smith & Normani", mood: "letting_go", painIndex: 6.0 },
+
+  // === yung kai ===
+  { title: "blue", artist: "yung kai", mood: "sweet_pining", painIndex: 4.5 },
+  { title: "sage", artist: "yung kai", mood: "yearning", painIndex: 6.0 },
+  { title: "clouded", artist: "yung kai", mood: "nostalgia", painIndex: 6.5 },
+  { title: "cold weather", artist: "yung kai", mood: "sweet_pining", painIndex: 5.0 },
+
+  // === d4vd ===
+  { title: "Romantic Homicide", artist: "d4vd", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Here With Me", artist: "d4vd", mood: "yearning", painIndex: 7.0 },
+  { title: "Sleep Well", artist: "d4vd", mood: "letting_go", painIndex: 7.5 },
+  { title: "Feel It", artist: "d4vd", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "My Love", artist: "d4vd", mood: "devotion", painIndex: 5.0 },
+
+  // === The Neighbourhood ===
+  { title: "Sweater Weather", artist: "The Neighbourhood", mood: "infatuation", painIndex: 5.5 },
+
+  // === Måneskin ===
+  { title: "Beggin'", artist: "Måneskin", mood: "yearning", painIndex: 7.0 },
+  { title: "I WANNA BE YOUR SLAVE", artist: "Måneskin", mood: "obsession", painIndex: 6.5 },
+  { title: "THE LONELIEST", artist: "Måneskin", mood: "heartbreak", painIndex: 8.5 },
+
+  // === Rixton ===
+  { title: "Me and My Broken Heart", artist: "Rixton", mood: "heartbreak", painIndex: 6.5 },
+
+  // === Sarah Geronimo ===
+  { title: "Maybe This Time", artist: "Sarah Geronimo", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "God Gave Me You", artist: "Sarah Geronimo", mood: "devotion", painIndex: 3.5 },
+  { title: "Tala", artist: "Sarah Geronimo", mood: "kilig", painIndex: 2.5 },
+  { title: "Kilometro", artist: "Sarah Geronimo", mood: "yearning", painIndex: 6.5 },
+  { title: "Ikot-Ikot", artist: "Sarah Geronimo", mood: "kilig", painIndex: 3.0 },
+  { title: "Sino Nga Ba Siya", artist: "Sarah Geronimo", mood: "jealousy", painIndex: 7.0 },
+  { title: "Forever's Not Enough", artist: "Sarah Geronimo", mood: "devotion", painIndex: 4.5 },
+  { title: "Minamahal Kita", artist: "Sarah Geronimo", mood: "devotion", painIndex: 5.0 },
+
+  // === The Walters ===
+  { title: "I Love You So", artist: "The Walters", mood: "yearning", painIndex: 7.5 },
+
+  // === Hozier ===
+  { title: "Take Me to Church", artist: "Hozier", mood: "devotion", painIndex: 7.0 },
+  { title: "Cherry Wine", artist: "Hozier", mood: "toxic", painIndex: 8.0 },
+  { title: "Someone New", artist: "Hozier", mood: "letting_go", painIndex: 6.0 },
+  { title: "Like Real People Do", artist: "Hozier", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "From Eden", artist: "Hozier", mood: "forbidden", painIndex: 7.0 },
+  { title: "Work Song", artist: "Hozier", mood: "devotion", painIndex: 5.5 },
+  { title: "Too Sweet", artist: "Hozier", mood: "toxic", painIndex: 5.5 },
+  { title: "Movement", artist: "Hozier", mood: "obsession", painIndex: 6.5 },
+  { title: "Francesca", artist: "Hozier", mood: "forbidden", painIndex: 7.5 },
+  { title: "Unknown / Nth", artist: "Hozier", mood: "yearning", painIndex: 7.0 },
+  { title: "Almost (Sweet Music)", artist: "Hozier", mood: "nostalgia", painIndex: 6.0 },
+
+  // === Steve Lacy ===
+  { title: "Bad Habit", artist: "Steve Lacy", mood: "yearning", painIndex: 7.0 },
+  { title: "Dark Red", artist: "Steve Lacy", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Some", artist: "Steve Lacy", mood: "infatuation", painIndex: 4.5 },
+  { title: "Sunshine", artist: "Steve Lacy ft. Fousheé", mood: "toxic", painIndex: 6.0 },
+  { title: "Mercury", artist: "Steve Lacy", mood: "existential", painIndex: 6.5 },
+  { title: "Static", artist: "Steve Lacy", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Buttons", artist: "Steve Lacy", mood: "infatuation", painIndex: 4.0 },
+
+  // === Morisette ===
+  { title: "Akin Ka Na Lang", artist: "Morisette", mood: "yearning", painIndex: 7.0 },
+  { title: "Throwback", artist: "Morisette", mood: "nostalgia", painIndex: 7.5 },
+  { title: "Mahal Na Mahal", artist: "Morisette", mood: "devotion", painIndex: 5.5 },
+  { title: "Oh Bakit", artist: "Morisette", mood: "heartbreak", painIndex: 8.0 },
+
+  // === Roselle Nava ===
+  { title: "Bakit Nga Ba Mahal Kita", artist: "Roselle Nava", mood: "yearning", painIndex: 8.0 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs
