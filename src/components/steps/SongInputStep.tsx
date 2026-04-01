@@ -48,6 +48,13 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Song request form state
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestTitle, setRequestTitle] = useState("");
+  const [requestArtist, setRequestArtist] = useState("");
+  const [requestSubmitted, setRequestSubmitted] = useState(false);
+  const [requestLoading, setRequestLoading] = useState(false);
+
   // Read Spotify tracks from sessionStorage on mount
   useEffect(() => {
     const raw = sessionStorage.getItem("spotify_tracks");
@@ -67,6 +74,8 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
     if (trimmed.length === 0) {
       setResults([]);
       setOpen(false);
+      setShowRequestForm(false);
+      setRequestSubmitted(false);
       return;
     }
     const found = searchSongs(trimmed).slice(0, MAX_RESULTS);
@@ -128,6 +137,36 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
       addSong(results[0]);
     } else if (query.trim()) {
       addCustomSong();
+    }
+  }
+
+  function openRequestForm() {
+    setRequestTitle(query.trim());
+    setRequestArtist("");
+    setRequestSubmitted(false);
+    setShowRequestForm(true);
+  }
+
+  async function submitRequest() {
+    const title = requestTitle.trim();
+    const artist = requestArtist.trim();
+    if (!title || !artist) return;
+    setRequestLoading(true);
+    try {
+      await fetch("/api/song-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, artist }),
+      });
+    } catch {
+      // best-effort — show confirmation regardless
+    } finally {
+      setRequestLoading(false);
+      setRequestSubmitted(true);
+      setTimeout(() => {
+        setShowRequestForm(false);
+        setRequestSubmitted(false);
+      }, 3000);
     }
   }
 
@@ -286,6 +325,66 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
           </div>
         )}
       </div>
+
+      {/* Can't find song? — request form, shown below search when no results */}
+      {query.trim().length >= 2 && results.length === 0 && canAdd && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-text-secondary">
+            Can&apos;t find your song?
+          </p>
+          <div className="flex flex-col gap-2 text-xs text-text-muted font-mono">
+            <span>
+              [Type it and press Enter to add it anyway]
+            </span>
+            {!showRequestForm && (
+              <button
+                onClick={openRequestForm}
+                className="text-left text-accent hover:underline w-fit"
+              >
+                [Request it to be added →]
+              </button>
+            )}
+          </div>
+
+          {showRequestForm && (
+            <div className="bg-bg-card border border-border-subtle rounded-lg p-3 space-y-2">
+              {requestSubmitted ? (
+                <p className="text-xs text-accent-success font-mono">Submitted! ✓ Thanks, we&apos;ll consider adding it.</p>
+              ) : (
+                <>
+                  <p className="text-xs text-text-muted font-mono">📝 Request a song</p>
+                  <input
+                    type="text"
+                    value={requestTitle}
+                    onChange={(e) => setRequestTitle(e.target.value)}
+                    placeholder="Song title"
+                    maxLength={100}
+                    className="w-full bg-[#0f0f18] border border-border-subtle rounded-md px-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent/60 transition-colors duration-150"
+                  />
+                  <input
+                    type="text"
+                    value={requestArtist}
+                    onChange={(e) => setRequestArtist(e.target.value)}
+                    placeholder="Artist"
+                    maxLength={100}
+                    className="w-full bg-[#0f0f18] border border-border-subtle rounded-md px-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent/60 transition-colors duration-150"
+                  />
+                  <Button
+                    onClick={submitRequest}
+                    disabled={requestLoading || !requestTitle.trim() || !requestArtist.trim()}
+                    className="px-4 py-2 text-xs min-h-[36px]"
+                  >
+                    {requestLoading ? "Submitting..." : "Submit Request"}
+                  </Button>
+                  <p className="text-xs text-text-muted">
+                    We&apos;ll consider adding it! Your song will still work — our AI analyzes it on the fly.
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <p className="text-xs text-text-muted font-mono">
         Press Enter to add the top result, or click a suggestion. Custom songs get a default pain index.
