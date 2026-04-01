@@ -10,11 +10,13 @@ import MbtiStep from "@/components/steps/MbtiStep";
 import AttachmentStep from "@/components/steps/AttachmentStep";
 import LoveLanguageStep from "@/components/steps/LoveLanguageStep";
 import ZodiacStep from "@/components/steps/ZodiacStep";
+import PersonalContextStep from "@/components/steps/PersonalContextStep";
 import AnalysisLoader from "@/components/AnalysisLoader";
 import ResultsDashboard from "@/components/ResultsDashboard";
 import RateLimitBlock from "@/components/RateLimitBlock";
 
 import { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
+import { sanitizePersonalContext } from "@/lib/sanitize";
 
 type Step =
   | "landing"
@@ -23,6 +25,7 @@ type Step =
   | "attachment"
   | "love-language"
   | "zodiac"
+  | "personal-context"
   | "loading"
   | "results"
   | "blocked";
@@ -42,6 +45,7 @@ export default function Home() {
   const [attachmentStyle, setAttachmentStyle] = useState<AttachmentStyle>("anxious");
   const [loveLanguage, setLoveLanguage] = useState<LoveLanguage>("words");
   const [zodiac, setZodiac] = useState<string>("");
+  const [personalContext, setPersonalContext] = useState<string>("");
   const [result, setResult] = useState<ProfileResult | null>(null);
 
   function handleMbtiSelect(value: string) {
@@ -61,7 +65,7 @@ export default function Home() {
 
   function handleZodiacSelect(value: string) {
     setZodiac(value);
-    setStep("loading");
+    setStep("personal-context");
   }
 
   return (
@@ -95,7 +99,34 @@ export default function Home() {
               <SongInputStep
                 songs={songs}
                 onSongsChange={setSongs}
-                onNext={() => setStep("mbti")}
+                onNext={() => {
+                  // Background-classify any songs that were manually entered (mood === "unknown")
+                  const unknownSongs = songs.filter((s) => s.mood === "unknown");
+                  if (unknownSongs.length > 0) {
+                    fetch("/api/classify-songs", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ songs: unknownSongs }),
+                    })
+                      .then((res) => res.json())
+                      .then((classified) => {
+                        setSongs((prev) =>
+                          prev.map((s) => {
+                            const match = classified.find(
+                              (c: { title: string; artist: string; mood: string; painIndex: number }) =>
+                                c.title.toLowerCase() === s.title.toLowerCase() &&
+                                c.artist.toLowerCase() === s.artist.toLowerCase()
+                            );
+                            return match
+                              ? { ...s, mood: match.mood, painIndex: match.painIndex }
+                              : s;
+                          })
+                        );
+                      })
+                      .catch(() => {}); // Silent failure — fallback values are fine
+                  }
+                  setStep("mbti");
+                }}
               />
             </motion.div>
           )}
@@ -158,6 +189,30 @@ export default function Home() {
             </motion.div>
           )}
 
+          {step === "personal-context" && (
+            <motion.div
+              key="personal-context"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={transition}
+            >
+              <PersonalContextStep
+                context={personalContext}
+                onContextChange={setPersonalContext}
+                onNext={() => {
+                  setPersonalContext(sanitizePersonalContext(personalContext));
+                  setStep("loading");
+                }}
+                onSkip={() => {
+                  setPersonalContext("");
+                  setStep("loading");
+                }}
+              />
+            </motion.div>
+          )}
+
           {step === "loading" && (
             <motion.div
               key="loading"
@@ -173,6 +228,7 @@ export default function Home() {
                 attachmentStyle={attachmentStyle}
                 loveLanguage={loveLanguage}
                 zodiac={zodiac}
+                personalContext={personalContext}
                 onComplete={(r: ProfileResult) => {
                   setResult(r);
                   setStep("results");
