@@ -57,6 +57,7 @@ function getFunnyTitle(entry: LeaderboardEntry): string {
 function useCountUp(target: number, duration = 1500) {
   const [value, setValue] = useState(0);
   useEffect(() => {
+    setValue(0);
     const start = performance.now();
     let raf: number;
     function tick(now: number) {
@@ -197,18 +198,10 @@ function EntryCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, type: "spring", stiffness: 300, damping: 28 }}
-      className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 rounded-lg group transition-all duration-200"
+      className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 rounded-lg transition-all duration-200 hover:shadow-[0_0_12px_rgba(255,50,82,0.08)]"
       style={{
         backgroundColor: "rgba(255,255,255,0.02)",
         border: "1px solid rgba(255,255,255,0.06)",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = `${threatColor}44`;
-        e.currentTarget.style.boxShadow = `0 0 12px ${threatColor}15`;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
-        e.currentTarget.style.boxShadow = "none";
       }}
     >
       <span className="w-8 text-center text-sm font-bold font-mono shrink-0 text-[#555]">
@@ -310,25 +303,25 @@ export default function LeaderboardPage() {
         </div>
 
         <div className="mb-8 space-y-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">MBTI</span>
             {MBTI_TYPES.map((t) => (
               <FilterPill key={t} label={t} active={filterMbti === t} onClick={() => setFilterMbti(filterMbti === t ? null : t)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Attach</span>
             {ATTACHMENT_STYLES.map((a) => (
               <FilterPill key={a} label={a} active={filterAttachment === a} onClick={() => setFilterAttachment(filterAttachment === a ? null : a)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Zodiac</span>
             {ZODIACS.map((z) => (
               <FilterPill key={z} label={z} active={filterZodiac === z} onClick={() => setFilterZodiac(filterZodiac === z ? null : z)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Threat</span>
             {THREAT_LEVELS.map((t) => (
               <FilterPill key={t} label={t} active={filterThreat === t} color={THREAT_COLORS[t]} onClick={() => setFilterThreat(filterThreat === t ? null : t)} />
@@ -367,7 +360,7 @@ export default function LeaderboardPage() {
             {top3.length > 0 && (
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 {top3.map((entry, i) => (
-                  <PodiumCard key={`${entry.timestamp}-${i}`} entry={entry} rank={i + 1} delay={i === 0 ? 0 : i === 1 ? 0.15 : 0.3} />
+                  <PodiumCard key={`podium-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 1} delay={i === 0 ? 0 : i === 1 ? 0.15 : 0.3} />
                 ))}
               </div>
             )}
@@ -375,7 +368,7 @@ export default function LeaderboardPage() {
             {rest.length > 0 && (
               <div className="flex flex-col gap-2">
                 {rest.map((entry, i) => (
-                  <EntryCard key={`${entry.timestamp}-${i}`} entry={entry} rank={i + 4} index={i} />
+                  <EntryCard key={`entry-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 4} index={i} />
                 ))}
               </div>
             )}
