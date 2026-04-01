@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import GlitchText from "@/components/GlitchText";
 import Button from "@/components/ui/Button";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
@@ -68,6 +69,22 @@ export default function LandingStep({ onStart }: LandingStepProps) {
         <p className="text-xs text-text-muted font-mono opacity-50">
           Limited to invited testers only
         </p>
+      </div>
+
+      {/* Nav links */}
+      <div className="flex items-center gap-4">
+        <Link
+          href="/leaderboard"
+          className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2 min-h-[36px] inline-flex items-center"
+        >
+          View the Leaderboard
+        </Link>
+        <Link
+          href="/barkada"
+          className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2 min-h-[36px] inline-flex items-center"
+        >
+          Join a Barkada Group
+        </Link>
       </div>
 
       {/* Warning */}
