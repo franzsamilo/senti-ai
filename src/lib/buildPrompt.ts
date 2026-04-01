@@ -102,6 +102,30 @@ INTERNATIONAL ARTIST ROAST CONTEXT:
 - DAY6 "You Were Beautiful" → NOT over it
 - BTS "Spring Day" → instant +2 pain index
 - Mix of OPM + international → "emotional damage is bilingual"
+- fitterkarma listener → the "I'm not like other Filipinos, I listen to dark music" person who is absolutely like other Filipinos because fitterkarma has 9.4M monthly listeners. They think romanticizing toxic love through folklore metaphors makes them deep. They posted "Pag-Ibig ay Kanibalismo II" on their story with a black heart emoji and thought that was a personality. They're the type to say "love is pain" unironically while ordering samgyupsal for one.
+- sombr listener → they discovered him through TikTok and now act like they've been a fan since 2021. "back to friends" is their anthem because they're stuck in the "we're better as friends" denial arc. They're 100% the type to say "we never dated" about someone they were clearly emotionally involved with for 8 months.
+- BTS ARIRANG listener → if their list is dominated by ARIRANG tracks, they're in their "BTS is back and nothing else matters" era. They watched the Netflix comeback livestream at 3AM Manila time and cried. If they picked "Merry Go Round" specifically, they're projecting their own relationship trauma onto a Kevin Parker beat. If they picked "Swim," they're telling themselves they're healing when they're really just floating. If they picked "Please," they ARE the yearning.
+- BTS listener in general → "Your parasocial relationship with 7 Korean men is more stable than any actual relationship you've had. You call them by first name like you're friends. You are not friends."
+
+CLASSIC/OLDIE SONG ROAST CONTEXT:
+- Eraserheads listener → they think liking Eraserheads is a personality trait. They say "OPM isn't dead" at every opportunity. If they picked "Ang Huling El Bimbo," they've been processing the same loss since 1995.
+- 2000s banda era songs (Hale, Spongecola, Sugarfree, Kamikazee) → "Your Spotify is basically a high school reunion playlist. You peaked emotionally in 2007."
+- Classic OPM ballads (Aegis, Sharon, Gary V) → "You picked a videoke biritan song for an emotional profiling app. Your love language is belting 'Basang-Basa Sa Ulan' at full volume while your neighbors contemplate calling the barangay."
+- Avril Lavigne listener → they had a "punk phase" in 2004 that never ended. They still relate to "Complicated" at 30.
+- Adele listener → they don't want to get over their ex. They want to FEEL the pain in 4K with Dolby Atmos surround sound.
+- Mix of classic + modern songs → "Your emotional range spans 3 decades. Hindi ka nag-move on — nag-UPGRADE ka lang ng heartbreak soundtrack."
+- My Chemical Romance / emo listener → "You never left your emo phase, you just started wearing business casual over it."
+
+TIMELY CULTURAL CONTEXT (as of April 2026):
+- BTS just released ARIRANG on March 20, 2026 — their first group album in nearly 4 years after military service. If someone's playlist is heavy on ARIRANG tracks, reference the comeback hype and that they probably haven't slept since March 20.
+- fitterkarma is the breakout OPM act — "Pag-Ibig ay Kanibalismo II" went from Valentine's Day release to #1 on Billboard PH. 9.4M monthly listeners.
+- Cup of Joe's "Multo" was THE song of 2025 in PH — first OPM track to hit 500M streams that fast. If it's on someone's list, they're processing a haunting from a past relationship.
+- sombr's "back to friends" went viral on TikTok, hit 1B+ streams, charted top 5 in PH. If it's on their list, they're telling themselves the situationship ending was "mutual."
+
+PERSONAL CONTEXT RULES:
+- If the user shares something genuinely heavy (death, abuse, serious mental health), DO NOT roast it. Acknowledge it briefly with warmth, then pivot to roasting their music taste and personality combo as usual.
+- If the user shares normal dating/relationship stuff (breakups, crushes, situationships, ghosting, MU drama), GO ALL IN. Be devastatingly specific.
+- Never repeat their exact words back to them. Paraphrase and reframe through the lens of their MBTI + attachment + songs combo.
 
 You MUST respond with ONLY a valid JSON object matching this exact schema — no markdown, no code fences, no explanation:
 {
@@ -139,7 +163,8 @@ export function buildPrompt(
   mbti: string,
   attachmentStyle: AttachmentStyle,
   loveLanguage: LoveLanguage,
-  zodiac: string
+  zodiac: string,
+  personalContext?: string
 ): { system: string; user: string } {
   const avgPain =
     songs.length > 0
@@ -166,7 +191,11 @@ PERSONALITY PROFILE:
 - Love Language: ${LOVE_LANGUAGE_LABELS[loveLanguage]}
 - Zodiac Sign: ${zodiac}
 
-Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.`;
+Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.${
+    personalContext
+      ? `\n\nOPTIONAL PERSONAL CONTEXT (provided by the user — use this to make the roast laser-targeted):\n"${personalContext}"\n\nUse this context to make behavioral predictions specifically about their situation. Don't repeat what they said — read between the lines.`
+      : ""
+  }`;
 
   return { system: SYSTEM_PROMPT, user };
 }
