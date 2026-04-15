@@ -39,7 +39,7 @@ export default function ZodiacStep({ selected, onSelect }: ZodiacStepProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {ZODIACS.map((z) => {
           const isSelected = selected === z.value;
           return (

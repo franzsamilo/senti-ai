@@ -46,11 +46,11 @@ export default function StatBox({ label, value, suffix = "", animate = false }: 
     : value;
 
   return (
-    <div className="bg-bg-card border border-border-subtle rounded-lg p-3 sm:p-4 text-center min-w-[120px] sm:min-w-[140px] shrink-0">
-      <p className="text-xl sm:text-2xl font-bold text-accent font-mono">
+    <div className="bg-bg-card border border-border-subtle rounded-lg p-3 sm:p-4 text-center flex-1 min-w-0">
+      <p className="text-lg sm:text-2xl font-bold text-accent font-mono leading-tight">
         {displayValue}{suffix}
       </p>
-      <p className="text-[10px] sm:text-xs text-text-muted uppercase tracking-wider font-mono mt-1">
+      <p className="text-[10px] sm:text-xs text-text-muted uppercase tracking-wider font-mono mt-1 leading-tight">
         {label}
       </p>
     </div>

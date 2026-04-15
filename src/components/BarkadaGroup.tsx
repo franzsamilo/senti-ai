@@ -114,7 +114,7 @@ function GroupStatBox({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, type: "spring", stiffness: 300, damping: 28 }}
-      className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-lg p-3 sm:p-4 text-center min-w-[120px] shrink-0"
+      className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-lg p-3 sm:p-4 text-center flex-1 min-w-0"
     >
       <p className="text-xl sm:text-2xl font-bold text-[#ff3252] font-mono">
         {children}
@@ -390,7 +390,7 @@ export default function BarkadaGroup({ members, groupId }: BarkadaGroupProps) {
         <p className="text-xs tracking-[0.25em] uppercase font-mono text-[#555]">
           GROUP STATS
         </p>
-        <div className="flex gap-3 overflow-x-auto pb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <GroupStatBox label="Avg Emotional Damage" delay={0}>
             <AnimatedNumber target={parseFloat(avgDamage.toFixed(1))} suffix="/10" />
           </GroupStatBox>

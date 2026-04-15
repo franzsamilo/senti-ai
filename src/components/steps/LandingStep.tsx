@@ -20,7 +20,7 @@ export default function LandingStep({ onStart }: LandingStepProps) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center gap-6 sm:gap-8">
+    <div className="flex flex-col items-center justify-center min-h-screen px-5 text-center gap-5 sm:gap-8">
       {/* CLASSIFIED badge */}
       <div className="inline-flex items-center gap-2 border border-accent/60 rounded-full px-4 py-1.5 text-xs font-mono text-accent tracking-widest uppercase">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />

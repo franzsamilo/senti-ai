@@ -26,8 +26,8 @@ export default function ThreatMeter({
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-1">
-        <span className="text-xs font-mono text-text-secondary">{label}</span>
-        <span className="text-xs font-mono" style={{ color }}>{value}%</span>
+        <span className="text-[11px] sm:text-xs font-mono text-text-secondary truncate">{label}</span>
+        <span className="text-[11px] sm:text-xs font-mono shrink-0 ml-2" style={{ color }}>{value}%</span>
       </div>
       <div className="h-1.5 bg-neutral-900 rounded-full overflow-hidden">
         <div

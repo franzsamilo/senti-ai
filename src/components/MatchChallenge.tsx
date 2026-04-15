@@ -114,13 +114,13 @@ export default function MatchChallenge({ profile }: MatchChallengeProps) {
       {status === "ready" && matchId && (
         <div className="flex flex-col gap-3">
           {/* Link input */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 min-w-0">
             <input
               id="match-link-input"
               type="text"
               readOnly
               value={matchUrl}
-              className="flex-1 rounded-lg px-3 py-2.5 text-xs font-mono outline-none min-w-0"
+              className="flex-1 rounded-lg px-3 py-2.5 text-[11px] sm:text-xs font-mono outline-none min-w-0 truncate"
               style={{
                 background: "rgba(0,0,0,0.3)",
                 border: "1px solid rgba(255,255,255,0.08)",

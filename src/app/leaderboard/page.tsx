@@ -295,7 +295,7 @@ export default function LeaderboardPage() {
           <GlitchText
             text="MOST EMOTIONALLY DAMAGED"
             as="h1"
-            className="text-3xl sm:text-5xl font-bold text-[#e8e8e8] mb-3"
+            className="text-2xl sm:text-5xl font-bold text-[#e8e8e8] mb-3"
           />
           <p className="text-[#888] font-mono text-xs tracking-[0.2em] uppercase">
             {entries.length} profile{entries.length !== 1 ? "s" : ""} in the database
@@ -303,25 +303,25 @@ export default function LeaderboardPage() {
         </div>
 
         <div className="mb-8 space-y-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">MBTI</span>
             {MBTI_TYPES.map((t) => (
               <FilterPill key={t} label={t} active={filterMbti === t} onClick={() => setFilterMbti(filterMbti === t ? null : t)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Attach</span>
             {ATTACHMENT_STYLES.map((a) => (
               <FilterPill key={a} label={a} active={filterAttachment === a} onClick={() => setFilterAttachment(filterAttachment === a ? null : a)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Zodiac</span>
             {ZODIACS.map((z) => (
               <FilterPill key={z} label={z} active={filterZodiac === z} onClick={() => setFilterZodiac(filterZodiac === z ? null : z)} />
             ))}
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Threat</span>
             {THREAT_LEVELS.map((t) => (
               <FilterPill key={t} label={t} active={filterThreat === t} color={THREAT_COLORS[t]} onClick={() => setFilterThreat(filterThreat === t ? null : t)} />

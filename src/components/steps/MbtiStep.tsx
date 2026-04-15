@@ -25,7 +25,7 @@ export default function MbtiStep({ selected, onSelect }: MbtiStepProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {MBTI_TYPES.map((type) => {
           const isSelected = selected === type;
           return (

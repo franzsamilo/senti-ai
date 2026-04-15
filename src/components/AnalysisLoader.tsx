@@ -154,7 +154,7 @@ export default function AnalysisLoader({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-8 w-full max-w-xl mx-auto gap-6 sm:gap-8">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 sm:px-6 py-8 w-full max-w-xl mx-auto gap-6 sm:gap-8">
       {/* Spinner */}
       <div
         className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-transparent animate-spin shrink-0"
