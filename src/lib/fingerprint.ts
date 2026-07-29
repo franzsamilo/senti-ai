@@ -1,3 +1,5 @@
+import { ANALYSIS_LIMITS_ENABLED, DAILY_ANALYSIS_LIMIT } from "./limits";
+
 export function generateFingerprint(): string {
   const components = [
     navigator.userAgent,
@@ -18,6 +20,8 @@ export function generateFingerprint(): string {
 }
 
 export function getRemainingAnalyses(fingerprint: string): number {
+  if (!ANALYSIS_LIMITS_ENABLED) return Number.POSITIVE_INFINITY;
+
   // No limits on localhost. The parens matter: without them the `||` bound
   // looser than the `typeof` guard and the 127.0.0.1 check could run against
   // an undefined `window`.
@@ -26,7 +30,7 @@ export function getRemainingAnalyses(fingerprint: string): number {
     (window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1")
   ) {
-    return 999;
+    return Number.POSITIVE_INFINITY;
   }
 
   const key = `senti_usage_${fingerprint}`;
@@ -35,13 +39,22 @@ export function getRemainingAnalyses(fingerprint: string): number {
     const stored = localStorage.getItem(key);
     if (stored) {
       const data = JSON.parse(stored);
-      if (data.date === today) return Math.max(0, 2 - data.count);
+      if (data.date === today) {
+        return Math.max(0, DAILY_ANALYSIS_LIMIT - data.count);
+      }
     }
   } catch {}
-  return 2;
+  return DAILY_ANALYSIS_LIMIT;
+}
+
+/** Whether the user has any analyses left. */
+export function hasAnalysesRemaining(fingerprint: string): boolean {
+  return getRemainingAnalyses(fingerprint) > 0;
 }
 
 export function recordAnalysis(fingerprint: string): void {
+  if (!ANALYSIS_LIMITS_ENABLED) return;
+
   const key = `senti_usage_${fingerprint}`;
   const today = new Date().toDateString();
   try {

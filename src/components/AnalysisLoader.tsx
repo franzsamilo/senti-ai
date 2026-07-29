@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
 import {
   generateFingerprint,
-  getRemainingAnalyses,
+  hasAnalysesRemaining,
   recordAnalysis,
 } from "@/lib/fingerprint";
 import { generateFallback } from "@/lib/fallbackResults";
@@ -153,7 +153,7 @@ export default function AnalysisLoader({
 
     async function runAnalysis() {
       const fp = generateFingerprint();
-      if (getRemainingAnalyses(fp) <= 0) {
+      if (!hasAnalysesRemaining(fp)) {
         if (!cancelled) onBlocked();
         return;
       }

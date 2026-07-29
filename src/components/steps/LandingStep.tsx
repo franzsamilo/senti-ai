@@ -7,14 +7,13 @@ import GlitchText from "@/components/GlitchText";
 import Button from "@/components/ui/Button";
 import { IconArrowRight, IconSpotify, IconTarget } from "@/components/ui/icons";
 import { headerVariants, itemVariants, listVariants, spring } from "@/components/ui/motion";
-import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
+import { generateFingerprint, hasAnalysesRemaining } from "@/lib/fingerprint";
+import { ANALYSIS_LIMITS_ENABLED } from "@/lib/limits";
 import { initiateSpotifyAuth } from "@/lib/spotify";
 
 interface LandingStepProps {
   onStart: () => void;
 }
-
-const DAILY_SCANS = 2;
 
 /** Reads as system capability, not as a promise about tone. */
 const CAPABILITIES = [
@@ -25,19 +24,16 @@ const CAPABILITIES = [
 ];
 
 export default function LandingStep({ onStart }: LandingStepProps) {
-  const [remaining, setRemaining] = useState<number>(2);
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
+    if (!ANALYSIS_LIMITS_ENABLED) return;
     // Browser-only read: the count comes from a canvas fingerprint plus
     // localStorage, so it cannot be resolved during render without a
     // hydration mismatch. Syncing after mount is the intended behaviour here.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setRemaining(getRemainingAnalyses(generateFingerprint()));
+    setLocked(!hasAnalysesRemaining(generateFingerprint()));
   }, []);
-
-  const locked = remaining === 0;
-  // Localhost bypasses the limit and returns a sentinel — don't render "999 of 2".
-  const shownRemaining = Math.min(remaining, DAILY_SCANS);
 
   return (
     <motion.div
@@ -121,17 +117,12 @@ export default function LandingStep({ onStart }: LandingStepProps) {
           Import from Spotify
         </motion.button>
 
-        <div className="flex items-center gap-2 font-mono text-[11px] text-text-muted pt-1">
-          <IconTarget size={13} className={locked ? "text-accent" : "text-accent-success"} />
-          {locked ? (
+        {locked && (
+          <div className="flex items-center gap-2 font-mono text-[11px] pt-1">
+            <IconTarget size={13} className="text-accent" />
             <span className="text-accent">Assessment limit reached</span>
-          ) : (
-            <span>
-              <span className="text-accent-success">{shownRemaining}</span> of{" "}
-              {DAILY_SCANS} scans remaining today
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </motion.div>
 
       {/* Secondary nav */}
