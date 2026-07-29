@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
-import StepIndicator from "@/components/StepIndicator";
+import StepShell from "@/components/ui/StepShell";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
+import { IconArrowRight, IconSearch, IconSignal } from "@/components/ui/icons";
 import { searchSongs, songDatabase } from "@/data/songs";
 import { Song } from "@/lib/types";
 import type { SpotifyTrack } from "@/lib/spotify";
@@ -227,16 +228,22 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   })();
 
   return (
-    <div className="flex flex-col gap-6 px-4 py-8 max-w-[680px] mx-auto w-full">
-      <div className="flex flex-col gap-2">
-        <StepIndicator current={1} />
-        <h2 className="text-2xl font-bold text-text-primary">Your Hugot Playlist</h2>
-        <p className="text-sm text-text-secondary">
-          Add 3–{MAX_SONGS} songs that define your emotional state rn. OPM, P-pop,
-          Taylor, Sabrina, sombr, K-pop — lahat pwede.
-        </p>
-      </div>
-
+    <StepShell
+      step={1}
+      kicker="INTAKE"
+      title="Your listening profile"
+      subtitle={`Add 3–${MAX_SONGS} songs you actually have on repeat. OPM, P-pop, Taylor, Sabrina, sombr, K-pop — lahat pwede. The more you add, the more the system has to work with.`}
+      footer={
+        <Button onClick={onNext} disabled={!canProceed} className="w-full gap-2">
+          {canProceed
+            ? "Continue"
+            : `Add ${MIN_SONGS - songs.length} more song${
+                MIN_SONGS - songs.length !== 1 ? "s" : ""
+              }`}
+          {canProceed && <IconArrowRight size={18} />}
+        </Button>
+      }
+    >
       {/* Song counter + intensity meter */}
       <div className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
@@ -282,7 +289,8 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
 
       {/* Playlist diagnostics */}
       {songs.length >= MIN_SONGS && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted border border-border-subtle rounded-lg px-3 py-2 bg-bg-card">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted border border-border-subtle rounded-xl px-3.5 py-2.5 bg-bg-card">
+          <IconSignal size={14} className="text-accent/70 shrink-0" />
           <span>
             AVG PAIN INDEX{" "}
             <span className={avgPain >= 7 ? "text-accent" : "text-text-secondary"}>
@@ -377,6 +385,12 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
 
       {/* Search input + dropdown */}
       <div ref={containerRef} className="relative">
+        <span
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+          style={{ color: query ? "#ff3252" : "#4a4a4a", transition: "color 180ms ease" }}
+        >
+          <IconSearch size={17} />
+        </span>
         <input
           ref={inputRef}
           type="text"
@@ -385,12 +399,10 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
           onKeyDown={handleKeyDown}
           disabled={!canAdd}
           placeholder={
-            canAdd
-              ? "Search for a song or type a custom title..."
-              : "Maximum songs added"
+            canAdd ? "Search a song, or type any title" : "Maximum songs added"
           }
           className={[
-            "w-full bg-bg-card border rounded-lg px-4 py-3 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors duration-150",
+            "w-full bg-bg-card border rounded-xl pl-11 pr-4 py-3.5 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors duration-150",
             canAdd
               ? "border-border-subtle focus:border-accent/60"
               : "border-border-subtle opacity-50 cursor-not-allowed",
@@ -515,21 +527,10 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
         </div>
       )}
 
-      <p className="text-xs text-text-muted font-mono">
-        ↑↓ to browse, Enter to add, or just type any song title and hit Enter —
-        we&apos;ll classify it on the fly.
+      <p className="text-[11px] text-text-muted/80 font-mono leading-relaxed">
+        ↑↓ to browse, Enter to add. Not in the list? Type it anyway — the system
+        classifies unknown tracks on the fly.
       </p>
-
-      {/* Next button */}
-      <Button
-        onClick={onNext}
-        disabled={!canProceed}
-        className="w-full mt-2"
-      >
-        {canProceed
-          ? "Analyze My Emotional Damage →"
-          : `Add ${MIN_SONGS - songs.length} more song${MIN_SONGS - songs.length !== 1 ? "s" : ""} to continue`}
-      </Button>
-    </div>
+    </StepShell>
   );
 }

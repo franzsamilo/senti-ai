@@ -1,84 +1,81 @@
 "use client";
 
+import { motion } from "framer-motion";
+import StepShell from "@/components/ui/StepShell";
+import Button from "@/components/ui/Button";
+import { IconLock, IconArrowRight } from "@/components/ui/icons";
+import { itemVariants, softSpring } from "@/components/ui/motion";
+import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
+
+const MAX_CHARS = MAX_CONTEXT_CHARS;
+const MIN_CHARS = 20;
+
+/** Nudges shown under the field to unblock a staring-at-cursor moment. */
+const PROMPTS = [
+  "How did the last one end?",
+  "What are you still not over?",
+  "Who are you not texting right now?",
+  "What do you keep re-reading?",
+];
+
 interface PersonalContextStepProps {
   context: string;
   onContextChange: (context: string) => void;
   onNext: () => void;
 }
 
-import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
-
-const MAX_CHARS = MAX_CONTEXT_CHARS;
-const MIN_CHARS = 20;
-
 export default function PersonalContextStep({
   context,
   onContextChange,
   onNext,
 }: PersonalContextStepProps) {
-  const remaining = MAX_CHARS - context.length;
-  const isOverLimit = context.length > MAX_CHARS;
-  const isTooShort = context.trim().length < MIN_CHARS;
+  const length = context.length;
+  const isOverLimit = length > MAX_CHARS;
+  const trimmed = context.trim().length;
+  const isTooShort = trimmed < MIN_CHARS;
+  const progress = Math.min(1, trimmed / 240);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-4 py-12">
-      <div className="w-full max-w-[580px] mx-auto flex flex-col gap-6">
-        {/* Badge */}
-        <div className="flex items-center gap-3">
-          <span
-            className="font-mono text-xs tracking-widest px-2 py-1 rounded border"
-            style={{
-              color: "#ff3252",
-              borderColor: "rgba(255,50,82,0.35)",
-              background: "rgba(255,50,82,0.06)",
-            }}
+    <StepShell
+      step={6}
+      kicker="INTAKE"
+      title="Ano nangyari sa'yo?"
+      subtitle="The system reads context far better than it reads checkboxes. Situationship, breakup, the thing you keep re-reading at 2AM — the more it has, the more precise the assessment."
+      footer={
+        <div className="flex flex-col gap-3">
+          <Button
+            onClick={onNext}
+            disabled={isTooShort || isOverLimit}
+            className="w-full gap-2"
           >
-            REQUIRED
-          </span>
-          <span
-            className="font-mono text-xs tracking-widest"
-            style={{ color: "#555555" }}
-          >
-            STEP 06 / 06
-          </span>
+            {isTooShort ? `${MIN_CHARS - trimmed} more characters` : "Run assessment"}
+            {!isTooShort && !isOverLimit && <IconArrowRight size={18} />}
+          </Button>
+          <div className="flex items-center gap-2.5 text-xs rounded-lg px-3 py-2.5 border border-border-subtle bg-bg-card text-text-muted">
+            <IconLock size={15} className="shrink-0" />
+            <span>Not stored, not shared. It goes to the analysis and nowhere else.</span>
+          </div>
         </div>
-
-        {/* Title */}
-        <div className="flex flex-col gap-2">
-          <h1
-            className="text-3xl font-bold leading-tight"
-            style={{ color: "#e8e8e8" }}
-          >
-            Ano nangyari sa&apos;yo?
-          </h1>
-          <p className="text-sm" style={{ color: "#888888" }}>
-            Dito magaling yung AI — the more context you give, the more
-            devastatingly accurate the roast.{" "}
-            <span style={{ color: "#aaaaaa" }}>
-              Spill everything. Situationship drama, breakup lore, 3AM thoughts,
-              the whole mess.
-            </span>
-          </p>
-        </div>
-
-        {/* Textarea */}
-        <div className="flex flex-col gap-2">
+      }
+    >
+      <motion.div variants={itemVariants} className="flex flex-col gap-3">
+        <div className="relative">
           <textarea
             value={context}
             onChange={(e) => onContextChange(e.target.value)}
             maxLength={MAX_CHARS + 10}
             rows={9}
-            placeholder={`e.g., "nag-break kami after 3 years tapos nakita ko siya sa Spotify ng ex niya na may shared playlist called 'us <3'... ayoko na talaga. MU kami for 2 years walang label, tapos biglang may bago. Ngayon every gabi Pagsamo on repeat habang ini-scroll ko yung old convos namin. I keep typing 'kumusta ka na' then deleting it. Ang gago ko."`}
-            className="w-full resize-none rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors placeholder:opacity-40"
+            placeholder={
+              "Start anywhere. For example: nag-break kami after 3 years, tapos nakita ko siya sa Spotify ng ex niya na may shared playlist. MU kami for 2 years, walang label. Ngayon every gabi may isang kanta na paulit-ulit habang ini-scroll ko yung old convos namin."
+            }
+            className="w-full resize-none rounded-xl px-4 py-3.5 text-sm font-mono outline-none transition-colors placeholder:opacity-35"
             style={{
-              background: "rgba(255,255,255,0.03)",
+              background: "rgba(255,255,255,0.025)",
               border: `1px solid ${
-                isOverLimit
-                  ? "rgba(255,50,82,0.6)"
-                  : "rgba(255,255,255,0.08)"
+                isOverLimit ? "rgba(255,50,82,0.6)" : "rgba(255,255,255,0.08)"
               }`,
               color: "#e8e8e8",
-              lineHeight: "1.6",
+              lineHeight: 1.65,
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = isOverLimit
@@ -92,73 +89,46 @@ export default function PersonalContextStep({
             }}
           />
 
-          {/* Character counter */}
-          <div className="flex justify-between">
-            {isTooShort && context.trim().length > 0 ? (
-              <span
-                className="font-mono text-xs"
-                style={{ color: "#ff8c00" }}
-              >
-                {MIN_CHARS - context.trim().length} more characters needed
-              </span>
-            ) : (
-              <span />
-            )}
-            <span
-              className="font-mono text-xs tabular-nums"
+          {/* Depth meter — rewards writing more without stating a target */}
+          <div className="absolute left-4 right-4 bottom-3 h-[2px] rounded-full bg-white/[0.06] overflow-hidden">
+            <motion.div
+              className="h-full rounded-full"
+              initial={false}
+              animate={{ scaleX: progress }}
+              transition={softSpring}
               style={{
-                color: isOverLimit
-                  ? "#ff3252"
-                  : remaining <= 50
-                  ? "#ff8c00"
-                  : "#555555",
+                originX: 0,
+                background: "linear-gradient(90deg, rgba(255,50,82,0.5), #ff3252)",
               }}
-            >
-              {context.length}/{MAX_CHARS}
-            </span>
+            />
           </div>
         </div>
 
-        {/* Privacy notice */}
-        <div
-          className="flex items-center gap-2 text-xs rounded-lg px-3 py-2"
-          style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.05)",
-            color: "#555555",
-          }}
-        >
-          <span>🔒</span>
-          <span>This stays between you and the AI. Nothing is stored or shared.</span>
-        </div>
-
-        {/* Actions */}
-        <div className="flex flex-col gap-3 mt-2">
-          <button
-            onClick={onNext}
-            disabled={isTooShort || isOverLimit}
-            className="w-full py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-150"
-            style={
-              isTooShort || isOverLimit
-                ? {
-                    background: "rgba(255,255,255,0.04)",
-                    color: "#555555",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    cursor: "not-allowed",
-                  }
-                : {
-                    background: "linear-gradient(135deg, #ff3252, #ff0844)",
-                    color: "#fff",
-                    border: "none",
-                    boxShadow: "0 0 18px rgba(255,50,82,0.35)",
-                    cursor: "pointer",
-                  }
-            }
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {PROMPTS.map((prompt) => (
+              <span
+                key={prompt}
+                className="font-mono text-[11px] text-text-muted/70"
+              >
+                {prompt}
+              </span>
+            ))}
+          </div>
+          <span
+            className="font-mono text-[11px] tabular-nums shrink-0"
+            style={{
+              color: isOverLimit
+                ? "#ff3252"
+                : MAX_CHARS - length <= 100
+                ? "#ff8c00"
+                : "#4a4a4a",
+            }}
           >
-            Analyze My Emotional Damage →
-          </button>
+            {length}/{MAX_CHARS}
+          </span>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </StepShell>
   );
 }

@@ -18,8 +18,14 @@ export function generateFingerprint(): string {
 }
 
 export function getRemainingAnalyses(fingerprint: string): number {
-  // No limits on localhost
-  if (typeof window !== "undefined" && window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  // No limits on localhost. The parens matter: without them the `||` bound
+  // looser than the `typeof` guard and the 127.0.0.1 check could run against
+  // an undefined `window`.
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1")
+  ) {
     return 999;
   }
 

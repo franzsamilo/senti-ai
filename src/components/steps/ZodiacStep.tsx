@@ -1,26 +1,23 @@
 "use client";
 
-import StepIndicator from "@/components/StepIndicator";
+import { motion } from "framer-motion";
+import StepShell from "@/components/ui/StepShell";
+import { ZODIAC_ICONS } from "@/components/ui/icons";
+import { gridVariants, itemVariants, spring } from "@/components/ui/motion";
 
-interface ZodiacOption {
-  value: string;
-  symbol: string;
-  label: string;
-}
-
-const ZODIACS: ZodiacOption[] = [
-  { value: "aries", symbol: "♈", label: "Aries" },
-  { value: "taurus", symbol: "♉", label: "Taurus" },
-  { value: "gemini", symbol: "♊", label: "Gemini" },
-  { value: "cancer", symbol: "♋", label: "Cancer" },
-  { value: "leo", symbol: "♌", label: "Leo" },
-  { value: "virgo", symbol: "♍", label: "Virgo" },
-  { value: "libra", symbol: "♎", label: "Libra" },
-  { value: "scorpio", symbol: "♏", label: "Scorpio" },
-  { value: "sagittarius", symbol: "♐", label: "Sagittarius" },
-  { value: "capricorn", symbol: "♑", label: "Capricorn" },
-  { value: "aquarius", symbol: "♒", label: "Aquarius" },
-  { value: "pisces", symbol: "♓", label: "Pisces" },
+const ZODIACS: { value: string; label: string; window: string }[] = [
+  { value: "aries", label: "Aries", window: "Mar 21 – Apr 19" },
+  { value: "taurus", label: "Taurus", window: "Apr 20 – May 20" },
+  { value: "gemini", label: "Gemini", window: "May 21 – Jun 20" },
+  { value: "cancer", label: "Cancer", window: "Jun 21 – Jul 22" },
+  { value: "leo", label: "Leo", window: "Jul 23 – Aug 22" },
+  { value: "virgo", label: "Virgo", window: "Aug 23 – Sep 22" },
+  { value: "libra", label: "Libra", window: "Sep 23 – Oct 22" },
+  { value: "scorpio", label: "Scorpio", window: "Oct 23 – Nov 21" },
+  { value: "sagittarius", label: "Sagittarius", window: "Nov 22 – Dec 21" },
+  { value: "capricorn", label: "Capricorn", window: "Dec 22 – Jan 19" },
+  { value: "aquarius", label: "Aquarius", window: "Jan 20 – Feb 18" },
+  { value: "pisces", label: "Pisces", window: "Feb 19 – Mar 20" },
 ];
 
 interface ZodiacStepProps {
@@ -30,39 +27,64 @@ interface ZodiacStepProps {
 
 export default function ZodiacStep({ selected, onSelect }: ZodiacStepProps) {
   return (
-    <div className="flex flex-col gap-6 px-4 py-8 max-w-[680px] mx-auto w-full">
-      <div className="flex flex-col gap-2">
-        <StepIndicator current={5} />
-        <h2 className="text-2xl font-bold text-text-primary">Zodiac Sign</h2>
-        <p className="text-sm text-text-secondary">
-          The stars don&apos;t lie. Neither does this algorithm.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-        {ZODIACS.map((z) => {
-          const isSelected = selected === z.value;
+    <StepShell
+      step={5}
+      kicker="INTAKE"
+      title="Star sign"
+      subtitle="Included for completeness. The system weights it more heavily than it should."
+    >
+      <motion.div
+        variants={gridVariants}
+        className="grid grid-cols-3 sm:grid-cols-4 gap-2.5"
+      >
+        {ZODIACS.map(({ value, label, window }) => {
+          const Icon = ZODIAC_ICONS[value];
+          const isSelected = selected === value;
           return (
-            <button
-              key={z.value}
-              onClick={() => onSelect(z.value)}
-              className={[
-                "flex flex-col items-center justify-center gap-1 rounded-lg border py-3 sm:py-4 transition-all duration-150 cursor-pointer min-h-[56px]",
-                isSelected
-                  ? "bg-accent/10 border-accent shadow-[0_0_12px_rgba(255,50,82,0.25)]"
-                  : "bg-bg-card border-border-subtle hover:border-accent/50",
-              ].join(" ")}
+            <motion.button
+              key={value}
+              variants={itemVariants}
+              onClick={() => onSelect(value)}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.96 }}
+              transition={spring}
+              aria-pressed={isSelected}
+              title={window}
+              className="relative flex flex-col items-center justify-center gap-2 rounded-xl border py-4 cursor-pointer min-h-[92px] overflow-hidden"
+              style={{
+                borderColor: isSelected
+                  ? "rgba(255,50,82,0.55)"
+                  : "rgba(255,255,255,0.07)",
+                background: isSelected
+                  ? "rgba(255,50,82,0.07)"
+                  : "rgba(255,255,255,0.02)",
+                color: isSelected ? "#ff3252" : "#7d7d7d",
+                transition:
+                  "border-color 180ms ease, background 180ms ease, color 180ms ease",
+              }}
             >
-              <span className={`text-lg sm:text-xl ${isSelected ? "text-accent" : "text-text-secondary"}`}>
-                {z.symbol}
+              {isSelected && (
+                <motion.span
+                  layoutId="zodiac-selection"
+                  transition={spring}
+                  className="absolute inset-0 -z-10"
+                  style={{
+                    background:
+                      "radial-gradient(120% 90% at 50% 0%, rgba(255,50,82,0.20), transparent 70%)",
+                  }}
+                />
+              )}
+              <Icon size={30} />
+              <span
+                className="text-[10px] sm:text-[11px] font-mono tracking-wide leading-none text-center"
+                style={{ color: isSelected ? "#ff5470" : "#5f5f5f" }}
+              >
+                {label}
               </span>
-              <span className={`text-[10px] sm:text-xs font-mono leading-tight text-center ${isSelected ? "text-accent" : "text-text-muted"}`}>
-                {z.label}
-              </span>
-            </button>
+            </motion.button>
           );
         })}
-      </div>
-    </div>
+      </motion.div>
+    </StepShell>
   );
 }

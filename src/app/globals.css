@@ -50,23 +50,48 @@ body {
   background: transparent;
 }
 
+/*
+ * The channel split sits at rest most of the time, so keep the offset and
+ * opacity low — at full strength the wordmark reads as a rendering fault
+ * rather than a deliberate effect. The animation keyframes still punch out
+ * to full offset during the brief glitch bursts.
+ */
 .glitch::before {
   color: #ff3252;
+  opacity: 0.55;
   clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  transform: translate(-2px, -2px);
-  animation: glitch-top 3s infinite linear;
+  transform: translate(-1px, -1px);
+  animation: glitch-top 5s infinite linear;
 }
 
 .glitch::after {
   color: #00e5ff;
+  opacity: 0.4;
   clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  transform: translate(2px, 2px);
-  animation: glitch-bottom 3s infinite linear;
+  transform: translate(1px, 1px);
+  animation: glitch-bottom 5s infinite linear;
+}
+
+/* Honour the OS-level reduced-motion preference across the whole app. */
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before,
+  .glitch::after {
+    animation: none;
+    opacity: 0.25;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @keyframes glitch-top {
   0%, 90%, 100% {
-    transform: translate(-2px, -2px);
+    transform: translate(-1px, -1px);
     clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
   }
   92% {
@@ -85,7 +110,7 @@ body {
 
 @keyframes glitch-bottom {
   0%, 90%, 100% {
-    transform: translate(2px, 2px);
+    transform: translate(1px, 1px);
     clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
   }
   92% {

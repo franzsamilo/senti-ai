@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import GlitchText from "@/components/GlitchText";
 import Button from "@/components/ui/Button";
+import { IconArrowRight, IconSpotify, IconTarget } from "@/components/ui/icons";
+import { headerVariants, itemVariants, listVariants, spring } from "@/components/ui/motion";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
 import { initiateSpotifyAuth } from "@/lib/spotify";
 
@@ -11,86 +14,148 @@ interface LandingStepProps {
   onStart: () => void;
 }
 
+const DAILY_SCANS = 2;
+
+/** Reads as system capability, not as a promise about tone. */
+const CAPABILITIES = [
+  "Listening history",
+  "Attachment model",
+  "Personality index",
+  "Written context",
+];
+
 export default function LandingStep({ onStart }: LandingStepProps) {
   const [remaining, setRemaining] = useState<number>(2);
 
   useEffect(() => {
-    const fp = generateFingerprint();
-    setRemaining(getRemainingAnalyses(fp));
+    // Browser-only read: the count comes from a canvas fingerprint plus
+    // localStorage, so it cannot be resolved during render without a
+    // hydration mismatch. Syncing after mount is the intended behaviour here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRemaining(getRemainingAnalyses(generateFingerprint()));
   }, []);
 
+  const locked = remaining === 0;
+  // Localhost bypasses the limit and returns a sentinel — don't render "999 of 2".
+  const shownRemaining = Math.min(remaining, DAILY_SCANS);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-5 text-center gap-5 sm:gap-8">
-      {/* CLASSIFIED badge */}
-      <div className="inline-flex items-center gap-2 border border-accent/60 rounded-full px-4 py-1.5 text-xs font-mono text-accent tracking-widest uppercase">
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-        CLASSIFIED
-      </div>
+    <motion.div
+      variants={listVariants}
+      initial="hidden"
+      animate="show"
+      className="flex flex-col items-center justify-center min-h-screen px-5 text-center gap-6 sm:gap-7 py-16"
+    >
+      {/* Status badge */}
+      <motion.div
+        variants={headerVariants}
+        className="inline-flex items-center gap-2.5 border border-accent/40 rounded-full px-4 py-1.5 text-[11px] font-mono text-accent tracking-[0.2em] uppercase"
+        style={{ background: "rgba(255,50,82,0.05)" }}
+      >
+        <motion.span
+          className="inline-block w-1.5 h-1.5 rounded-full bg-accent"
+          animate={{ opacity: [1, 0.25, 1], scale: [1, 0.85, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        />
+        System online
+      </motion.div>
 
-      {/* Main title */}
-      <GlitchText
-        text="SENTI.AI"
-        className="text-5xl sm:text-8xl font-bold text-text-primary"
-        as="h1"
-      />
+      {/* Wordmark */}
+      <motion.div variants={headerVariants} className="flex flex-col items-center gap-3">
+        <GlitchText
+          text="SENTI.AI"
+          className="text-[54px] leading-none sm:text-8xl font-bold text-text-primary tracking-tight"
+          as="h1"
+        />
+        <p className="font-mono text-[11px] sm:text-xs text-text-secondary tracking-[0.25em] uppercase">
+          Emotional Damage Assessment System
+        </p>
+      </motion.div>
 
-      {/* Tagline */}
-      <p className="font-mono text-sm text-text-secondary tracking-wider">
-        Emotional Damage Assessment System v6.9
-      </p>
-
-      {/* Remaining scans counter */}
-      <div className="font-mono text-xs text-text-muted border border-border-subtle rounded px-3 py-1.5">
-        {remaining > 0 ? (
-          <span>
-            <span className="text-accent-success">{remaining}/2</span> free scans remaining
+      {/* What it reads — sets up the method without previewing the verdict */}
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 max-w-[380px]"
+      >
+        {CAPABILITIES.map((item) => (
+          <span
+            key={item}
+            className="font-mono text-[10px] tracking-wide uppercase text-text-muted border border-border-subtle rounded-full px-3 py-1.5"
+          >
+            {item}
           </span>
-        ) : (
-          <span className="text-accent">0/2 scans remaining — limit reached</span>
-        )}
-      </div>
+        ))}
+      </motion.div>
 
-      {/* CTA */}
-      <div className="flex flex-col items-center gap-3 w-full max-w-xs px-0">
+      <motion.p
+        variants={itemVariants}
+        className="text-sm text-text-secondary leading-relaxed max-w-[36ch]"
+      >
+        Six questions. One profile. The system builds a full psychological
+        readout from what you listen to and how you love.
+      </motion.p>
+
+      {/* Actions */}
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col items-center gap-3 w-full max-w-xs"
+      >
         <Button
           onClick={onStart}
-          disabled={remaining === 0}
-          className="w-full text-base py-4"
+          disabled={locked}
+          className="w-full text-base py-4 gap-2"
         >
-          Start Emotional Assessment
+          Begin assessment
+          {!locked && <IconArrowRight size={19} />}
         </Button>
-        <button
+
+        <motion.button
           onClick={() => initiateSpotifyAuth()}
-          disabled={remaining === 0}
-          className="text-sm text-text-muted hover:text-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+          disabled={locked}
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.98 }}
+          transition={spring}
+          className="w-full inline-flex items-center justify-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono border border-border-subtle hover:border-accent/40 rounded-lg py-3 cursor-pointer"
         >
-          or connect Spotify for auto-import
-        </button>
-        <p className="text-xs text-text-muted font-mono opacity-50">
-          Limited to invited testers only
-        </p>
-      </div>
+          <IconSpotify size={17} />
+          Import from Spotify
+        </motion.button>
 
-      {/* Nav links */}
-      <div className="flex items-center gap-4">
-        <Link
-          href="/leaderboard"
-          className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2 min-h-[36px] inline-flex items-center"
-        >
-          View the Leaderboard
-        </Link>
-        <Link
-          href="/barkada"
-          className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2 min-h-[36px] inline-flex items-center"
-        >
-          Join a Barkada
-        </Link>
-      </div>
+        <div className="flex items-center gap-2 font-mono text-[11px] text-text-muted pt-1">
+          <IconTarget size={13} className={locked ? "text-accent" : "text-accent-success"} />
+          {locked ? (
+            <span className="text-accent">Assessment limit reached</span>
+          ) : (
+            <span>
+              <span className="text-accent-success">{shownRemaining}</span> of{" "}
+              {DAILY_SCANS} scans remaining today
+            </span>
+          )}
+        </div>
+      </motion.div>
 
-      {/* Warning */}
-      <p className="text-xs text-text-muted max-w-sm font-mono">
-        Warning: This system is brutally honest. Proceed at your own emotional risk.
-      </p>
-    </div>
+      {/* Secondary nav */}
+      <motion.div variants={itemVariants} className="flex items-center gap-2.5">
+        {[
+          { href: "/leaderboard", label: "Leaderboard" },
+          { href: "/barkada", label: "Group scan" },
+        ].map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="text-xs font-mono text-text-muted hover:text-accent transition-colors duration-200 border border-border-subtle hover:border-accent/40 rounded-lg px-4 py-2.5 min-h-[40px] inline-flex items-center"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </motion.div>
+
+      <motion.p
+        variants={itemVariants}
+        className="text-[11px] text-text-muted/70 max-w-[34ch] font-mono leading-relaxed"
+      >
+        The system does not flatter. Findings are final.
+      </motion.p>
+    </motion.div>
   );
 }

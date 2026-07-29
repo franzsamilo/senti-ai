@@ -21,10 +21,12 @@ interface AnalysisLoaderProps {
   onBlocked: () => void;
 }
 
+// Deliberate escalation: the first lines read as instrumentation, and the
+// register only turns on the user once every input is already committed.
 const MESSAGES = [
-  "Initializing Emotional Damage Protocol v6.9...",
-  "Scanning your playlist for emotional damage...",
-  "Cross-referencing attachment issues with zodiac toxicity index...",
+  "Initializing assessment protocol v6.9...",
+  "Indexing listening history...",
+  "Cross-referencing attachment model with personality index...",
   "Checking kung ilang beses mo na ni-replay yung last song...",
   "Computing probability of 'kumusta ka na?' text at 3AM...",
   "Analyzing hugot concentration per song... WARNING: lethal levels detected",
@@ -43,7 +45,7 @@ const STALL_MESSAGES = [
   "Cross-checking your red flags against the national average... you're above it.",
   "Verifying na hindi ka lang overreacting. (You are, but with evidence.)",
   "Compiling receipts. There are a lot of receipts.",
-  "Double-checking one prediction. It felt too mean. Keeping it anyway.",
+  "Re-running one prediction to be sure. It held up.",
   "Running the numbers again para sure. Still bad.",
   "Consulting your last 3 situationships for peer review...",
   "Almost done. Breathe. You'll survive this (allegedly).",

@@ -1,11 +1,20 @@
 "use client";
 
-import StepIndicator from "@/components/StepIndicator";
+import { motion } from "framer-motion";
+import StepShell from "@/components/ui/StepShell";
+import OptionCard from "@/components/ui/OptionCard";
+import {
+  IconAnxious,
+  IconAvoidant,
+  IconDisorganized,
+  IconSecure,
+} from "@/components/ui/icons";
+import { listVariants } from "@/components/ui/motion";
 import { AttachmentStyle } from "@/lib/types";
 
 interface AttachmentOption {
   value: AttachmentStyle;
-  emoji: string;
+  Icon: typeof IconAnxious;
   label: string;
   description: string;
 }
@@ -13,27 +22,27 @@ interface AttachmentOption {
 const OPTIONS: AttachmentOption[] = [
   {
     value: "anxious",
-    emoji: "😰",
+    Icon: IconAnxious,
     label: "Anxious",
-    description: "'Bakit hindi ka nagrereply?!' energy",
+    description: "You notice the gap between the message and the reply.",
   },
   {
     value: "avoidant",
-    emoji: "🚪",
+    Icon: IconAvoidant,
     label: "Avoidant",
-    description: "'I need space' pero nagsstalk sa socmed",
+    description: "You ask for space before anyone asks you for more.",
   },
   {
     value: "disorganized",
-    emoji: "🌀",
+    Icon: IconDisorganized,
     label: "Disorganized",
-    description: "Push-pull champion of the world",
+    description: "You want closeness and distance in the same hour.",
   },
   {
     value: "secure",
-    emoji: "🧘",
+    Icon: IconSecure,
     label: "Secure",
-    description: "Allegedly healthy... sus",
+    description: "You say what you mean and it usually goes fine.",
   },
 ];
 
@@ -44,43 +53,25 @@ interface AttachmentStepProps {
 
 export default function AttachmentStep({ selected, onSelect }: AttachmentStepProps) {
   return (
-    <div className="flex flex-col gap-6 px-4 py-8 max-w-[680px] mx-auto w-full">
-      <div className="flex flex-col gap-2">
-        <StepIndicator current={3} />
-        <h2 className="text-2xl font-bold text-text-primary">Attachment Style</h2>
-        <p className="text-sm text-text-secondary">
-          Be honest. The algorithm knows if you&apos;re lying.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        {OPTIONS.map((opt) => {
-          const isSelected = selected === opt.value;
-          return (
-            <button
-              key={opt.value}
-              onClick={() => onSelect(opt.value)}
-              className={[
-                "flex items-center gap-4 w-full rounded-lg border px-5 py-4 text-left transition-all duration-150 cursor-pointer min-h-[44px]",
-                isSelected
-                  ? "bg-accent/10 border-accent text-text-primary"
-                  : "bg-bg-card border-border-subtle hover:border-accent/50",
-              ].join(" ")}
-            >
-              <span className="text-2xl leading-none">{opt.emoji}</span>
-              <div className="flex flex-col gap-0.5">
-                <span className={`font-semibold text-sm ${isSelected ? "text-accent" : "text-text-primary"}`}>
-                  {opt.label}
-                </span>
-                <span className="text-xs text-text-secondary">{opt.description}</span>
-              </div>
-              {isSelected && (
-                <span className="ml-auto text-accent text-xs font-mono">SELECTED</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+    <StepShell
+      step={3}
+      kicker="INTAKE"
+      title="Attachment style"
+      subtitle="Answer for how you actually behave, not how you'd describe yourself to a friend."
+    >
+      <motion.div variants={listVariants} className="flex flex-col gap-2.5">
+        {OPTIONS.map(({ value, Icon, label, description }) => (
+          <OptionCard
+            key={value}
+            selected={selected === value}
+            onSelect={() => onSelect(value)}
+            icon={<Icon size={22} />}
+            label={label}
+            description={description}
+            layoutGroupId="attachment-selection"
+          />
+        ))}
+      </motion.div>
+    </StepShell>
   );
 }

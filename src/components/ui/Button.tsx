@@ -1,9 +1,12 @@
 "use client";
 
-import { ButtonHTMLAttributes } from "react";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import type { ReactNode } from "react";
+import { spring } from "@/components/ui/motion";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref" | "children"> {
   variant?: "primary" | "secondary" | "ghost";
+  children?: ReactNode;
 }
 
 export default function Button({
@@ -14,25 +17,46 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition-all duration-200 min-h-[44px] cursor-pointer inline-flex items-center justify-center";
+    "relative px-4 sm:px-6 py-3 rounded-xl font-semibold text-[15px] tracking-tight transition-colors duration-200 min-h-[48px] cursor-pointer inline-flex items-center justify-center overflow-hidden";
 
   const variants = {
     primary: disabled
-      ? "bg-neutral-800 text-neutral-500 cursor-not-allowed"
-      : "bg-gradient-to-r from-accent to-accent-secondary text-white shadow-[0_0_20px_rgba(255,50,82,0.4)] hover:shadow-[0_0_28px_rgba(255,50,82,0.6)] hover:brightness-110",
+      ? "text-neutral-600 cursor-not-allowed"
+      : "text-white",
     secondary:
-      "border border-border-subtle hover:border-accent/50 text-text-primary hover:text-white bg-transparent",
-    ghost:
-      "text-text-secondary hover:text-text-primary bg-transparent",
+      "border border-border-subtle hover:border-accent/50 text-text-primary bg-transparent",
+    ghost: "text-text-secondary hover:text-text-primary bg-transparent",
   };
 
+  const primaryStyle = disabled
+    ? { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }
+    : {
+        background: "linear-gradient(135deg, #ff3252, #ff0844)",
+        boxShadow: "0 0 24px rgba(255,50,82,0.35)",
+      };
+
   return (
-    <button
+    <motion.button
       disabled={disabled}
+      whileHover={disabled ? undefined : { y: -2, boxShadow: "0 0 34px rgba(255,50,82,0.5)" }}
+      whileTap={disabled ? undefined : { scale: 0.98, y: 0 }}
+      transition={spring}
       className={`${base} ${variants[variant]} ${className}`}
+      style={variant === "primary" ? primaryStyle : undefined}
       {...props}
     >
+      {/* Sheen sweep on hover — subtle, only on the enabled primary */}
+      {variant === "primary" && !disabled && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background:
+              "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)",
+          }}
+        />
+      )}
       {children}
-    </button>
+    </motion.button>
   );
 }
