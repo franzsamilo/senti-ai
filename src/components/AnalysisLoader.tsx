@@ -8,7 +8,6 @@ import {
   recordAnalysis,
 } from "@/lib/fingerprint";
 import { generateFallback } from "@/lib/fallbackResults";
-import { looksLikeSelfClaim, mentionsCreator } from "@/lib/easterEggs";
 
 interface AnalysisLoaderProps {
   songs: Song[];
@@ -199,16 +198,6 @@ export default function AnalysisLoader({
         resultRef.current = {
           ...generateFallback(songs, mbti, attachmentStyle, loveLanguage, zodiac),
           degraded: true,
-          // The offline report can't write the Easter egg, but it can still
-          // acknowledge that it fired — otherwise the badge appears or
-          // vanishes depending on whether the API happened to be up.
-          ...(personalContext && mentionsCreator(personalContext)
-            ? {
-                creator_egg: looksLikeSelfClaim(personalContext)
-                  ? ("self" as const)
-                  : ("mention" as const),
-              }
-            : {}),
         };
       }
 

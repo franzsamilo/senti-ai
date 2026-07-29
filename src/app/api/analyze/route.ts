@@ -195,12 +195,6 @@ export async function POST(req: NextRequest) {
     // can't express — array lengths, score ranges, empty strings.
     const result: ProfileResult = normalizeProfileResult(JSON.parse(raw));
 
-    // Flag the Easter egg so the report can badge it. The model decides how to
-    // write it; this only records that it fired, for the UI.
-    if (safeContext && mentionsCreator(safeContext)) {
-      result.creator_egg = looksLikeSelfClaim(safeContext) ? "self" : "mention";
-    }
-
     return NextResponse.json({ result, remaining, source: "model" });
   } catch (err) {
     // Log everything useful. A generic "API call failed" line is why a broken

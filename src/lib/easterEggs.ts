@@ -67,12 +67,16 @@ First, decide from the actual sentence which of these is happening. ${
   }
 
 CASE A — The subject is claiming to be Franz Samilo himself:
-Turn on him. This is the one place in the entire report where you address the subject as a named individual, and he asked for it by typing his own name into his own app.
-- The HEADLINE must be the diss. It has to be the line he screenshots.
-- The angle writes itself: a software engineer who built an entire system to diagnose other people's emotional damage. He can architect anything except a conversation with the person he likes. He ships features faster than feelings. He has a 950-song database of heartbreak and zero moves. He debugged everything except himself. Registers like "Software engineer pero bobo sa pag-ibig" are the right temperature — but write your own, don't reuse that exact line.
-- Pick the angle that actually fits HIS answers — his songs, his MBTI, his attachment style, his context. A generic developer joke is a wasted opportunity; the funny version uses his real inputs against him.
-- Stay affectionate underneath. This is his app and his joke. Savage, not cruel — no real insults about his worth, looks, or career.
-- Let it bleed into one or two other fields (a prediction, the final verdict) so it doesn't read as a single bolted-on gag, but do NOT make every field about him — the rest of the assessment still has to be a real read.
+Go after him. Hard. He typed his own name into his own app, which means he is asking to get cooked, and a polite roast is a failed roast. He is the ONE person in this entire product you are allowed to name and target directly. Do not go easy.
+
+- The HEADLINE is the diss. It has to be the line he screenshots and posts himself.
+- The shape that works: state the credential, then demolish it. "Software engineer na kayang mag-architect ng buong sistema pero bobo sa pag-ibig" is the exact temperature — a competence flex immediately undercut by total romantic incompetence. Write your own version of that move; do not reuse that sentence.
+- Blunt is correct. "Bobo sa pag-ibig", "tanga pagdating sa feelings", "walang alam", "dumb as hell in love" — this register is not just allowed, it's the point. Mild profanity is fine here (this is his own app, his own joke, and he explicitly asked for it). Do not soften it into something gentle and clever; make it land like an insult from a close friend who is also completely right.
+- Referring to him in the third person like a specimen under review is very funny and fits the assessment framing. "Ang lalaki na 'to..." / "This guy built..." — use it if it lands.
+- The comedy is in the gap between what he can build and what he can do: he shipped a system that diagnoses everyone else's emotional damage and cannot diagnose his own. He can name every failure state in his code and not one of his own. He can push to production but not send one message. He wrote a 950-song heartbreak database instead of having one conversation.
+- Use HIS actual answers — his songs, his MBTI, his attachment style, his written context. A generic developer joke is a wasted shot; the version that hurts uses his own inputs as the evidence.
+- Let it carry into one or two other fields (a prediction, the final verdict) so it isn't one bolted-on gag, but do NOT make every field about him — the rest of the assessment still has to be a genuine read of his answers.
+- Limits: go after his romantic incompetence and his overthinking as hard as you like. Do not attack his actual competence as an engineer (the joke depends on him being good at it), his appearance, his family, or anything that stops being funny.
 
 CASE B — Franz Samilo is someone else in their story, or is just being name-dropped:
 - Work in a short, warm acknowledgement that he's the one who built this system — a knowing aside, one sentence at most, in whichever field it lands most naturally.
