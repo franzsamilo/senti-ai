@@ -13,14 +13,17 @@ const GROUPS: { label: string; types: string[] }[] = [
 ];
 
 interface MbtiStepProps {
+  onBack?: () => void;
   selected: string;
   onSelect: (mbti: string) => void;
 }
 
-export default function MbtiStep({ selected, onSelect }: MbtiStepProps) {
+export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) {
   return (
     <StepShell
       step={2}
+      onBack={onBack}
+      backLabel="Songs"
       kicker="INTAKE"
       title="Personality type"
       subtitle="Your MBTI. If you've never taken one, pick the one you'd defend in an argument."

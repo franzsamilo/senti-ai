@@ -21,14 +21,17 @@ const ZODIACS: { value: string; label: string; window: string }[] = [
 ];
 
 interface ZodiacStepProps {
+  onBack?: () => void;
   selected: string;
   onSelect: (zodiac: string) => void;
 }
 
-export default function ZodiacStep({ selected, onSelect }: ZodiacStepProps) {
+export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepProps) {
   return (
     <StepShell
       step={5}
+      onBack={onBack}
+      backLabel="Love language"
       kicker="INTAKE"
       title="Star sign"
       subtitle="Included for completeness. The system weights it more heavily than it should."

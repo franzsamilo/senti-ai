@@ -19,12 +19,14 @@ const PROMPTS = [
 ];
 
 interface PersonalContextStepProps {
+  onBack?: () => void;
   context: string;
   onContextChange: (context: string) => void;
   onNext: () => void;
 }
 
 export default function PersonalContextStep({
+  onBack,
   context,
   onContextChange,
   onNext,
@@ -38,6 +40,8 @@ export default function PersonalContextStep({
   return (
     <StepShell
       step={6}
+      onBack={onBack}
+      backLabel="Star sign"
       kicker="INTAKE"
       title="Ano nangyari sa'yo?"
       subtitle="The system reads context far better than it reads checkboxes. Situationship, breakup, the thing you keep re-reading at 2AM — the more it has, the more precise the assessment."

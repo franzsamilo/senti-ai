@@ -144,6 +144,13 @@ export const IconCheck = (p: IconProps) => (
   </Svg>
 );
 
+export const IconArrowLeft = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M20 12H5" />
+    <path d="m11 6-6 6 6 6" />
+  </Svg>
+);
+
 export const IconArrowRight = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4 12h15" />
@@ -163,6 +170,21 @@ export const IconSpotify = (p: IconProps) => (
   <Svg {...p}>
     <circle cx="12" cy="12" r="9" />
     <path d="M7.5 9.2c3-.8 6.2-.5 8.9 1M8 12.4c2.5-.7 5.1-.4 7.3.9M8.6 15.5c2-.5 4.1-.3 5.9.7" />
+  </Svg>
+);
+
+export const IconFlag = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 21V4" />
+    <path d="M5 4.5h11l-2.2 3.6L16 12H5" />
+  </Svg>
+);
+
+export const IconShare = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 15V3" />
+    <path d="m8 7 4-4 4 4" />
+    <path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" />
   </Svg>
 );
 

@@ -56,12 +56,14 @@ const OPTIONS: LoveLanguageOption[] = [
 ];
 
 interface LoveLanguageStepProps {
+  onBack?: () => void;
   selected: LoveLanguage[];
   onSelect: (langs: LoveLanguage[]) => void;
   onNext: () => void;
 }
 
 export default function LoveLanguageStep({
+  onBack,
   selected,
   onSelect,
   onNext,
@@ -77,6 +79,8 @@ export default function LoveLanguageStep({
   return (
     <StepShell
       step={4}
+      onBack={onBack}
+      backLabel="Attachment"
       kicker="INTAKE"
       title="Love language"
       subtitle="How you give it, not how you'd like to receive it. Select all that apply."

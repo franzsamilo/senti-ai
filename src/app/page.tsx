@@ -17,6 +17,7 @@ import RateLimitBlock from "@/components/RateLimitBlock";
 
 import { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
 import { sanitizePersonalContext } from "@/lib/sanitize";
+import { useStepHistory } from "@/hooks/useStepHistory";
 
 type Step =
   | "landing"
@@ -38,8 +39,17 @@ const variants = {
 
 const transition = { type: "spring" as const, stiffness: 320, damping: 30 };
 
+/**
+ * Reached automatically rather than chosen — Back should skip past these to
+ * the last question the user actually answered.
+ */
+const NON_RETURNABLE_STEPS = ["loading", "blocked"] as const;
+
 export default function Home() {
   const [step, setStep] = useState<Step>("landing");
+  const { goTo, goBack } = useStepHistory<Step>(step, setStep, {
+    replaceFor: NON_RETURNABLE_STEPS,
+  });
   const [songs, setSongs] = useState<Song[]>([]);
   const [mbti, setMbti] = useState<string>("");
   const [attachmentStyle, setAttachmentStyle] = useState<AttachmentStyle>("anxious");
@@ -50,21 +60,21 @@ export default function Home() {
 
   function handleMbtiSelect(value: string) {
     setMbti(value);
-    setStep("attachment");
+    goTo("attachment");
   }
 
   function handleAttachmentSelect(value: AttachmentStyle) {
     setAttachmentStyle(value);
-    setStep("love-language");
+    goTo("love-language");
   }
 
   function handleLoveLanguageNext() {
-    setStep("zodiac");
+    goTo("zodiac");
   }
 
   function handleZodiacSelect(value: string) {
     setZodiac(value);
-    setStep("personal-context");
+    goTo("personal-context");
   }
 
   return (
@@ -82,7 +92,7 @@ export default function Home() {
               exit="exit"
               transition={transition}
             >
-              <LandingStep onStart={() => setStep("songs")} />
+              <LandingStep onStart={() => goTo("songs")} />
             </motion.div>
           )}
 
@@ -96,6 +106,7 @@ export default function Home() {
               transition={transition}
             >
               <SongInputStep
+                onBack={goBack}
                 songs={songs}
                 onSongsChange={setSongs}
                 onNext={() => {
@@ -124,7 +135,7 @@ export default function Home() {
                       })
                       .catch(() => {}); // Silent failure — fallback values are fine
                   }
-                  setStep("mbti");
+                  goTo("mbti");
                 }}
               />
             </motion.div>
@@ -139,7 +150,7 @@ export default function Home() {
               exit="exit"
               transition={transition}
             >
-              <MbtiStep selected={mbti} onSelect={handleMbtiSelect} />
+              <MbtiStep onBack={goBack} selected={mbti} onSelect={handleMbtiSelect} />
             </motion.div>
           )}
 
@@ -153,6 +164,7 @@ export default function Home() {
               transition={transition}
             >
               <AttachmentStep
+                onBack={goBack}
                 selected={attachmentStyle}
                 onSelect={handleAttachmentSelect}
               />
@@ -169,6 +181,7 @@ export default function Home() {
               transition={transition}
             >
               <LoveLanguageStep
+                onBack={goBack}
                 selected={loveLanguage}
                 onSelect={setLoveLanguage}
                 onNext={handleLoveLanguageNext}
@@ -185,7 +198,7 @@ export default function Home() {
               exit="exit"
               transition={transition}
             >
-              <ZodiacStep selected={zodiac} onSelect={handleZodiacSelect} />
+              <ZodiacStep onBack={goBack} selected={zodiac} onSelect={handleZodiacSelect} />
             </motion.div>
           )}
 
@@ -199,11 +212,12 @@ export default function Home() {
               transition={transition}
             >
               <PersonalContextStep
+                onBack={goBack}
                 context={personalContext}
                 onContextChange={setPersonalContext}
                 onNext={() => {
                   setPersonalContext(sanitizePersonalContext(personalContext));
-                  setStep("loading");
+                  goTo("loading");
                 }}
               />
             </motion.div>
@@ -227,9 +241,9 @@ export default function Home() {
                 personalContext={personalContext}
                 onComplete={(r: ProfileResult) => {
                   setResult(r);
-                  setStep("results");
+                  goTo("results");
                 }}
-                onBlocked={() => setStep("blocked")}
+                onBlocked={() => goTo("blocked")}
               />
             </motion.div>
           )}
@@ -258,7 +272,7 @@ export default function Home() {
                   setZodiac("");
                   setPersonalContext("");
                   setResult(null);
-                  setStep("landing");
+                  goTo("landing");
                 }}
               />
             </motion.div>

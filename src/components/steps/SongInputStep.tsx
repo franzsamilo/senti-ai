@@ -5,7 +5,7 @@ import Image from "next/image";
 import StepShell from "@/components/ui/StepShell";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
-import { IconArrowRight, IconSearch, IconSignal } from "@/components/ui/icons";
+import { IconArrowRight, IconSearch } from "@/components/ui/icons";
 import { searchSongs, songDatabase } from "@/data/songs";
 import { Song } from "@/lib/types";
 import type { SpotifyTrack } from "@/lib/spotify";
@@ -16,18 +16,10 @@ const SWEET_SPOT = 8; // where the roast starts getting genuinely specific
 const MAX_RESULTS = 40;
 
 interface SongInputStepProps {
+  onBack?: () => void;
   songs: Song[];
   onSongsChange: (songs: Song[]) => void;
   onNext: () => void;
-}
-
-/** Threat-meter palette applied to a song's pain index. */
-function painColor(painIndex: number): string {
-  if (painIndex >= 9) return "#ff0040";
-  if (painIndex >= 7) return "#ff3252";
-  if (painIndex >= 5) return "#ff8c00";
-  if (painIndex >= 3) return "#ffd000";
-  return "#00cc88";
 }
 
 function spotifyTrackToSong(track: SpotifyTrack): Song {
@@ -51,7 +43,7 @@ function spotifyTrackToSong(track: SpotifyTrack): Song {
   };
 }
 
-export default function SongInputStep({ songs, onSongsChange, onNext }: SongInputStepProps) {
+export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: SongInputStepProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Song[]>([]);
   const [open, setOpen] = useState(false);
@@ -202,34 +194,14 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   const canAdd = songs.length < MAX_SONGS;
   const canProceed = songs.length >= MIN_SONGS;
 
-  // Live playlist diagnostics — gives the user a reason to keep adding songs
-  const avgPain =
-    songs.length > 0
-      ? songs.reduce((sum, s) => sum + s.painIndex, 0) / songs.length
-      : 0;
-
-  const uniqueArtists = new Set(songs.map((s) => s.artist.toLowerCase())).size;
-
-  const dominantMood = (() => {
-    const counts = new Map<string, number>();
-    for (const s of songs) {
-      if (s.mood === "unknown") continue;
-      counts.set(s.mood, (counts.get(s.mood) ?? 0) + 1);
-    }
-    let best: string | null = null;
-    let bestCount = 0;
-    for (const [mood, count] of counts) {
-      if (count > bestCount) {
-        best = mood;
-        bestCount = count;
-      }
-    }
-    return best;
-  })();
+  // Nothing derived from the songs is surfaced here on purpose — pain index,
+  // mood and artist tallies all telegraph the read before the report lands.
 
   return (
     <StepShell
       step={1}
+      onBack={onBack}
+      backLabel="Start"
       kicker="INTAKE"
       title="Your listening profile"
       subtitle={`Add 3–${MAX_SONGS} songs you actually have on repeat. OPM, P-pop, Taylor, Sabrina, sombr, K-pop — lahat pwede. The more you add, the more the system has to work with.`}
@@ -278,39 +250,14 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
 
         <p className="font-mono text-[11px] text-text-muted">
           {songs.length < MIN_SONGS
-            ? `Minimum ${MIN_SONGS} songs to run a scan.`
+            ? `Minimum ${MIN_SONGS} tracks required.`
             : songs.length < SWEET_SPOT
-            ? `${SWEET_SPOT - songs.length} more song${
+            ? `${SWEET_SPOT - songs.length} more track${
                 SWEET_SPOT - songs.length !== 1 ? "s" : ""
-              } and the AI can actually read your patterns, not just your mood.`
-            : "Sample size: lethal. The AI has more than enough to work with."}
+              } recommended for a complete sample.`
+            : "Sample size sufficient."}
         </p>
       </div>
-
-      {/* Playlist diagnostics */}
-      {songs.length >= MIN_SONGS && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted border border-border-subtle rounded-xl px-3.5 py-2.5 bg-bg-card">
-          <IconSignal size={14} className="text-accent/70 shrink-0" />
-          <span>
-            AVG PAIN INDEX{" "}
-            <span className={avgPain >= 7 ? "text-accent" : "text-text-secondary"}>
-              {avgPain.toFixed(1)}
-            </span>
-            /10
-          </span>
-          {dominantMood && (
-            <span>
-              DOMINANT MOOD{" "}
-              <span className="text-text-secondary">
-                {dominantMood.replace(/_/g, " ")}
-              </span>
-            </span>
-          )}
-          <span>
-            ARTISTS <span className="text-text-secondary">{uniqueArtists}</span>
-          </span>
-        </div>
-      )}
 
       {/* Selected songs */}
       {songs.length > 0 && (
@@ -435,16 +382,8 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
                       <span className="text-accent font-medium truncate">{song.title}</span>
                       <span className="text-text-muted text-xs truncate">{song.artist}</span>
                     </div>
-                    {dup ? (
+                    {dup && (
                       <span className="text-xs text-text-muted shrink-0">added</span>
-                    ) : (
-                      <span
-                        className="font-mono text-xs shrink-0 tabular-nums"
-                        style={{ color: painColor(song.painIndex) }}
-                        title="Pain index"
-                      >
-                        {song.painIndex.toFixed(1)}
-                      </span>
                     )}
                   </button>
                 </li>

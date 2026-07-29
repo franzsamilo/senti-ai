@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Song, AttachmentStyle, LoveLanguage, ProfileResult, ThreatLevel } from "@/lib/types";
 import GlitchText from "@/components/GlitchText";
@@ -9,6 +9,14 @@ import ThreatMeter from "@/components/ui/ThreatMeter";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
 import MatchChallenge from "@/components/MatchChallenge";
+import {
+  IconFlag,
+  IconSearch,
+  IconSignal,
+  IconShare,
+  IconTarget,
+} from "@/components/ui/icons";
+import { itemVariants, listVariants, spring } from "@/components/ui/motion";
 import { captureCard } from "@/lib/shareImage";
 
 /** Songs shown in the diagnosis card before the list collapses. */
@@ -32,33 +40,78 @@ const THREAT_COLORS: Record<ThreatLevel, string> = {
   LOW: "#00cc88",
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 0.45, ease: "easeOut" as const },
-  }),
-};
-
-function Section({ children, index }: { children: React.ReactNode; index: number }) {
+function Card({
+  children,
+  accent = false,
+}: {
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
   return (
-    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={index}>
-      {children}
-    </motion.div>
-  );
-}
-
-function Card({ children, accentBorder = false }: { children: React.ReactNode; accentBorder?: boolean }) {
-  return (
-    <div className={`bg-bg-card rounded-xl p-4 sm:p-5 ${accentBorder ? "border border-accent/40" : "border border-border-subtle"}`}>
+    <div
+      className="rounded-xl p-4 sm:p-5"
+      style={{
+        background: accent ? "rgba(255,50,82,0.05)" : "rgba(255,255,255,0.02)",
+        border: `1px solid ${accent ? "rgba(255,50,82,0.28)" : "rgba(255,255,255,0.07)"}`,
+      }}
+    >
       {children}
     </div>
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="font-mono text-xs text-text-muted uppercase tracking-widest mb-3">{children}</p>;
+/**
+ * A numbered section header with a rule running to the edge — the visual
+ * grammar of a filed report rather than a stack of cards.
+ */
+function ReportSection({
+  index,
+  label,
+  icon,
+  children,
+}: {
+  index: number;
+  label: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.section variants={itemVariants} className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-[10px] tabular-nums text-accent tracking-[0.18em]">
+          {String(index).padStart(2, "0")}
+        </span>
+        {icon && <span className="text-text-muted shrink-0">{icon}</span>}
+        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-secondary whitespace-nowrap">
+          {label}
+        </span>
+        <span className="h-px flex-1 bg-border-subtle" />
+      </div>
+      {children}
+    </motion.section>
+  );
+}
+
+/** Labelled sub-value inside a card. */
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-muted">
+        {label}
+      </span>
+      <span className="text-sm text-text-secondary leading-relaxed">{children}</span>
+    </div>
+  );
+}
+
+/** Stable per-report identifier — deterministic so it survives re-renders. */
+function makeCaseId(seed: string): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return `CASE #SA-${Math.abs(hash).toString(36).toUpperCase().padStart(6, "0").slice(0, 6)}`;
 }
 
 export default function ResultsDashboard({
@@ -72,6 +125,20 @@ export default function ResultsDashboard({
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [showAllSongs, setShowAllSongs] = useState(false);
+
+  // Frozen at mount so the header doesn't reshuffle on every re-render.
+  const caseId = useMemo(
+    () => makeCaseId(`${mbti}${attachmentStyle}${zodiac}${result.headline}`),
+    [mbti, attachmentStyle, zodiac, result.headline]
+  );
+  const timestamp = useMemo(
+    () =>
+      new Date().toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    []
+  );
 
   const meters = [
     { label: "Emotional Instability", value: Math.min(99, Math.round(score * 10.5)) },
@@ -129,7 +196,12 @@ export default function ResultsDashboard({
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-20 flex flex-col gap-5 sm:gap-6">
+    <motion.div
+      variants={listVariants}
+      initial="hidden"
+      animate="show"
+      className="w-full max-w-2xl mx-auto px-4 pt-8 pb-20 flex flex-col gap-6 sm:gap-7"
+    >
 
       {/* ============================================================
           HIDDEN SHARE CARD — compact, story-optimized (9:16 ratio)
@@ -261,67 +333,121 @@ export default function ResultsDashboard({
           END HIDDEN SHARE CARD
           ============================================================ */}
 
+      {/* ══════════════════════════════════════════════
+          REPORT HEADER — the dossier frame. The content is
+          absurd; the presentation is not. The joke lands harder
+          against a page that looks like it means it.
+          ══════════════════════════════════════════════ */}
+      <motion.header variants={itemVariants} className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3 font-mono text-[10px] tracking-[0.18em] uppercase text-text-muted">
+          <span className="inline-flex items-center gap-2 text-accent-success">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-success" />
+            Assessment complete
+          </span>
+          <span>{caseId}</span>
+        </div>
 
-      {/* 1. Header */}
-      <Section index={0}>
-        <div className="flex flex-col items-center text-center gap-3 pt-2 sm:pt-4 pb-2">
-          <p className="font-mono text-[10px] sm:text-xs text-text-muted tracking-widest">SENTI.AI — EMOTIONAL DAMAGE REPORT</p>
-          <GlitchText text={result.headline} as="h2" className="text-xl sm:text-3xl font-bold leading-tight" />
-          <span
-            className="font-mono text-[10px] sm:text-xs tracking-widest px-3 py-1.5 rounded-full border font-bold"
-            style={{ color: threatColor, borderColor: threatColor, boxShadow: `0 0 12px ${threatColor}44` }}
+        <div className="flex flex-col items-center text-center gap-3.5 py-1">
+          <p className="font-mono text-[10px] text-text-muted tracking-[0.25em] uppercase">
+            Emotional Damage Report
+          </p>
+          <GlitchText
+            text={result.headline}
+            as="h2"
+            className="text-[22px] sm:text-3xl font-bold leading-[1.2] tracking-tight"
+          />
+          <motion.span
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ ...spring, delay: 0.25 }}
+            className="font-mono text-[11px] tracking-[0.18em] px-3.5 py-2 rounded-full border font-bold"
+            style={{
+              color: threatColor,
+              borderColor: threatColor,
+              background: `${threatColor}12`,
+              boxShadow: `0 0 18px ${threatColor}33`,
+            }}
           >
             THREAT LEVEL: {result.threat_level}
-          </span>
+          </motion.span>
         </div>
-      </Section>
 
-      {/* 2. Final Verdict — ON TOP for maximum impact */}
-      <Section index={1}>
-        <Card accentBorder>
-          <SectionLabel>Final Verdict</SectionLabel>
-          <p className="text-text-primary text-sm leading-relaxed mb-3">{result.final_verdict}</p>
-          <p className="text-text-secondary text-sm italic mb-3">{result.recommended_action}</p>
-          <p className="font-mono text-xs text-text-muted">{result.compatibility_warning}</p>
+        {/* Subject line — the detail that makes it read as a real record */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px rounded-xl overflow-hidden border border-border-subtle bg-border-subtle">
+          {[
+            { label: "Type", value: mbti || "—" },
+            { label: "Attachment", value: attachmentStyle },
+            { label: "Sign", value: zodiac || "—" },
+            { label: "Sample", value: `${songs.length} tracks` },
+          ].map((field) => (
+            <div key={field.label} className="bg-bg-primary px-3 py-2.5 flex flex-col gap-1">
+              <span className="font-mono text-[9px] tracking-[0.18em] uppercase text-text-muted">
+                {field.label}
+              </span>
+              <span className="font-mono text-[12px] text-text-secondary uppercase truncate">
+                {field.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <p className="font-mono text-[10px] text-text-muted/70 text-center tracking-wide">
+          Generated {timestamp} · Findings are final
+        </p>
+      </motion.header>
+
+      {/* 01 — Final verdict, kept on top for impact */}
+      <ReportSection index={1} label="Final Verdict" icon={<IconTarget size={14} />}>
+        <Card accent>
+          <p className="text-text-primary text-[15px] leading-relaxed">{result.final_verdict}</p>
+          <div className="mt-4 pt-4 border-t border-border-subtle flex flex-col gap-3">
+            <Field label="Recommended action">{result.recommended_action}</Field>
+            <Field label="Compatibility warning">{result.compatibility_warning}</Field>
+          </div>
         </Card>
-      </Section>
+      </ReportSection>
 
-      {/* 3. Quick Stats Row — flex grid, no horizontal scroll */}
-      <Section index={2}>
+      {/* 02 — Key metrics */}
+      <ReportSection index={2} label="Key Metrics" icon={<IconSignal size={14} />}>
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <StatBox label="Emotional Damage" value={result.emotional_damage_score} suffix="/10" animate />
           <StatBox label="Drunk Text Prob" value={result.drunk_text_probability} suffix="%" animate />
           <StatBox label="Avg Pain Index" value={avgPainIndex} suffix="/10" animate />
         </div>
-      </Section>
+      </ReportSection>
 
-      {/* 4. Ex-Stalking */}
-      <Section index={3}>
+      {/* 03 — Surveillance pattern */}
+      <ReportSection index={3} label="Surveillance Pattern" icon={<IconSearch size={14} />}>
         <Card>
-          <SectionLabel>Ex-Stalking Frequency</SectionLabel>
           <p className="text-text-primary text-sm leading-relaxed">{result.ex_stalking_frequency}</p>
         </Card>
-      </Section>
+      </ReportSection>
 
-      {/* 5. Threat Assessment Meters */}
-      <Section index={4}>
+      {/* 04 — Threat meters */}
+      <ReportSection index={4} label="Threat Assessment" icon={<IconTarget size={14} />}>
         <Card>
-          <SectionLabel>Threat Assessment</SectionLabel>
           <div className="flex flex-col gap-4">
             {meters.map((m) => (
-              <ThreatMeter key={m.label} label={m.label} value={m.value} color={m.label === "Healing Progress" ? "#00cc88" : threatColor} />
+              <ThreatMeter
+                key={m.label}
+                label={m.label}
+                value={m.value}
+                color={m.label === "Healing Progress" ? "#00cc88" : threatColor}
+              />
             ))}
           </div>
         </Card>
-      </Section>
+      </ReportSection>
 
-      {/* 6. Song Diagnosis */}
-      <Section index={5}>
+      {/* 05 — Song diagnosis */}
+      <ReportSection index={5} label="Listening Analysis" icon={<IconSignal size={14} />}>
         <Card>
-          <SectionLabel>Song Diagnosis</SectionLabel>
-          <p className="text-text-primary text-sm leading-relaxed mb-4">{result.song_diagnosis}</p>
+          <p className="text-text-primary text-sm leading-relaxed">{result.song_diagnosis}</p>
           {songs.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-border-subtle">
+              <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-muted">
+                Evidence · {songs.length} tracks
+              </p>
               <div className="flex flex-wrap gap-2">
                 {(showAllSongs ? songs : songs.slice(0, SONG_PREVIEW_COUNT)).map((s, i) => (
                   <SongChip key={`${s.title}-${s.artist}-${i}`} song={s} showPainIndex />
@@ -330,128 +456,158 @@ export default function ResultsDashboard({
               {songs.length > SONG_PREVIEW_COUNT && (
                 <button
                   onClick={() => setShowAllSongs((v) => !v)}
-                  className="self-start font-mono text-xs text-accent hover:underline"
+                  className="self-start font-mono text-[11px] text-accent hover:underline cursor-pointer"
                 >
                   {showAllSongs
-                    ? "[show less]"
-                    : `[+${songs.length - SONG_PREVIEW_COUNT} more evidence]`}
+                    ? "[ show less ]"
+                    : `[ +${songs.length - SONG_PREVIEW_COUNT} more ]`}
                 </button>
               )}
             </div>
           )}
         </Card>
-      </Section>
+      </ReportSection>
 
-      {/* 7. Behavioral Predictions */}
-      <Section index={6}>
-        <SectionLabel>Behavioral Predictions</SectionLabel>
-        <div className="flex flex-col gap-3">
+      {/* 06 — Behavioral predictions */}
+      <ReportSection index={6} label="Behavioral Predictions" icon={<IconTarget size={14} />}>
+        <div className="flex flex-col gap-2.5">
           {result.behavioral_predictions.map((pred, i) => (
-            <Card key={i}>
-              <div className="flex gap-3">
-                <span className="font-mono text-xs text-accent shrink-0 mt-0.5">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-text-primary text-sm leading-relaxed">{pred}</p>
-              </div>
-            </Card>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ ...spring, delay: i * 0.06 }}
+            >
+              <Card>
+                <div className="flex gap-3.5">
+                  <span
+                    className="font-mono text-[11px] shrink-0 mt-0.5 tabular-nums"
+                    style={{ color: threatColor }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-text-primary text-sm leading-relaxed">{pred}</p>
+                </div>
+              </Card>
+            </motion.div>
           ))}
         </div>
-      </Section>
+      </ReportSection>
 
-      {/* 8. Toxic Traits + Red Flags */}
-      <Section index={7}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* 07 — Traits and flags */}
+      <ReportSection index={7} label="Risk Factors" icon={<IconFlag size={14} />}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Card>
-            <SectionLabel>Toxic Traits</SectionLabel>
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-muted mb-3">
+              Toxic traits
+            </p>
             <ul className="flex flex-col gap-3">
               {result.toxic_traits.map((trait, i) => (
-                <li key={i} className="flex gap-2 text-sm text-text-primary leading-relaxed">
-                  <span className="text-accent shrink-0">▸</span>{trait}
+                <li key={i} className="flex gap-2.5 text-sm text-text-primary leading-relaxed">
+                  <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-accent" />
+                  {trait}
                 </li>
               ))}
             </ul>
           </Card>
           <Card>
-            <SectionLabel>Red Flags (For Future Jowa)</SectionLabel>
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-muted mb-3">
+              Red flags · for future jowa
+            </p>
             <ul className="flex flex-col gap-3">
               {result.red_flags.map((flag, i) => (
-                <li key={i} className="flex gap-2 text-sm text-text-primary leading-relaxed">
-                  <span className="text-red-500 shrink-0">⚑</span>{flag}
+                <li key={i} className="flex gap-2.5 text-sm text-text-primary leading-relaxed">
+                  <IconFlag size={13} className="shrink-0 mt-1 text-threat-critical" />
+                  {flag}
                 </li>
               ))}
             </ul>
           </Card>
         </div>
-      </Section>
+      </ReportSection>
 
-      {/* 9. Actions */}
-      <Section index={8}>
-        <div className="flex flex-col gap-3 pt-2">
-          {/* Primary share CTA */}
+      {/* Actions */}
+      <motion.div variants={itemVariants} className="flex flex-col gap-3 pt-3">
+        <div className="h-px w-full bg-border-subtle" />
+
+        <Button
+          variant="primary"
+          className="w-full gap-2 py-4"
+          disabled={downloading}
+          onClick={handleDownload}
+        >
+          {downloading ? (
+            <>Packaging your report...</>
+          ) : (
+            <>
+              <IconShare size={18} />
+              Share to IG / FB Story
+            </>
+          )}
+        </Button>
+
+        <MatchChallenge
+          profile={{ songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp: Date.now() }}
+        />
+
+        <div className="grid grid-cols-2 gap-2">
           <Button
-            variant="primary"
-            className="w-full text-sm sm:text-base font-semibold gap-2 py-4"
-            disabled={downloading}
-            onClick={handleDownload}
+            variant="secondary"
+            className="w-full text-[13px] py-3"
+            onClick={async () => {
+              const nickname = prompt("Enter your nickname for the barkada:");
+              if (!nickname) return;
+              const res = await fetch("/api/barkada", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "create",
+                  nickname,
+                  profile: { songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp: Date.now() },
+                }),
+              });
+              const data = await res.json();
+              window.open(`/barkada/${data.id}`, "_blank");
+            }}
           >
-            {downloading ? (
-              <><span className="animate-pulse">⏳</span> Packaging your emotional damage...</>
-            ) : (
-              <><span>📸</span> Share to IG / FB Story</>
-            )}
+            Create Barkada
           </Button>
 
-          <MatchChallenge
-            profile={{ songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp: Date.now() }}
-          />
-
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              variant="secondary"
-              className="w-full text-xs sm:text-sm py-3"
-              onClick={async () => {
-                const nickname = prompt("Enter your nickname for the barkada:");
-                if (!nickname) return;
-                const res = await fetch("/api/barkada", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    action: "create", nickname,
-                    profile: { songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp: Date.now() },
-                  }),
-                });
-                const data = await res.json();
-                window.open(`/barkada/${data.id}`, "_blank");
-              }}
-            >
-              Create Barkada
-            </Button>
-
-            <Button
-              variant="secondary"
-              className="w-full text-xs sm:text-sm py-3"
-              onClick={async () => {
-                const res = await fetch("/api/leaderboard", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ score: result.emotional_damage_score, mbti, attachmentStyle, zodiac, threat_level: result.threat_level }),
-                });
-                const data = await res.json();
-                alert(`Submitted! You're ranked #${data.rank} out of ${data.total}`);
-              }}
-            >
-              Post to Leaderboard
-            </Button>
-          </div>
-
-          <Button variant="ghost" className="w-full text-sm" onClick={onRunAgain}>
-            Run Again
+          <Button
+            variant="secondary"
+            className="w-full text-[13px] py-3"
+            onClick={async () => {
+              const res = await fetch("/api/leaderboard", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  score: result.emotional_damage_score,
+                  mbti,
+                  attachmentStyle,
+                  zodiac,
+                  threat_level: result.threat_level,
+                }),
+              });
+              const data = await res.json();
+              alert(`Submitted! You're ranked #${data.rank} out of ${data.total}`);
+            }}
+          >
+            Post to Leaderboard
           </Button>
-
-          <a href="/history" className="block text-center text-text-muted font-mono text-xs hover:text-accent transition-colors">
-            View History →
-          </a>
         </div>
-      </Section>
-    </div>
+
+        <Button variant="ghost" className="w-full text-sm" onClick={onRunAgain}>
+          Run again
+        </Button>
+
+        <a
+          href="/history"
+          className="block text-center text-text-muted font-mono text-[11px] tracking-wide hover:text-accent transition-colors py-2"
+        >
+          View assessment history →
+        </a>
+      </motion.div>
+    </motion.div>
   );
 }

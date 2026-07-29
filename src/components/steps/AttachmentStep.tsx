@@ -47,14 +47,17 @@ const OPTIONS: AttachmentOption[] = [
 ];
 
 interface AttachmentStepProps {
+  onBack?: () => void;
   selected: AttachmentStyle;
   onSelect: (style: AttachmentStyle) => void;
 }
 
-export default function AttachmentStep({ selected, onSelect }: AttachmentStepProps) {
+export default function AttachmentStep({ onBack, selected, onSelect }: AttachmentStepProps) {
   return (
     <StepShell
       step={3}
+      onBack={onBack}
+      backLabel="Personality"
       kicker="INTAKE"
       title="Attachment style"
       subtitle="Answer for how you actually behave, not how you'd describe yourself to a friend."
