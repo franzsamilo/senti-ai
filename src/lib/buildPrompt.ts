@@ -40,6 +40,9 @@ CRITICAL TONE RULES:
 
 5. Reference the SPECIFIC SONGS they chose — be creative and devastating about their specific choices.
 
+5b. SCOPE OF THESE RULES — READ THIS LITERALLY:
+Every rule in this document applies to EVERY string you write, not just the headline. That means: headline, all 5 behavioral_predictions, all 3 toxic_traits, all 3 red_flags, song_diagnosis, final_verdict, recommended_action, compatibility_warning, and ex_stalking_frequency. A perfect headline followed by three textbook-sounding toxic traits is a failed report. The traits and red flags are where most reports go generic — they are the ones to sweat.
+
 6. NEVER USE THESE AI PATTERNS:
 - "Based on the analysis..."
 - "It's worth noting that..."
@@ -154,7 +157,38 @@ PERSONAL CONTEXT RULES:
 - If the user shares normal dating/relationship stuff (breakups, crushes, situationships, ghosting, MU drama), GO ALL IN. Be devastatingly specific.
 - Never repeat their exact words back to them. Paraphrase and reframe through the lens of their MBTI + attachment + songs combo.
 
-You MUST respond with ONLY a valid JSON object matching this exact schema — no markdown, no code fences, no explanation:
+CALIBRATION EXAMPLES — match this register in every field:
+
+toxic_traits
+✗ "You have difficulty with emotional vulnerability and tend to push people away."
+✓ "Sinasabi mong 'wala lang' habang tatlong beses mo nang binura at tinype ulit yung parehong reply."
+(The rejected one describes a category. The good one describes a Tuesday.)
+
+red_flags
+✗ "Communication issues may arise in the relationship."
+✓ "Hindi ka mag-che-check kung anong nangyari. Mag-a-assume ka, tapos ita-tampo mo for six days, tapos ikaw pa magtatanong bakit ang lamig."
+
+behavioral_predictions
+✗ "You will likely overthink your interactions and struggle to move on."
+✓ "Sa Friday, 11:40PM, may makikita kang IG story na may lyrics ng kantang alam mong para sa'yo. Hindi mo ire-reply. Titingnan mo ulit ng eleven times."
+
+song_diagnosis
+✗ "Your song selection reflects themes of longing and unresolved feelings."
+✓ "May Multo ka at may Paubaya ka sa iisang listahan. Hindi 'yan playlist, timeline 'yan — alam mo mismo kung anong buwan ang bawat kanta."
+
+recommended_action
+✗ "Consider taking time for self-reflection and personal growth."
+✓ "I-archive mo yung playlist. Hindi i-delete — kaya mo pa 'yan. Archive muna."
+
+LENGTH DISCIPLINE:
+- headline: one breath, max 15 words.
+- Each behavioral_prediction: 1-2 sentences. Specific beats long — if the detail isn't doing work, cut it.
+- Each toxic_trait and red_flag: one sentence. These are jabs, not paragraphs.
+- song_diagnosis: 3-4 sentences. final_verdict: 2-3 sentences.
+- recommended_action and compatibility_warning: one line each.
+Do not pad a field to look thorough. A short devastating line beats a long clever one.
+
+Respond with a JSON object matching this schema:
 {
   "headline": "string — devastating one-liner, Taglish, max 15 words",
   "threat_level": "CRITICAL | SEVERE | ELEVATED | MODERATE | LOW",
@@ -250,8 +284,12 @@ function buildSignals(songs: Song[]): string {
     }`,
     `- Repeat artists: ${repeatSummary}`,
     `- Unique artists: ${artistCounts.size} across ${songs.length} songs`,
-    `- Heaviest track: "${heaviest.title}" by ${heaviest.artist} (${heaviest.painIndex}/10)`,
-    `- Lightest track: "${lightest.title}" by ${lightest.artist} (${lightest.painIndex}/10)`,
+    `- Heaviest track: "${heaviest.title}" by ${heaviest.artist} (${heaviest.painIndex.toFixed(
+      1
+    )}/10)`,
+    `- Lightest track: "${lightest.title}" by ${lightest.artist} (${lightest.painIndex.toFixed(
+      1
+    )}/10)`,
     `- ${devastating} song${
       devastating !== 1 ? "s" : ""
     } at 8.0+ pain (therapy tier), ${kilig} song${

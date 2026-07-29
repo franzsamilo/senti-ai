@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { buildMatchPrompt } from "@/lib/buildMatchPrompt";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { MATCH_RESULT_SCHEMA } from "@/lib/resultSchema";
+import { normalizeMatchResult } from "@/lib/normalizeResult";
 import type { UserProfile, MatchResult } from "@/lib/types";
 
 interface MatchEntry {
@@ -137,12 +138,15 @@ export async function POST(req: NextRequest) {
       const anthropic = new Anthropic();
 
       const message = await anthropic.messages.create({
-        model: "claude-opus-5",
-        max_tokens: 6000,
-        system,
+        model: "claude-sonnet-5",
+        // Adaptive thinking counts against max_tokens on Sonnet 5.
+        max_tokens: 8000,
+        system: [
+          { type: "text", text: system, cache_control: { type: "ephemeral" } },
+        ],
         messages: [{ role: "user", content: user }],
         output_config: {
-          effort: "medium",
+          effort: "high",
           format: { type: "json_schema", schema: MATCH_RESULT_SCHEMA },
         },
       });
@@ -159,7 +163,7 @@ export async function POST(req: NextRequest) {
       let raw = textBlock.text.trim();
       raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
 
-      const matchResult: MatchResult = JSON.parse(raw);
+      const matchResult: MatchResult = normalizeMatchResult(JSON.parse(raw));
 
       // Persist to store
       entry.matchResult = matchResult;

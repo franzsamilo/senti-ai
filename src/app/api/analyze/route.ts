@@ -4,7 +4,10 @@ import { buildPrompt } from "@/lib/buildPrompt";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
 import { PROFILE_RESULT_SCHEMA } from "@/lib/resultSchema";
+import { normalizeProfileResult } from "@/lib/normalizeResult";
 import type { AnalysisRequest, ProfileResult } from "@/lib/types";
+
+const MODEL = "claude-sonnet-5";
 
 // Server-side caps — the client enforces its own, this is the real boundary.
 const MAX_SONGS = 25;
@@ -84,18 +87,38 @@ export async function POST(req: NextRequest) {
 
     const anthropic = new Anthropic();
 
-    const message = await anthropic.messages.create({
-      model: "claude-opus-5",
-      max_tokens: 8000,
-      system,
-      messages: [{ role: "user", content: user }],
-      // Structured outputs guarantee the response parses — no more fence
-      // stripping and no half-written JSON on a truncated response.
-      output_config: {
-        effort: "medium",
-        format: { type: "json_schema", schema: PROFILE_RESULT_SCHEMA },
-      },
-    });
+    const requestAnalysis = () =>
+      anthropic.messages.create({
+        model: MODEL,
+        // Adaptive thinking is on by default and counts against max_tokens,
+        // so this has to cover reasoning AND the full report.
+        max_tokens: 12000,
+        // The system prompt is large and byte-identical on every request —
+        // cache it so repeat analyses pay ~10% for the prefix.
+        system: [
+          {
+            type: "text",
+            text: system,
+            cache_control: { type: "ephemeral" },
+          },
+        ],
+        messages: [{ role: "user", content: user }],
+        // Structured outputs guarantee the response parses — no more fence
+        // stripping and no half-written JSON on a truncated response.
+        output_config: {
+          effort: "high",
+          format: { type: "json_schema", schema: PROFILE_RESULT_SCHEMA },
+        },
+      });
+
+    let message = await requestAnalysis();
+
+    // A truncated response is unparseable JSON. One retry is far cheaper than
+    // dropping the user to the static fallback roast.
+    if (message.stop_reason === "max_tokens") {
+      console.warn("[/api/analyze] hit max_tokens, retrying once");
+      message = await requestAnalysis();
+    }
 
     // Safety classifiers can decline a request outright (HTTP 200, empty
     // content). Fall through to the client's fallback roast rather than
@@ -118,7 +141,9 @@ export async function POST(req: NextRequest) {
     let raw = textBlock.text.trim();
     raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
 
-    const result: ProfileResult = JSON.parse(raw);
+    // The schema fixes the shape; normalization fixes the contents the schema
+    // can't express — array lengths, score ranges, empty strings.
+    const result: ProfileResult = normalizeProfileResult(JSON.parse(raw));
 
     return NextResponse.json({ result, remaining });
   } catch (err) {
