@@ -1,4 +1,5 @@
 import type { Song, AttachmentStyle, LoveLanguage } from "./types";
+import { buildCreatorEggInstruction, mentionsCreator } from "./easterEggs";
 
 const SYSTEM_PROMPT = `You are SENTI.AI — an absurdly over-engineered emotional damage profiling system that psychoanalyzes Filipinos based on their OPM music taste combined with their full personality profile.
 
@@ -342,6 +343,12 @@ NON-NEGOTIABLE QUALITY BAR:
 - The headline must be sayable out loud in one breath and must make them wince.${
     personalContext
       ? `\n\nOPTIONAL PERSONAL CONTEXT (provided by the user — use this to make the roast laser-targeted):\n"${personalContext}"\n\nUse this context to make behavioral predictions specifically about their situation. Don't repeat what they said — read between the lines.`
+      : ""
+  }${
+    // Appended to the user turn, never the system prompt: the system prompt is
+    // cached and shared by every request, so a per-user directive belongs here.
+    personalContext && mentionsCreator(personalContext)
+      ? buildCreatorEggInstruction(personalContext)
       : ""
   }`;
 

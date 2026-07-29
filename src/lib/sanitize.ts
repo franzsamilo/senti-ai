@@ -9,7 +9,10 @@ export function sanitizePersonalContext(input: string): string {
   sanitized = sanitized.replace(/(\+?63|0)[\d\s-]{9,12}/g, "[redacted]");
   // Strip email addresses
   sanitized = sanitized.replace(/[\w.-]+@[\w.-]+\.\w+/g, "[redacted]");
-  // Strip social media handles
-  sanitized = sanitized.replace(/@[\w.]+/g, "[redacted]");
+  // Strip social media handles — except the creator's own, which is an
+  // intentional trigger. Redacting it would silently swallow the Easter egg.
+  sanitized = sanitized.replace(/@[\w.]+/g, (handle) =>
+    /^@franz[._-]*samilo$/i.test(handle) ? handle : "[redacted]"
+  );
   return sanitized.trim().slice(0, MAX_CONTEXT_CHARS);
 }

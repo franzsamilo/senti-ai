@@ -347,6 +347,28 @@ export default function ResultsDashboard({
           <span>{caseId}</span>
         </div>
 
+        {/* Easter egg badge — the point is that it looks unlockable, so the
+            screenshot reads as "I found something" rather than a UI label. */}
+        {result.creator_egg && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...spring, delay: 0.4 }}
+            className="self-center inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-[10px] tracking-[0.2em] uppercase"
+            style={{
+              color: "#ffd000",
+              border: "1px solid rgba(255,208,0,0.4)",
+              background: "rgba(255,208,0,0.07)",
+              boxShadow: "0 0 18px rgba(255,208,0,0.15)",
+            }}
+          >
+            <IconTarget size={12} />
+            {result.creator_egg === "self"
+              ? "Creator identified"
+              : "Creator referenced"}
+          </motion.div>
+        )}
+
         <div className="flex flex-col items-center text-center gap-3.5 py-1">
           <p className="font-mono text-[10px] text-text-muted tracking-[0.25em] uppercase">
             Emotional Damage Report

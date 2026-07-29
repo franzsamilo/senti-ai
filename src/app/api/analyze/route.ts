@@ -5,6 +5,7 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
 import { PROFILE_RESULT_SCHEMA } from "@/lib/resultSchema";
 import { normalizeProfileResult } from "@/lib/normalizeResult";
+import { looksLikeSelfClaim, mentionsCreator } from "@/lib/easterEggs";
 import type { AnalysisRequest, ProfileResult } from "@/lib/types";
 
 const MODEL = "claude-opus-5";
@@ -193,6 +194,12 @@ export async function POST(req: NextRequest) {
     // The schema fixes the shape; normalization fixes the contents the schema
     // can't express — array lengths, score ranges, empty strings.
     const result: ProfileResult = normalizeProfileResult(JSON.parse(raw));
+
+    // Flag the Easter egg so the report can badge it. The model decides how to
+    // write it; this only records that it fired, for the UI.
+    if (safeContext && mentionsCreator(safeContext)) {
+      result.creator_egg = looksLikeSelfClaim(safeContext) ? "self" : "mention";
+    }
 
     return NextResponse.json({ result, remaining, source: "model" });
   } catch (err) {

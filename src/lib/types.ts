@@ -61,6 +61,8 @@ export interface ProfileResult {
    * Optional so results stored before this field existed still parse.
    */
   degraded?: boolean;
+  /** Set when the creator Easter egg fired — see src/lib/easterEggs.ts */
+  creator_egg?: "self" | "mention";
 }
 
 export interface MatchResult {
