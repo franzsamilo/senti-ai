@@ -20,27 +20,6 @@ const THREAT_LEVELS: ThreatLevel[] = [
   "LOW",
 ];
 
-/** Padding lines, kept in-voice so a repaired field never reads as an error. */
-const PREDICTION_FILLER = [
-  "Mag-o-open ka ng Notes app mamayang 2AM para mag-draft ng message. Hindi mo ise-send. Sa-save mo.",
-  "Ise-screenshot mo 'to, isesend sa barkada GC, tapos sasabihin mong 'HAHAHA hindi naman totoo' habang tumatango ka.",
-  "May isang tao na ipapa-check mo sa profile mamaya. Alam mo kung sino. Alam din namin.",
-  "Mag-a-add ka ng bagong song sa 'healing' playlist mo. Same energy pa rin ng dati. Hindi 'yan healing, repackaging 'yan.",
-  "Sasabihin mong busy ka. Ang totoo, three hours ka nang nakatitig sa isang chat na na-seen ka last week.",
-];
-
-const TRAIT_FILLER = [
-  "Nagpapanggap na chill habang inaaral ang bawat punctuation ng reply nila.",
-  "Nire-reward ang bare minimum na parang grand gesture.",
-  "Pinapalitan ang confrontation ng cryptic na IG story.",
-];
-
-const FLAG_FILLER = [
-  "Sasabihin nilang 'okay lang ako' hanggang sa hindi na.",
-  "May naka-save pa ring conversation screenshots mula 2023.",
-  "Ang tampo, silent film — walang subtitles, ikaw bahala mag-interpret.",
-];
-
 function str(value: unknown, fallback: string): string {
   if (typeof value !== "string") return fallback;
   // Models occasionally wrap a field in stray quotes or markdown emphasis
@@ -54,22 +33,31 @@ function clamp(value: unknown, min: number, max: number, fallback: number): numb
   return Math.min(max, Math.max(min, n));
 }
 
-/** Coerce to exactly `size` non-empty entries, padding from `filler`. */
-function exactly(value: unknown, size: number, filler: string[]): string[] {
+/**
+ * Trim to at most `max` non-empty, de-duplicated entries.
+ *
+ * Deliberately does NOT pad. An earlier version topped short arrays up from a
+ * fixed filler pool, which meant any two users whose reports came back short
+ * received the exact same lines — the single worst thing this app can do,
+ * since the first thing users do is compare results with friends. A report
+ * with four sharp predictions beats one with five where the fifth is shared
+ * with every other user.
+ */
+function upTo(value: unknown, max: number): string[] {
   const source = Array.isArray(value) ? value : [];
-  const items = source
-    .map((item) => (typeof item === "string" ? item.trim() : ""))
-    .filter((item) => item.length > 0)
-    .slice(0, size);
+  const seen = new Set<string>();
+  const items: string[] = [];
 
-  for (let i = 0; items.length < size; i++) {
-    const candidate = filler[i % filler.length];
-    // Avoid handing the user the same line twice
-    if (!items.includes(candidate)) items.push(candidate);
-    else if (i >= filler.length) break;
+  for (const item of source) {
+    if (typeof item !== "string") continue;
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) continue; // the model occasionally repeats itself
+    seen.add(key);
+    items.push(trimmed);
+    if (items.length === max) break;
   }
-  // If dedup left us short (tiny filler pools), top up regardless
-  while (items.length < size) items.push(filler[items.length % filler.length]);
 
   return items;
 }
@@ -110,13 +98,9 @@ export function normalizeProfileResult(raw: unknown): ProfileResult {
       "Tuwing may bagong story. So, araw-araw."
     ),
     emotional_damage_score: score,
-    behavioral_predictions: exactly(
-      data.behavioral_predictions,
-      5,
-      PREDICTION_FILLER
-    ),
-    toxic_traits: exactly(data.toxic_traits, 3, TRAIT_FILLER),
-    red_flags: exactly(data.red_flags, 3, FLAG_FILLER),
+    behavioral_predictions: upTo(data.behavioral_predictions, 5),
+    toxic_traits: upTo(data.toxic_traits, 3),
+    red_flags: upTo(data.red_flags, 3),
     song_diagnosis: str(
       data.song_diagnosis,
       "Ang playlist mo, hindi taste — evidence 'yan."

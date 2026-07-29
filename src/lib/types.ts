@@ -56,6 +56,11 @@ export interface ProfileResult {
   final_verdict: string;
   recommended_action: string;
   compatibility_warning: string;
+  /**
+   * True when this came from the offline template instead of the model.
+   * Optional so results stored before this field existed still parse.
+   */
+  degraded?: boolean;
 }
 
 export interface MatchResult {

@@ -394,6 +394,26 @@ export default function ResultsDashboard({
         <p className="font-mono text-[10px] text-text-muted/70 text-center tracking-wide">
           Generated {timestamp} · Findings are final
         </p>
+
+        {/* The offline template is generic by nature. Say so rather than
+            passing it off as a real read of this specific person. */}
+        {result.degraded && (
+          <div
+            className="flex items-start gap-2.5 rounded-lg px-3 py-2.5 text-[11px] leading-relaxed"
+            style={{
+              background: "rgba(255,140,0,0.07)",
+              border: "1px solid rgba(255,140,0,0.28)",
+              color: "#ff8c00",
+            }}
+          >
+            <IconTarget size={14} className="shrink-0 mt-0.5" />
+            <span>
+              <strong className="font-semibold">Offline assessment.</strong> The
+              analysis engine was unreachable, so this is the generic profile —
+              not a read of your specific answers. Run it again in a moment.
+            </span>
+          </div>
+        )}
       </motion.header>
 
       {/* 01 — Final verdict, kept on top for impact */}

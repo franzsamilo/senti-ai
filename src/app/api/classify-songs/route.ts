@@ -66,7 +66,7 @@ ${songList}`;
 
     try {
       const message = await client.messages.create({
-        model: "claude-sonnet-5",
+        model: "claude-opus-5",
         // Scales with the batch — users can now add up to 25 songs, and a
         // truncated response would drop classifications silently.
         max_tokens: Math.min(4000, 400 + uncached.length * 120),

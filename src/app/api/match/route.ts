@@ -138,15 +138,15 @@ export async function POST(req: NextRequest) {
       const anthropic = new Anthropic();
 
       const message = await anthropic.messages.create({
-        model: "claude-sonnet-5",
-        // Adaptive thinking counts against max_tokens on Sonnet 5.
+        model: "claude-opus-5",
+        // Adaptive thinking counts against max_tokens on Opus 5.
         max_tokens: 8000,
         system: [
           { type: "text", text: system, cache_control: { type: "ephemeral" } },
         ],
         messages: [{ role: "user", content: user }],
         output_config: {
-          effort: "high",
+          effort: "medium",
           format: { type: "json_schema", schema: MATCH_RESULT_SCHEMA },
         },
       });

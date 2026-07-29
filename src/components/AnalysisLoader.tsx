@@ -175,14 +175,30 @@ export default function AnalysisLoader({
 
         if (cancelled) return;
         if (res.status === 429) { onBlocked(); return; }
-        if (!res.ok) throw new Error("API error");
+
+        if (!res.ok) {
+          // Surface WHY. A silent fallback means a broken model config looks
+          // exactly like a working one — every user quietly gets the same
+          // templated report and nobody finds out.
+          const detail = await res.json().catch(() => ({}));
+          console.error(
+            `[analysis] API failed (${res.status})`,
+            detail?.reason ?? "",
+            detail?.message ?? ""
+          );
+          throw new Error(detail?.reason ?? `http_${res.status}`);
+        }
 
         const data = await res.json();
         recordAnalysis(fp);
         resultRef.current = data.result as ProfileResult;
-      } catch {
+      } catch (err) {
         if (cancelled) return;
-        resultRef.current = generateFallback(songs, mbti, attachmentStyle, loveLanguage, zodiac);
+        console.error("[analysis] falling back to offline report:", err);
+        resultRef.current = {
+          ...generateFallback(songs, mbti, attachmentStyle, loveLanguage, zodiac),
+          degraded: true,
+        };
       }
 
       if (!cancelled) setApiDone(true);

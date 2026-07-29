@@ -7,7 +7,15 @@ import { PROFILE_RESULT_SCHEMA } from "@/lib/resultSchema";
 import { normalizeProfileResult } from "@/lib/normalizeResult";
 import type { AnalysisRequest, ProfileResult } from "@/lib/types";
 
-const MODEL = "claude-sonnet-5";
+const MODEL = "claude-opus-5";
+
+/**
+ * Deliberately not "high". Higher effort makes the model converge on what it
+ * judges to be the single best answer, which across users reads as the same
+ * answer. This is a creative-voice task, not a correctness task — variance
+ * between users matters more here than squeezing out the optimum.
+ */
+const EFFORT = "medium" as const;
 
 // Server-side caps — the client enforces its own, this is the real boundary.
 const MAX_SONGS = 25;
@@ -87,37 +95,59 @@ export async function POST(req: NextRequest) {
 
     const anthropic = new Anthropic();
 
-    const requestAnalysis = () =>
-      anthropic.messages.create({
-        model: MODEL,
-        // Adaptive thinking is on by default and counts against max_tokens,
-        // so this has to cover reasoning AND the full report.
-        max_tokens: 12000,
-        // The system prompt is large and byte-identical on every request —
-        // cache it so repeat analyses pay ~10% for the prefix.
-        system: [
-          {
-            type: "text",
-            text: system,
-            cache_control: { type: "ephemeral" },
-          },
-        ],
-        messages: [{ role: "user", content: user }],
-        // Structured outputs guarantee the response parses — no more fence
-        // stripping and no half-written JSON on a truncated response.
-        output_config: {
-          effort: "high",
-          format: { type: "json_schema", schema: PROFILE_RESULT_SCHEMA },
+    const baseRequest = {
+      model: MODEL,
+      // Adaptive thinking is on by default and counts against max_tokens,
+      // so this has to cover reasoning AND the full report.
+      max_tokens: 12000,
+      // The system prompt is large and byte-identical on every request —
+      // cache it so repeat analyses pay ~10% for the prefix.
+      system: [
+        {
+          type: "text" as const,
+          text: system,
+          cache_control: { type: "ephemeral" as const },
         },
+      ],
+      messages: [{ role: "user" as const, content: user }],
+    };
+
+    // Structured outputs guarantee the response parses. If the account or API
+    // version rejects the parameter, we must NOT lose the whole analysis over
+    // it — a silent drop to the static fallback is exactly how every user ends
+    // up with the same templated report.
+    const requestAnalysis = (structured: boolean) =>
+      anthropic.messages.create({
+        ...baseRequest,
+        output_config: structured
+          ? {
+              effort: EFFORT,
+              format: { type: "json_schema", schema: PROFILE_RESULT_SCHEMA },
+            }
+          : { effort: EFFORT },
       });
 
-    let message = await requestAnalysis();
+    let message;
+    try {
+      message = await requestAnalysis(true);
+    } catch (err) {
+      const status = (err as { status?: number })?.status;
+      if (status === 400) {
+        console.warn(
+          "[/api/analyze] structured outputs rejected, retrying without:",
+          (err as Error)?.message
+        );
+        message = await requestAnalysis(false);
+      } else {
+        throw err;
+      }
+    }
 
     // A truncated response is unparseable JSON. One retry is far cheaper than
     // dropping the user to the static fallback roast.
     if (message.stop_reason === "max_tokens") {
       console.warn("[/api/analyze] hit max_tokens, retrying once");
-      message = await requestAnalysis();
+      message = await requestAnalysis(true);
     }
 
     // Safety classifiers can decline a request outright (HTTP 200, empty
@@ -145,11 +175,30 @@ export async function POST(req: NextRequest) {
     // can't express — array lengths, score ranges, empty strings.
     const result: ProfileResult = normalizeProfileResult(JSON.parse(raw));
 
-    return NextResponse.json({ result, remaining });
+    return NextResponse.json({ result, remaining, source: "model" });
   } catch (err) {
-    console.error("[/api/analyze] error:", err);
+    // Log everything useful. A generic "API call failed" line is why a broken
+    // model config could sit in production handing every user the same
+    // templated fallback without anyone noticing.
+    const e = err as { status?: number; name?: string; message?: string };
+    console.error("[/api/analyze] FAILED", {
+      model: MODEL,
+      status: e?.status,
+      name: e?.name,
+      message: e?.message,
+      hasApiKey: Boolean(
+        process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN
+      ),
+    });
+
     return NextResponse.json(
-      { error: "analysis_failed", message: "API call failed" },
+      {
+        error: "analysis_failed",
+        // Surfaced so the client can show that the report is degraded rather
+        // than passing a template off as a real analysis.
+        reason: e?.status ? `api_${e.status}` : e?.name ?? "unknown",
+        message: e?.message ?? "API call failed",
+      },
       { status: 500 }
     );
   }

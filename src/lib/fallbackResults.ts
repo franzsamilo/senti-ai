@@ -21,6 +21,32 @@ const LOVE_LANGUAGE_LABELS: Record<LoveLanguage, string> = {
   touch: "Physical Touch",
 };
 
+/**
+ * Returns a chooser that always picks the same option for the same subject,
+ * but different options for different subjects. Keeps the offline report
+ * deterministic (re-running gives the same text) without making it uniform
+ * across users.
+ */
+function seededPicker(seed: string): <T>(options: T[]) => T {
+  // FNV-1a, then an xorshift avalanche per call. A plain shift-hash plus an
+  // LCG collided constantly on short option lists — two different subjects
+  // landed on the same index far too often, which is the whole thing we're
+  // trying to avoid.
+  let state = 0x811c9dc5;
+  for (let i = 0; i < seed.length; i++) {
+    state ^= seed.charCodeAt(i);
+    state = Math.imul(state, 0x01000193);
+  }
+
+  return <T,>(options: T[]): T => {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    state = Math.imul(state, 0x2545f491);
+    return options[Math.abs(state) % options.length];
+  };
+}
+
 function computeThreatLevel(avgPain: number): ThreatLevel {
   if (avgPain >= 8) return "CRITICAL";
   if (avgPain >= 6.5) return "SEVERE";
@@ -187,7 +213,22 @@ export function generateFallback(
   const attachLabel = ATTACHMENT_LABELS[attachmentStyle];
   const llLabel = loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(" + ");
 
-  const headline = `${mbti} na may ${attachLabel} attachment nakikinig ng "${topSong.title}" — nasa atin na tayo, bestie.`;
+  // Seeded from the subject's own answers so two different people don't land
+  // on identical wording. This is a degraded path either way — but "degraded"
+  // shouldn't mean "everyone gets the same paragraph".
+  const pick = seededPicker(
+    `${mbti}|${attachmentStyle}|${zodiac}|${loveLanguage.join(",")}|${songs
+      .map((s) => s.title)
+      .join(",")}`
+  );
+
+  const headline = pick([
+    `"${topSong.title}" on repeat at sinasabi mong okay ka. Pick one, ${zodiac}.`,
+    `${attachLabel} attachment, ${llLabel}, at isang playlist na hindi marunong magsinungaling.`,
+    `Ang ${mbti} na nag-cu-curate ng sariling heartbreak. Ang galing, nakakabahala.`,
+    `${songs.length} kanta, isang pattern, zero self-awareness. Tuloy tayo.`,
+    `Hindi ka nakikinig ng musika, ${zodiac}. Nagre-rehearse ka ng feelings.`,
+  ]);
 
   const song_diagnosis =
     songs.length > 1
@@ -206,7 +247,11 @@ export function generateFallback(
 
   const red_flags = getRedFlags(topSong, mbti, attachmentStyle, zodiac);
 
-  const final_verdict = `${mbti} + ${attachLabel} attachment + ${llLabel} + ${zodiac} = isang tao na alam kung paano mahalin nang husto pero hindi pa alam kung paano tanggapin ang parehong klase ng pagmamahal. "${topSong.title}" on repeat ay hindi therapy — iyan ay emotional marination. Huwag kang mag-alala, bestie. Alam ng Senti.AI na somewhere sa playlist mo ay may kanta para sa recovery. Hindi pa lang siya yung pinakamalakas.`;
+  const final_verdict = pick([
+    `Alam mong hindi therapy ang pag-repeat ng "${topSong.title}", pero ginagawa mo pa rin. ${attachLabel} attachment kasi — ang sakit, pamilyar; ang pamilyar, ligtas. Somewhere sa ${songs.length} kanta mo may recovery song. Hindi pa lang siya yung pinakamalakas.`,
+    `Ang buong problema, ${mbti}: kaya mong i-articulate ang lahat maliban sa sarili mong kailangan. ${llLabel} ang love language mo pero hindi mo ito hinihingi — binibigay mo lang, tapos naghihintay. Hindi 'yan kabutihan, transaction 'yan na walang kausap.`,
+    `Hindi ka stuck sa tao, ${zodiac}. Stuck ka sa version ng sarili mo noong panahong iyon. Kaya "${topSong.title}" — hindi para sa kanya iyon, para sa dati mong ikaw. Mas mahirap i-move on-an ang sarili.`,
+  ]);
 
   const recommended_action =
     threat_level === "CRITICAL"
