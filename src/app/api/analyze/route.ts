@@ -17,6 +17,14 @@ const MODEL = "claude-opus-5";
  */
 const EFFORT = "medium" as const;
 
+// Adaptive thinking is on by default and counts against max_tokens, so this
+// has to cover reasoning AND the full report.
+const MAX_TOKENS = 12000;
+
+// The retry after a truncated response needs real headroom. Re-sending the
+// same ceiling just truncates again in the same place.
+const RETRY_MAX_TOKENS = 20000;
+
 // Server-side caps — the client enforces its own, this is the real boundary.
 const MAX_SONGS = 25;
 const MAX_FIELD_LEN = 200;
@@ -97,9 +105,7 @@ export async function POST(req: NextRequest) {
 
     const baseRequest = {
       model: MODEL,
-      // Adaptive thinking is on by default and counts against max_tokens,
-      // so this has to cover reasoning AND the full report.
-      max_tokens: 12000,
+      max_tokens: MAX_TOKENS,
       // The system prompt is large and byte-identical on every request —
       // cache it so repeat analyses pay ~10% for the prefix.
       system: [
@@ -116,9 +122,10 @@ export async function POST(req: NextRequest) {
     // version rejects the parameter, we must NOT lose the whole analysis over
     // it — a silent drop to the static fallback is exactly how every user ends
     // up with the same templated report.
-    const requestAnalysis = (structured: boolean) =>
+    const requestAnalysis = (structured: boolean, maxTokens = MAX_TOKENS) =>
       anthropic.messages.create({
         ...baseRequest,
+        max_tokens: maxTokens,
         output_config: structured
           ? {
               effort: EFFORT,
@@ -127,9 +134,10 @@ export async function POST(req: NextRequest) {
           : { effort: EFFORT },
       });
 
+    let structured = true;
     let message;
     try {
-      message = await requestAnalysis(true);
+      message = await requestAnalysis(structured);
     } catch (err) {
       const status = (err as { status?: number })?.status;
       if (status === 400) {
@@ -137,17 +145,28 @@ export async function POST(req: NextRequest) {
           "[/api/analyze] structured outputs rejected, retrying without:",
           (err as Error)?.message
         );
-        message = await requestAnalysis(false);
+        structured = false;
+        message = await requestAnalysis(structured);
       } else {
         throw err;
       }
     }
 
-    // A truncated response is unparseable JSON. One retry is far cheaper than
-    // dropping the user to the static fallback roast.
+    // A truncated response is unparseable JSON. Retry with real headroom —
+    // re-sending the same ceiling just truncates in the same place. Keep
+    // whichever output mode the first attempt settled on, so a structured-
+    // output rejection isn't silently undone by the retry.
     if (message.stop_reason === "max_tokens") {
-      console.warn("[/api/analyze] hit max_tokens, retrying once");
-      message = await requestAnalysis(true);
+      console.warn(
+        `[/api/analyze] hit max_tokens at ${MAX_TOKENS}, retrying at ${RETRY_MAX_TOKENS}`
+      );
+      message = await requestAnalysis(structured, RETRY_MAX_TOKENS);
+    }
+
+    // Still truncated. Parsing would throw a misleading JSON syntax error, so
+    // fail with something the client can actually surface as a reason.
+    if (message.stop_reason === "max_tokens") {
+      throw new Error(`Response truncated at ${RETRY_MAX_TOKENS} max_tokens`);
     }
 
     // Safety classifiers can decline a request outright (HTTP 200, empty
