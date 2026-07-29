@@ -11,6 +11,9 @@ import Button from "@/components/ui/Button";
 import MatchChallenge from "@/components/MatchChallenge";
 import { captureCard } from "@/lib/shareImage";
 
+/** Songs shown in the diagnosis card before the list collapses. */
+const SONG_PREVIEW_COUNT = 10;
+
 interface ResultsDashboardProps {
   result: ProfileResult;
   songs: Song[];
@@ -68,6 +71,7 @@ export default function ResultsDashboard({
   const score = result.emotional_damage_score;
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [showAllSongs, setShowAllSongs] = useState(false);
 
   const meters = [
     { label: "Emotional Instability", value: Math.min(99, Math.round(score * 10.5)) },
@@ -317,10 +321,22 @@ export default function ResultsDashboard({
           <SectionLabel>Song Diagnosis</SectionLabel>
           <p className="text-text-primary text-sm leading-relaxed mb-4">{result.song_diagnosis}</p>
           {songs.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {songs.map((s) => (
-                <SongChip key={`${s.title}-${s.artist}`} song={s} showPainIndex={false} />
-              ))}
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-2">
+                {(showAllSongs ? songs : songs.slice(0, SONG_PREVIEW_COUNT)).map((s, i) => (
+                  <SongChip key={`${s.title}-${s.artist}-${i}`} song={s} showPainIndex />
+                ))}
+              </div>
+              {songs.length > SONG_PREVIEW_COUNT && (
+                <button
+                  onClick={() => setShowAllSongs((v) => !v)}
+                  className="self-start font-mono text-xs text-accent hover:underline"
+                >
+                  {showAllSongs
+                    ? "[show less]"
+                    : `[+${songs.length - SONG_PREVIEW_COUNT} more evidence]`}
+                </button>
+              )}
             </div>
           )}
         </Card>

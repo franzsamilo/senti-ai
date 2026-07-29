@@ -6,7 +6,9 @@ interface PersonalContextStepProps {
   onNext: () => void;
 }
 
-const MAX_CHARS = 500;
+import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
+
+const MAX_CHARS = MAX_CONTEXT_CHARS;
 const MIN_CHARS = 20;
 
 export default function PersonalContextStep({
@@ -65,7 +67,7 @@ export default function PersonalContextStep({
             value={context}
             onChange={(e) => onContextChange(e.target.value)}
             maxLength={MAX_CHARS + 10}
-            rows={5}
+            rows={9}
             placeholder={`e.g., "nag-break kami after 3 years tapos nakita ko siya sa Spotify ng ex niya na may shared playlist called 'us <3'... ayoko na talaga. MU kami for 2 years walang label, tapos biglang may bago. Ngayon every gabi Pagsamo on repeat habang ini-scroll ko yung old convos namin. I keep typing 'kumusta ka na' then deleting it. Ang gago ko."`}
             className="w-full resize-none rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors placeholder:opacity-40"
             style={{

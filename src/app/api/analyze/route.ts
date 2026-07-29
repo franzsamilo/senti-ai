@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildPrompt } from "@/lib/buildPrompt";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { MAX_CONTEXT_CHARS } from "@/lib/sanitize";
+import { PROFILE_RESULT_SCHEMA } from "@/lib/resultSchema";
 import type { AnalysisRequest, ProfileResult } from "@/lib/types";
+
+// Server-side caps — the client enforces its own, this is the real boundary.
+const MAX_SONGS = 25;
+const MAX_FIELD_LEN = 200;
 
 export async function POST(req: NextRequest) {
   // Resolve client IP
@@ -52,25 +58,63 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Clamp untrusted input before it reaches the prompt
+  const safeSongs = songs.slice(0, MAX_SONGS).map((s) => ({
+    title: String(s.title ?? "").slice(0, MAX_FIELD_LEN),
+    artist: String(s.artist ?? "Unknown Artist").slice(0, MAX_FIELD_LEN),
+    mood: s.mood ?? "unknown",
+    painIndex:
+      typeof s.painIndex === "number" && Number.isFinite(s.painIndex)
+        ? Math.min(10, Math.max(0, s.painIndex))
+        : 5.5,
+  }));
+  const safeContext = personalContext
+    ? String(personalContext).slice(0, MAX_CONTEXT_CHARS)
+    : undefined;
+
   try {
-    const { system, user } = buildPrompt(songs, mbti, attachmentStyle, loveLanguage, zodiac, personalContext);
+    const { system, user } = buildPrompt(
+      safeSongs,
+      String(mbti).slice(0, 8),
+      attachmentStyle,
+      loveLanguage,
+      String(zodiac).slice(0, 32),
+      safeContext
+    );
 
     const anthropic = new Anthropic();
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1500,
+      model: "claude-opus-5",
+      max_tokens: 8000,
       system,
       messages: [{ role: "user", content: user }],
+      // Structured outputs guarantee the response parses — no more fence
+      // stripping and no half-written JSON on a truncated response.
+      output_config: {
+        effort: "medium",
+        format: { type: "json_schema", schema: PROFILE_RESULT_SCHEMA },
+      },
     });
 
-    // Extract the text content block
+    // Safety classifiers can decline a request outright (HTTP 200, empty
+    // content). Fall through to the client's fallback roast rather than
+    // rendering an empty dashboard.
+    if (message.stop_reason === "refusal") {
+      return NextResponse.json(
+        { error: "analysis_failed", message: "Analysis declined" },
+        { status: 500 }
+      );
+    }
+
+    // Extract the text content block (skips any thinking blocks)
     const textBlock = message.content.find((block) => block.type === "text");
     if (!textBlock || textBlock.type !== "text") {
       throw new Error("No text content in API response");
     }
 
-    // Strip markdown code fences if present
+    // Strip markdown code fences if present (belt-and-braces — structured
+    // outputs shouldn't emit them)
     let raw = textBlock.text.trim();
     raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
 

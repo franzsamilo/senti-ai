@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildMatchPrompt } from "@/lib/buildMatchPrompt";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { MATCH_RESULT_SCHEMA } from "@/lib/resultSchema";
 import type { UserProfile, MatchResult } from "@/lib/types";
 
 interface MatchEntry {
@@ -136,11 +137,19 @@ export async function POST(req: NextRequest) {
       const anthropic = new Anthropic();
 
       const message = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
+        model: "claude-opus-5",
+        max_tokens: 6000,
         system,
         messages: [{ role: "user", content: user }],
+        output_config: {
+          effort: "medium",
+          format: { type: "json_schema", schema: MATCH_RESULT_SCHEMA },
+        },
       });
+
+      if (message.stop_reason === "refusal") {
+        throw new Error("Analysis declined");
+      }
 
       const textBlock = message.content.find((block) => block.type === "text");
       if (!textBlock || textBlock.type !== "text") {

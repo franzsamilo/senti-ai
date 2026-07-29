@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const prompt = `You are a music mood classifier. For each song, determine its emotional mood and pain index.
 
-Classify each into ONE mood from: yearning, heartbreak, letting_go, kilig, toxic, denial, nostalgia, devotion, infatuation, existential, hopeless_crush, forbidden, sweet_pining, loyalty, anxiety, lost_love, adoration, warmth, obsession, belonging, tragic_hope
+Classify each into ONE mood from: yearning, heartbreak, letting_go, kilig, toxic, denial, nostalgia, devotion, infatuation, existential, hopeless_crush, forbidden, sweet_pining, loyalty, anxiety, lost_love, adoration, warmth, obsession, belonging, tragic_hope, jealousy
 
 Assign a painIndex from 0.0 to 10.0 (0-3 happy, 4-6 bittersweet, 7-8 heartbreak, 9-10 devastation).
 
@@ -66,12 +66,17 @@ ${songList}`;
 
     try {
       const message = await client.messages.create({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 500,
+        model: "claude-opus-5",
+        // Scales with the batch — users can now add up to 25 songs, and a
+        // truncated response would drop classifications silently.
+        max_tokens: Math.min(4000, 400 + uncached.length * 120),
+        thinking: { type: "disabled" },
+        output_config: { effort: "low" },
         messages: [{ role: "user", content: prompt }],
       });
 
-      const raw = message.content[0].type === "text" ? message.content[0].text : "";
+      const textBlock = message.content.find((b) => b.type === "text");
+      const raw = textBlock && textBlock.type === "text" ? textBlock.text : "";
 
       // Extract JSON array from the response
       const jsonMatch = raw.match(/\[[\s\S]*\]/);

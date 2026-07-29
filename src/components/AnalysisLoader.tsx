@@ -36,6 +36,19 @@ const MESSAGES = [
   "Final scan complete. You're not okay, bestie.",
 ];
 
+// Cycled while the API is still thinking — the analysis now runs a deeper model,
+// so the screen must never look frozen. Per the brief: loop the final messages.
+const STALL_MESSAGES = [
+  "Re-reading your playlist. The AI needs a moment.",
+  "Cross-checking your red flags against the national average... you're above it.",
+  "Verifying na hindi ka lang overreacting. (You are, but with evidence.)",
+  "Compiling receipts. There are a lot of receipts.",
+  "Double-checking one prediction. It felt too mean. Keeping it anyway.",
+  "Running the numbers again para sure. Still bad.",
+  "Consulting your last 3 situationships for peer review...",
+  "Almost done. Breathe. You'll survive this (allegedly).",
+];
+
 // Show messages faster at first (800ms), slow down mid-way (1200ms)
 // When API is done, rush remaining messages at 400ms each
 const NORMAL_SPEED = 900;
@@ -59,6 +72,7 @@ export default function AnalysisLoader({
   });
 
   const [visibleCount, setVisibleCount] = useState(1);
+  const [stallCount, setStallCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [apiDone, setApiDone] = useState(false);
 
@@ -80,14 +94,38 @@ export default function AnalysisLoader({
     return () => clearTimeout(id);
   }, [visibleCount, apiDone]);
 
+  // Once the scripted list runs out and the API is still working, keep the
+  // stall messages coming so the screen never looks stuck.
+  useEffect(() => {
+    if (apiDone) return;
+    if (visibleCount < MESSAGES.length) return;
+    const id = setTimeout(() => setStallCount((prev) => prev + 1), 1800);
+    return () => clearTimeout(id);
+  }, [visibleCount, stallCount, apiDone]);
+
+  // Append a few stall lines, then keep rotating the last one in place so a
+  // slow response can't grow the list past the fold.
+  const MAX_APPENDED_STALLS = 6;
+  const appended = Math.min(stallCount, MAX_APPENDED_STALLS);
+  const stalls = Array.from(
+    { length: appended },
+    (_, i) => STALL_MESSAGES[i % STALL_MESSAGES.length]
+  );
+  if (stallCount > MAX_APPENDED_STALLS) {
+    stalls[appended - 1] =
+      STALL_MESSAGES[(stallCount - 1) % STALL_MESSAGES.length];
+  }
+
+  const shownMessages = [...MESSAGES.slice(0, visibleCount), ...stalls];
+
   // Completed checkmarks follow visible with shorter delay
   useEffect(() => {
-    if (completedCount >= visibleCount - 1) return;
+    if (completedCount >= shownMessages.length - 1) return;
     const id = setTimeout(() => {
-      setCompletedCount((prev) => Math.min(prev + 1, visibleCount - 1));
+      setCompletedCount((prev) => Math.min(prev + 1, shownMessages.length - 1));
     }, 400);
     return () => clearTimeout(id);
-  }, [visibleCount, completedCount]);
+  }, [shownMessages.length, completedCount]);
 
   // Fire result when ready
   const tryFire = useCallback(() => {
@@ -166,9 +204,9 @@ export default function AnalysisLoader({
 
       {/* Loading messages */}
       <div className="flex flex-col gap-2 w-full overflow-hidden">
-        {MESSAGES.slice(0, visibleCount).map((msg, i) => {
+        {shownMessages.map((msg, i) => {
           const isDone = i < completedCount;
-          const isActive = i === completedCount && i < visibleCount;
+          const isActive = i === completedCount;
 
           return (
             <div

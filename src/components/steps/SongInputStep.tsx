@@ -9,14 +9,24 @@ import { searchSongs, songDatabase } from "@/data/songs";
 import { Song } from "@/lib/types";
 import type { SpotifyTrack } from "@/lib/spotify";
 
-const MAX_SONGS = 10;
-const MIN_SONGS = 5;
-const MAX_RESULTS = 25;
+const MAX_SONGS = 25;
+const MIN_SONGS = 3;
+const SWEET_SPOT = 8; // where the roast starts getting genuinely specific
+const MAX_RESULTS = 40;
 
 interface SongInputStepProps {
   songs: Song[];
   onSongsChange: (songs: Song[]) => void;
   onNext: () => void;
+}
+
+/** Threat-meter palette applied to a song's pain index. */
+function painColor(painIndex: number): string {
+  if (painIndex >= 9) return "#ff0040";
+  if (painIndex >= 7) return "#ff3252";
+  if (painIndex >= 5) return "#ff8c00";
+  if (painIndex >= 3) return "#ffd000";
+  return "#00cc88";
 }
 
 function spotifyTrackToSong(track: SpotifyTrack): Song {
@@ -44,6 +54,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Song[]>([]);
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [spotifyTracks, setSpotifyTracks] = useState<SpotifyTrack[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,6 +91,7 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
     }
     const found = searchSongs(trimmed).slice(0, MAX_RESULTS);
     setResults(found);
+    setActiveIndex(0);
     setOpen(true);
   }, [query]);
 
@@ -131,10 +143,26 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "ArrowDown" && results.length > 0) {
+      e.preventDefault();
+      setOpen(true);
+      setActiveIndex((prev) => (prev + 1) % results.length);
+      return;
+    }
+    if (e.key === "ArrowUp" && results.length > 0) {
+      e.preventDefault();
+      setOpen(true);
+      setActiveIndex((prev) => (prev - 1 + results.length) % results.length);
+      return;
+    }
+    if (e.key === "Escape") {
+      setOpen(false);
+      return;
+    }
     if (e.key !== "Enter") return;
     e.preventDefault();
     if (results.length > 0) {
-      addSong(results[0]);
+      addSong(results[activeIndex] ?? results[0]);
     } else if (query.trim()) {
       addCustomSong();
     }
@@ -173,23 +201,108 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
   const canAdd = songs.length < MAX_SONGS;
   const canProceed = songs.length >= MIN_SONGS;
 
+  // Live playlist diagnostics — gives the user a reason to keep adding songs
+  const avgPain =
+    songs.length > 0
+      ? songs.reduce((sum, s) => sum + s.painIndex, 0) / songs.length
+      : 0;
+
+  const uniqueArtists = new Set(songs.map((s) => s.artist.toLowerCase())).size;
+
+  const dominantMood = (() => {
+    const counts = new Map<string, number>();
+    for (const s of songs) {
+      if (s.mood === "unknown") continue;
+      counts.set(s.mood, (counts.get(s.mood) ?? 0) + 1);
+    }
+    let best: string | null = null;
+    let bestCount = 0;
+    for (const [mood, count] of counts) {
+      if (count > bestCount) {
+        best = mood;
+        bestCount = count;
+      }
+    }
+    return best;
+  })();
+
   return (
     <div className="flex flex-col gap-6 px-4 py-8 max-w-[680px] mx-auto w-full">
       <div className="flex flex-col gap-2">
         <StepIndicator current={1} />
         <h2 className="text-2xl font-bold text-text-primary">Your Hugot Playlist</h2>
         <p className="text-sm text-text-secondary">
-          Select 5–10 songs that define your emotional state rn
+          Add 3–{MAX_SONGS} songs that define your emotional state rn. OPM, P-pop,
+          Taylor, Sabrina, sombr, K-pop — lahat pwede.
         </p>
       </div>
 
-      {/* Song counter */}
-      <div className="font-mono text-xs text-text-muted">
-        <span className={songs.length >= MIN_SONGS ? "text-accent-success" : "text-accent"}>
-          {songs.length}
-        </span>
-        /{MAX_SONGS} songs added
+      {/* Song counter + intensity meter */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-3">
+          <div className="font-mono text-xs text-text-muted">
+            <span className={songs.length >= MIN_SONGS ? "text-accent-success" : "text-accent"}>
+              {songs.length}
+            </span>
+            /{MAX_SONGS} songs added
+          </div>
+          {songs.length > 0 && (
+            <button
+              onClick={() => onSongsChange([])}
+              className="font-mono text-xs text-text-muted hover:text-accent transition-colors"
+            >
+              [clear all]
+            </button>
+          )}
+        </div>
+
+        <div className="h-1 w-full rounded-full bg-border-subtle overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-300"
+            style={{
+              width: `${Math.min(100, (songs.length / SWEET_SPOT) * 100)}%`,
+              background:
+                songs.length >= SWEET_SPOT
+                  ? "linear-gradient(90deg, #ff3252, #ff0844)"
+                  : "rgba(255,50,82,0.55)",
+            }}
+          />
+        </div>
+
+        <p className="font-mono text-[11px] text-text-muted">
+          {songs.length < MIN_SONGS
+            ? `Minimum ${MIN_SONGS} songs to run a scan.`
+            : songs.length < SWEET_SPOT
+            ? `${SWEET_SPOT - songs.length} more song${
+                SWEET_SPOT - songs.length !== 1 ? "s" : ""
+              } and the AI can actually read your patterns, not just your mood.`
+            : "Sample size: lethal. The AI has more than enough to work with."}
+        </p>
       </div>
+
+      {/* Playlist diagnostics */}
+      {songs.length >= MIN_SONGS && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted border border-border-subtle rounded-lg px-3 py-2 bg-bg-card">
+          <span>
+            AVG PAIN INDEX{" "}
+            <span className={avgPain >= 7 ? "text-accent" : "text-text-secondary"}>
+              {avgPain.toFixed(1)}
+            </span>
+            /10
+          </span>
+          {dominantMood && (
+            <span>
+              DOMINANT MOOD{" "}
+              <span className="text-text-secondary">
+                {dominantMood.replace(/_/g, " ")}
+              </span>
+            </span>
+          )}
+          <span>
+            ARTISTS <span className="text-text-secondary">{uniqueArtists}</span>
+          </span>
+        </div>
+      )}
 
       {/* Selected songs */}
       {songs.length > 0 && (
@@ -287,28 +400,44 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
         {/* Dropdown */}
         {open && results.length > 0 && (
           <ul className="absolute z-50 mt-1 w-full bg-[#0f0f18] border border-border-subtle rounded-lg overflow-y-auto max-h-[300px] shadow-xl">
-            {results.map((song, i) => (
-              <li key={i}>
-                <button
-                  onClick={() => addSong(song)}
-                  disabled={isDuplicate(song)}
-                  className={[
-                    "w-full flex items-center justify-between px-4 py-3 text-sm text-left transition-colors duration-100",
-                    isDuplicate(song)
-                      ? "opacity-40 cursor-not-allowed"
-                      : "hover:bg-accent/10 cursor-pointer",
-                  ].join(" ")}
-                >
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-accent font-medium truncate">{song.title}</span>
-                    <span className="text-text-muted text-xs truncate">{song.artist}</span>
-                  </div>
-                  {isDuplicate(song) && (
-                    <span className="text-xs text-text-muted ml-4 shrink-0">added</span>
-                  )}
-                </button>
-              </li>
-            ))}
+            {results.map((song, i) => {
+              const dup = isDuplicate(song);
+              return (
+                <li key={`${song.title}-${song.artist}-${i}`}>
+                  <button
+                    onClick={() => addSong(song)}
+                    // mousemove, not mouseenter: a cursor merely resting where
+                    // the dropdown opens must not steal the keyboard selection
+                    onMouseMove={() => setActiveIndex(i)}
+                    disabled={dup}
+                    className={[
+                      "w-full flex items-center justify-between gap-4 px-4 py-3 text-sm text-left transition-colors duration-100",
+                      dup
+                        ? "opacity-40 cursor-not-allowed"
+                        : i === activeIndex
+                        ? "bg-accent/10 cursor-pointer"
+                        : "cursor-pointer",
+                    ].join(" ")}
+                  >
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                      <span className="text-accent font-medium truncate">{song.title}</span>
+                      <span className="text-text-muted text-xs truncate">{song.artist}</span>
+                    </div>
+                    {dup ? (
+                      <span className="text-xs text-text-muted shrink-0">added</span>
+                    ) : (
+                      <span
+                        className="font-mono text-xs shrink-0 tabular-nums"
+                        style={{ color: painColor(song.painIndex) }}
+                        title="Pain index"
+                      >
+                        {song.painIndex.toFixed(1)}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
 
@@ -387,7 +516,8 @@ export default function SongInputStep({ songs, onSongsChange, onNext }: SongInpu
       )}
 
       <p className="text-xs text-text-muted font-mono">
-        Press Enter to add the top result, or click a suggestion.
+        ↑↓ to browse, Enter to add, or just type any song title and hit Enter —
+        we&apos;ll classify it on the fly.
       </p>
 
       {/* Next button */}

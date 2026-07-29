@@ -87,6 +87,16 @@ MBTI + ATTACHMENT COMBO CHEAT SHEET:
 - ISTJ + Anxious = spreadsheet tracking crush's response times
 - ISFP + Any = expressed feelings through Spotify playlist on IG story
 
+HOW TO USE THE PLAYLIST SIGNALS BLOCK:
+The user profile includes a computed SIGNALS block (mood spread, pain distribution, artist repeats, OPM vs international mix, era spread). Use it — it is the difference between a generic roast and a devastating one:
+- Repeat artist (3+ songs by one act) → that is not a "favorite artist," that is a coping mechanism with a discography. Name them.
+- High mood concentration (one mood is 50%+ of the list) → they are not curating, they are stuck. Call out the loop.
+- Wide mood spread with contradictory moods (kilig + heartbreak + toxic together) → they are not "eclectic," they are unresolved. Point out which song betrays which lie.
+- Pain range: if their lowest-pain song is 3.0 and highest is 9.8, roast the whiplash — that's the "I'm healing" playlist with one relapse track hidden in it.
+- OPM-only → hyper-local hugot, videoke-core, all pasaring captions. International-only → the "my taste is elevated" person whose Spotify Wrapped still says sad girl indie. Mixed → emotional damage is bilingual.
+- Era spread: if they mixed 90s/2000s OPM with 2025-2026 releases, they didn't move on, they upgraded the soundtrack.
+- Newer releases (2025-2026) in the list mean this is CURRENT damage, not archived damage. Treat it as an ongoing situation, not a memory.
+
 INTERNATIONAL ARTIST ROAST CONTEXT:
 - Taylor Swift listener → ex for every album era, romanticizes suffering
 - beabadoobee listener → claims "indie" with 40k followers
@@ -106,6 +116,16 @@ INTERNATIONAL ARTIST ROAST CONTEXT:
 - sombr listener → they discovered him through TikTok and now act like they've been a fan since 2021. "back to friends" is their anthem because they're stuck in the "we're better as friends" denial arc. They're 100% the type to say "we never dated" about someone they were clearly emotionally involved with for 8 months.
 - BTS ARIRANG listener → if their list is dominated by ARIRANG tracks, they're in their "BTS is back and nothing else matters" era. They watched the Netflix comeback livestream at 3AM Manila time and cried. If they picked "Merry Go Round" specifically, they're projecting their own relationship trauma onto a Kevin Parker beat. If they picked "Swim," they're telling themselves they're healing when they're really just floating. If they picked "Please," they ARE the yearning.
 - BTS listener in general → "Your parasocial relationship with 7 Korean men is more stable than any actual relationship you've had. You call them by first name like you're friends. You are not friends."
+- Taylor Swift "The Life of a Showgirl" era (Oct 2025) → they made a whole personality out of an album rollout. If they picked "Ruin the Friendship," they are actively planning to ruin a friendship and calling it fate. "Eldest Daughter" means they've been parentified since age 9 and are now dating like a project manager.
+- Olivia Rodrigo "You Seem Pretty Sad for a Girl So in Love" (Jun 2026) → the title IS the diagnosis, bestie. They're in a relationship and still crying to "Begged." If they picked "Drop Dead," they're posting pasaring about someone who blocked them in April.
+- Sabrina Carpenter listener → they have a devastating one-liner ready for a person who has not texted them in six weeks. "Manchild" on repeat while still replying to that manchild within four minutes.
+- Ariana Grande "eternal sunshine" listener → they'd erase the memory but keep the playlist. "i wish i hated you" is the whole thesis of their last three years.
+- Gracie Abrams / Lola Young / Alex Warren listener → their FYP raised them. Their entire emotional vocabulary came from a 14-second sped-up clip and they will defend it.
+- Chappell Roan listener → "Good Luck, Babe!" is not a song to them, it's a prophecy they issued to someone who is now happily married to a person of the gender they insisted they didn't like.
+- KPop Demon Hunters / HUNTR/X "Golden" or Saja Boys "Soda Pop" → they cried at an animated movie about demon idols and it unlocked something. Genuinely healthier than the rest of this list, which is a low bar.
+- Cup of Joe heavy (Multo, Estranghero, Sinderela, Alas Dose) → they have a specific person in mind for each track and could tell you exactly which month each one is about. The playlist is a case file.
+- BINI / SB19 / P-pop heavy → they have opinions about fandom discourse and a group chat dedicated to it. Their idol's comeback matters more to their week than their own love life, which is arguably correct.
+- fitterkarma + Cup of Joe + Arthur Nery in one list → the OPM sad-boy holy trinity. This is not a playlist, this is a diagnosis with a tracklist.
 
 CLASSIC/OLDIE SONG ROAST CONTEXT:
 - Eraserheads listener → they think liking Eraserheads is a personality trait. They say "OPM isn't dead" at every opportunity. If they picked "Ang Huling El Bimbo," they've been processing the same loss since 1995.
@@ -116,7 +136,14 @@ CLASSIC/OLDIE SONG ROAST CONTEXT:
 - Mix of classic + modern songs → "Your emotional range spans 3 decades. Hindi ka nag-move on — nag-UPGRADE ka lang ng heartbreak soundtrack."
 - My Chemical Romance / emo listener → "You never left your emo phase, you just started wearing business casual over it."
 
-TIMELY CULTURAL CONTEXT (as of April 2026):
+TIMELY CULTURAL CONTEXT (as of mid-2026):
+- Olivia Rodrigo dropped "You Seem Pretty Sad for a Girl So in Love" in June 2026. "Drop Dead" went straight to #1. Half the country is currently processing a situationship through it.
+- Taylor Swift's "The Life of a Showgirl" (Oct 2025) is still the default breakup-processing album for anyone over 22.
+- sombr's "I Barely Know Her" (Aug 2025) turned "back to friends" into the official anthem of people who were never officially anything.
+- "Golden" from KPop Demon Hunters was inescapable through 2025 and is still in every videoke queue and every mall in Metro Manila.
+- BINI and SB19 both broke internationally this year — P-pop stans have never been more insufferable and they have earned it.
+
+EARLIER CULTURAL CONTEXT (still relevant):
 - BTS just released ARIRANG on March 20, 2026 — their first group album in nearly 4 years after military service. If someone's playlist is heavy on ARIRANG tracks, reference the comeback hype and that they probably haven't slept since March 20.
 - fitterkarma is the breakout OPM act — "Pag-Ibig ay Kanibalismo II" went from Valentine's Day release to #1 on Billboard PH. 9.4M monthly listeners.
 - Cup of Joe's "Multo" was THE song of 2025 in PH — first OPM track to hit 500M streams that fast. If it's on someone's list, they're processing a haunting from a past relationship.
@@ -158,6 +185,84 @@ const ATTACHMENT_LABELS: Record<string, string> = {
   secure: "Secure",
 };
 
+/**
+ * Derives the patterns a human roaster would notice at a glance — repeat
+ * artists, mood loops, pain whiplash, OPM/international mix. Handing these to
+ * the model as pre-computed facts produces far sharper callouts than making it
+ * infer them from a raw track list.
+ */
+function buildSignals(songs: Song[]): string {
+  if (songs.length === 0) return "No songs provided.";
+
+  const pains = songs.map((s) => s.painIndex);
+  const avgPain = pains.reduce((a, b) => a + b, 0) / pains.length;
+  const minPain = Math.min(...pains);
+  const maxPain = Math.max(...pains);
+
+  // Mood distribution, most common first
+  const moodCounts = new Map<string, number>();
+  for (const s of songs) {
+    if (s.mood === "unknown") continue;
+    moodCounts.set(s.mood, (moodCounts.get(s.mood) ?? 0) + 1);
+  }
+  const moods = [...moodCounts.entries()].sort((a, b) => b[1] - a[1]);
+  const moodSummary = moods.length
+    ? moods
+        .map(
+          ([mood, n]) =>
+            `${mood} ×${n} (${Math.round((n / songs.length) * 100)}%)`
+        )
+        .join(", ")
+    : "unclassified";
+
+  // Artists appearing more than once — the coping-mechanism tell
+  const artistCounts = new Map<string, number>();
+  for (const s of songs) {
+    const key = s.artist.split(/\s+(?:ft\.|feat\.|&|w\/)\s+/i)[0].trim();
+    artistCounts.set(key, (artistCounts.get(key) ?? 0) + 1);
+  }
+  const repeats = [...artistCounts.entries()]
+    .filter(([, n]) => n > 1)
+    .sort((a, b) => b[1] - a[1]);
+  const repeatSummary = repeats.length
+    ? repeats.map(([artist, n]) => `${artist} ×${n}`).join(", ")
+    : "none — no single artist repeated";
+
+  const heaviest = songs.reduce((a, b) => (b.painIndex > a.painIndex ? b : a));
+  const lightest = songs.reduce((a, b) => (b.painIndex < a.painIndex ? b : a));
+
+  const devastating = songs.filter((s) => s.painIndex >= 8).length;
+  const kilig = songs.filter((s) => s.painIndex <= 4).length;
+
+  const topMoodShare = moods.length ? moods[0][1] / songs.length : 0;
+
+  return [
+    `- Average pain index: ${avgPain.toFixed(1)}/10 (range ${minPain.toFixed(
+      1
+    )} – ${maxPain.toFixed(1)})`,
+    `- Mood spread: ${moodSummary}`,
+    `- Mood concentration: ${
+      topMoodShare >= 0.5
+        ? `LOOPING — "${moods[0][0]}" is ${Math.round(
+            topMoodShare * 100
+          )}% of the list`
+        : "scattered — no single mood dominates, which is its own kind of unresolved"
+    }`,
+    `- Repeat artists: ${repeatSummary}`,
+    `- Unique artists: ${artistCounts.size} across ${songs.length} songs`,
+    `- Heaviest track: "${heaviest.title}" by ${heaviest.artist} (${heaviest.painIndex}/10)`,
+    `- Lightest track: "${lightest.title}" by ${lightest.artist} (${lightest.painIndex}/10)`,
+    `- ${devastating} song${
+      devastating !== 1 ? "s" : ""
+    } at 8.0+ pain (therapy tier), ${kilig} song${
+      kilig !== 1 ? "s" : ""
+    } at 4.0 or below (kilig tier)`,
+    `- Unrecognized/manually-added songs: ${
+      songs.filter((s) => s.mood === "unknown").length
+    } (roast these creatively — you don't know them, so read the title)`,
+  ].join("\n");
+}
+
 export function buildPrompt(
   songs: Song[],
   mbti: string,
@@ -185,13 +290,23 @@ ${songList}
 
 Average Pain Index: ${avgPain.toFixed(1)}/10
 
+COMPUTED PLAYLIST SIGNALS (use these — they are the sharpest material you have):
+${buildSignals(songs)}
+
 PERSONALITY PROFILE:
 - MBTI: ${mbti}
 - Attachment Style: ${ATTACHMENT_LABELS[attachmentStyle]}
 - Love Language(s): ${loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(", ")}
 - Zodiac Sign: ${zodiac}
 
-Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.${
+Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.
+
+NON-NEGOTIABLE QUALITY BAR:
+- Name at least THREE of their actual songs by title across the whole report. Not "your playlist" — the actual titles.
+- At least one behavioral prediction must be built on a COMPUTED SIGNAL above (a repeat artist, the mood loop, the pain range whiplash).
+- Every behavioral prediction must be a concrete, observable scenario with a specific detail — a time, a number, an app, a place. "You overthink" is a failure. "You'll draft the message at 2:14AM, screenshot it to the GC, and send nothing" is the bar.
+- No two predictions may be the same insight rephrased.
+- The headline must be sayable out loud in one breath and must make them wince.${
     personalContext
       ? `\n\nOPTIONAL PERSONAL CONTEXT (provided by the user — use this to make the roast laser-targeted):\n"${personalContext}"\n\nUse this context to make behavioral predictions specifically about their situation. Don't repeat what they said — read between the lines.`
       : ""
