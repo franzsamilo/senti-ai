@@ -12,7 +12,7 @@ import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
 import ShareCard from "@/components/ShareCard";
 import MatchChallenge from "@/components/MatchChallenge";
-import { BarkadaCreate, BarkadaJoin, LeaderboardSubmit } from "@/components/ResultActions";
+import { LeaderboardSubmit } from "@/components/ResultActions";
 import {
   IconArrowLeft,
   IconDownload,
@@ -46,8 +46,6 @@ interface ResultsDashboardProps {
   onRunAgain: () => void;
   onEditAnswers?: () => void;
   onHome?: () => void;
-  /** Set when the user arrived from a barkada group link. */
-  pendingBarkadaId?: string | null;
 }
 
 function Section({
@@ -104,7 +102,6 @@ export default function ResultsDashboard({
   onRunAgain,
   onEditAnswers,
   onHome,
-  pendingBarkadaId,
 }: ResultsDashboardProps) {
   const tone = threatTone(result.threat_level);
   const painIndex = result.pain_index ?? painStats(songs).weighted;
@@ -118,7 +115,7 @@ export default function ResultsDashboard({
     [mbti, attachmentStyle, zodiac, result.headline]
   );
 
-  // Frozen at mount: the profile shared to match/barkada should carry when
+  // Frozen at mount: the profile shared with a challenge should carry when
   // the report was viewed, not change on every render.
   const [timestamp] = useState(() => Date.now());
   const profile = { songs, mbti, attachmentStyle, loveLanguage, zodiac, result, timestamp };
@@ -381,14 +378,10 @@ export default function ResultsDashboard({
         </div>
       </Section>
 
-      <Section title="Bring your barkada into this" icon={<IconHeart size={16} />}>
+      <Section title="Pass it on" icon={<IconHeart size={16} />}>
         <div className="flex flex-col gap-3">
           <MatchChallenge profile={profile} />
-          {pendingBarkadaId && <BarkadaJoin groupId={pendingBarkadaId} profile={profile} />}
-          <div className="grid sm:grid-cols-2 gap-3">
-            <BarkadaCreate profile={profile} />
-            <LeaderboardSubmit result={result} mbti={mbti} attachmentStyle={attachmentStyle} zodiac={zodiac} />
-          </div>
+          <LeaderboardSubmit result={result} mbti={mbti} attachmentStyle={attachmentStyle} zodiac={zodiac} />
         </div>
       </Section>
 

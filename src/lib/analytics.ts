@@ -4,10 +4,8 @@ interface Analytics {
   totalShareTapped: number;
   totalMatchesCreated: number;
   totalMatchesCompleted: number;
-  totalBarkadaGroups: number;
   totalLeaderboardEntries: number;
   totalRateLimitHits: number;
-  totalSpotifyConnects: number;
   totalWithPersonalContext: number;
   totalSongRequests: number;
   avgEmotionalDamageScore: number;
@@ -25,10 +23,8 @@ const analytics: Analytics = {
   totalShareTapped: 0,
   totalMatchesCreated: 0,
   totalMatchesCompleted: 0,
-  totalBarkadaGroups: 0,
   totalLeaderboardEntries: 0,
   totalRateLimitHits: 0,
-  totalSpotifyConnects: 0,
   totalWithPersonalContext: 0,
   totalSongRequests: 0,
   avgEmotionalDamageScore: 0,
@@ -84,17 +80,11 @@ export function trackEvent(type: string, metadata?: Record<string, unknown>) {
     case "match_completed":
       analytics.totalMatchesCompleted++;
       break;
-    case "barkada_created":
-      analytics.totalBarkadaGroups++;
-      break;
     case "leaderboard_entry":
       analytics.totalLeaderboardEntries++;
       break;
     case "rate_limit_hit":
       analytics.totalRateLimitHits++;
-      break;
-    case "spotify_connect":
-      analytics.totalSpotifyConnects++;
       break;
     case "personal_context":
       analytics.totalWithPersonalContext++;

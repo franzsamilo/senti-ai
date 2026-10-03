@@ -140,7 +140,7 @@ export function painStats(songs: Song[]): PainStats {
   };
 }
 
-/** One shared ladder so the badge, the leaderboard and the barkada agree. */
+/** One shared ladder so the badge, the leaderboard and the history agree. */
 export function threatFromScore(score: number): ThreatLevel {
   if (score >= 8.5) return "CRITICAL";
   if (score >= 7) return "SEVERE";
