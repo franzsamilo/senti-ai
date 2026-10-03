@@ -20,6 +20,7 @@ interface LoveLanguageOption {
   Icon: typeof IconWords;
   label: string;
   description: string;
+  aside: string;
 }
 
 const OPTIONS: LoveLanguageOption[] = [
@@ -28,30 +29,35 @@ const OPTIONS: LoveLanguageOption[] = [
     Icon: IconWords,
     label: "Words of Affirmation",
     description: "Saying it out loud, and needing it said back.",
+    aside: "Nire-reread ang “ingat ka” ng limang beses",
   },
   {
     value: "acts",
     Icon: IconActs,
     label: "Acts of Service",
     description: "Handling the thing before they notice it needs handling.",
+    aside: "Nagpapa-Grab pauwi kahit hindi kayo",
   },
   {
     value: "gifts",
     Icon: IconGifts,
     label: "Receiving Gifts",
     description: "The object matters less than the fact they remembered.",
+    aside: "Tinatago pa rin yung resibo ng milk tea",
   },
   {
     value: "time",
     Icon: IconTime,
     label: "Quality Time",
     description: "Undivided attention, phone face-down.",
+    aside: "Ang “5 mins lang” mo ay 4 hours",
   },
   {
     value: "touch",
     Icon: IconTouch,
     label: "Physical Touch",
     description: "Proximity does what conversation can't.",
+    aside: "Holding hands sa jeep, walang label",
   },
 ];
 
@@ -81,18 +87,22 @@ export default function LoveLanguageStep({
       step={4}
       onBack={onBack}
       backLabel="Attachment"
-      kicker="INTAKE"
-      title="Love language"
-      subtitle="How you give it, not how you'd like to receive it. Select all that apply."
+      title="How do you show love?"
+      subtitle="How you give it, not how you'd like to receive it. Pick all that apply — but picking all five says something too."
       footer={
-        <Button onClick={onNext} disabled={selected.length === 0} className="w-full gap-2">
-          {selected.length === 0 ? "Select at least one" : "Continue"}
-          {selected.length > 0 && <IconArrowRight size={18} />}
+        <Button onClick={onNext} disabled={selected.length === 0} className="w-full">
+          {selected.length === 0 ? (
+            "Pick at least one"
+          ) : (
+            <>
+              Continue <IconArrowRight size={18} />
+            </>
+          )}
         </Button>
       }
     >
       <motion.div variants={listVariants} className="flex flex-col gap-2.5">
-        {OPTIONS.map(({ value, Icon, label, description }) => (
+        {OPTIONS.map(({ value, Icon, label, description, aside }) => (
           <OptionCard
             key={value}
             multi
@@ -101,6 +111,7 @@ export default function LoveLanguageStep({
             icon={<Icon size={22} />}
             label={label}
             description={description}
+            aside={aside}
           />
         ))}
       </motion.div>

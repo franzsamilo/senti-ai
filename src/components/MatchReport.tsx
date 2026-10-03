@@ -1,172 +1,80 @@
 "use client";
 
-import { MatchResult, UserProfile, ThreatLevel } from "@/lib/types";
-import GlitchText from "@/components/GlitchText";
+import { motion } from "framer-motion";
+import type { MatchResult, UserProfile } from "@/lib/types";
+import RevealText from "@/components/ui/RevealText";
+import ScoreRing from "@/components/ui/ScoreRing";
+import { itemVariants, listVariants } from "@/components/ui/motion";
+import { ATTACHMENT_LABELS, LOVE_LANGUAGE_SHORT, threatTone } from "@/lib/theme";
 
-const THREAT_COLORS: Record<string, string> = {
-  CRITICAL: "#ff0040",
-  SEVERE: "#ff3252",
-  ELEVATED: "#ff8c00",
-  MODERATE: "#ffd000",
-  LOW: "#00cc88",
-};
+const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
-function getThreatColor(level: string): string {
-  return THREAT_COLORS[level] ?? "#ff3252";
-}
-
-const LOVE_LANGUAGE_LABELS: Record<string, string> = {
-  words: "Words of Affirmation",
-  acts: "Acts of Service",
-  gifts: "Receiving Gifts",
-  time: "Quality Time",
-  touch: "Physical Touch",
-};
-
-const ATTACHMENT_LABELS: Record<string, string> = {
-  anxious: "Anxious 😰",
-  avoidant: "Avoidant 🚪",
-  disorganized: "Disorganized 🌀",
-  secure: "Secure 🧘",
-};
-
-interface ProfileCardProps {
-  profile: UserProfile;
-  label: string;
-  isWinner: boolean;
-}
-
-function ProfileCard({ profile, label, isWinner }: ProfileCardProps) {
-  const threatColor = getThreatColor(profile.result.threat_level);
+function ProfileCard({ profile, label, isWinner }: { profile: UserProfile; label: string; isWinner: boolean }) {
+  const tone = threatTone(profile.result.threat_level);
+  const languages = Array.isArray(profile.loveLanguage) ? profile.loveLanguage : [profile.loveLanguage];
 
   return (
-    <div
-      className="rounded-xl border p-4 flex flex-col gap-3 flex-1 min-w-0"
-      style={{
-        background: "rgba(255,255,255,0.02)",
-        borderColor: isWinner ? "rgba(255,50,82,0.4)" : "rgba(255,255,255,0.06)",
-      }}
+    <motion.div
+      variants={itemVariants}
+      className="glass rounded-3xl p-4 flex flex-col gap-3 flex-1 min-w-0"
+      style={isWinner ? { boxShadow: "var(--shadow-lift), inset 0 0 0 1.5px rgba(224,48,107,0.45)" } : undefined}
     >
       <div className="flex items-center justify-between gap-2">
-        <span
-          className="font-mono text-xs font-bold tracking-wider"
-          style={{ color: "#555555" }}
-        >
-          {label}
-        </span>
+        <span className="text-[13px] font-semibold text-text-muted">{label}</span>
         {isWinner && (
-          <span
-            className="font-mono text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(255,50,82,0.15)", color: "#ff3252", border: "1px solid rgba(255,50,82,0.3)" }}
-          >
-            MORE SAWI
+          <span className="text-[11px] font-bold rounded-full px-2 py-0.5 text-white" style={{ background: "var(--dusk-button)" }}>
+            More sawi 🏆
           </span>
         )}
       </div>
 
-      {/* Threat level badge */}
-      <div
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md w-fit font-mono text-xs font-bold"
-        style={{
-          background: `${threatColor}15`,
-          border: `1px solid ${threatColor}40`,
-          color: threatColor,
-        }}
-      >
-        <span
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ background: threatColor }}
-        />
-        {profile.result.threat_level}
+      <div className="flex items-end justify-between gap-2">
+        <span className="font-display text-[34px] font-extrabold leading-none" style={{ color: tone.ink }}>
+          {profile.result.emotional_damage_score.toFixed(1)}
+          <span className="text-[14px] text-text-muted font-semibold">/10</span>
+        </span>
+        <span className="text-[11px] font-semibold rounded-full px-2 py-0.5" style={{ color: tone.ink, background: tone.soft }}>
+          {tone.label}
+        </span>
       </div>
 
-      {/* Stats */}
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs" style={{ color: "#555555" }}>Damage Score</span>
-          <span
-            className="font-mono text-sm font-bold"
-            style={{ color: threatColor }}
-          >
-            {profile.result.emotional_damage_score.toFixed(1)}/10
-          </span>
-        </div>
-        <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs" style={{ color: "#555555" }}>MBTI</span>
-          <span className="font-mono text-xs font-bold" style={{ color: "#e8e8e8" }}>
-            {profile.mbti}
-          </span>
-        </div>
-        <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs shrink-0" style={{ color: "#555555" }}>Attachment</span>
-          <span className="font-mono text-xs text-right" style={{ color: "#888888" }}>
-            {ATTACHMENT_LABELS[profile.attachmentStyle] ?? profile.attachmentStyle}
-          </span>
-        </div>
-        <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs shrink-0" style={{ color: "#555555" }}>Love Language</span>
-          <span className="font-mono text-xs text-right leading-tight" style={{ color: "#888888" }}>
-            {Array.isArray(profile.loveLanguage)
-                ? profile.loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l] || l).join(", ")
-                : LOVE_LANGUAGE_LABELS[profile.loveLanguage] ?? profile.loveLanguage}
-          </span>
-        </div>
-        <div className="flex justify-between items-baseline gap-2">
-          <span className="text-xs" style={{ color: "#555555" }}>Zodiac</span>
-          <span className="font-mono text-xs capitalize" style={{ color: "#888888" }}>
-            {profile.zodiac}
-          </span>
-        </div>
-      </div>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[13px]">
+        <dt className="text-text-muted">Type</dt>
+        <dd className="text-text-primary font-medium text-right">{profile.mbti}</dd>
+        <dt className="text-text-muted">Attachment</dt>
+        <dd className="text-text-primary text-right">{ATTACHMENT_LABELS[profile.attachmentStyle] ?? profile.attachmentStyle}</dd>
+        <dt className="text-text-muted">Love</dt>
+        <dd className="text-text-primary text-right">{languages.map((l) => LOVE_LANGUAGE_SHORT[l] ?? l).join(", ")}</dd>
+        <dt className="text-text-muted">Sign</dt>
+        <dd className="text-text-primary text-right">{cap(profile.zodiac)}</dd>
+      </dl>
 
-      {/* Songs */}
-      <div className="flex flex-col gap-1">
-        <span className="font-mono text-xs" style={{ color: "#555555" }}>PLAYLIST</span>
-        <div className="flex flex-wrap gap-1">
-          {profile.songs.map((song, i) => (
-            <span
-              key={i}
-              className="text-xs px-2 py-0.5 rounded-full"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.06)",
-                color: "#888888",
-              }}
-            >
-              {song.title}
-            </span>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-1">
+        {profile.songs.slice(0, 8).map((song, i) => (
+          <span key={i} className="text-[11.5px] px-2 py-0.5 rounded-lg bg-white border border-border-subtle text-text-secondary truncate max-w-full">
+            {song.title}
+          </span>
+        ))}
+        {profile.songs.length > 8 && (
+          <span className="text-[11.5px] px-2 py-0.5 text-text-muted">+{profile.songs.length - 8}</span>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-interface DetailCardProps {
-  label: string;
-  value: string;
-  accent?: boolean;
-}
-
-function DetailCard({ label, value, accent }: DetailCardProps) {
+function DetailCard({ emoji, label, value, accent }: { emoji: string; label: string; value: string; accent?: boolean }) {
   return (
-    <div
-      className="rounded-xl border p-4 flex flex-col gap-2"
-      style={{
-        background: "rgba(255,255,255,0.02)",
-        borderColor: accent ? "rgba(255,50,82,0.25)" : "rgba(255,255,255,0.06)",
-      }}
+    <motion.div
+      variants={itemVariants}
+      className={`rounded-3xl p-5 flex flex-col gap-2 ${accent ? "" : "glass"}`}
+      style={accent ? { background: "#ffe6ee", border: "1px solid rgba(224,48,107,0.25)" } : undefined}
     >
-      <span
-        className="font-mono text-xs tracking-wider"
-        style={{ color: accent ? "#ff3252" : "#555555" }}
-      >
-        {label}
+      <span className={`text-[13px] font-semibold ${accent ? "text-accent-ink" : "text-text-muted"}`}>
+        {emoji} {label}
       </span>
-      <p className="text-sm leading-relaxed" style={{ color: "#e8e8e8" }}>
-        {value}
-      </p>
-    </div>
+      <p className="text-[15px] leading-relaxed text-text-primary">{value}</p>
+    </motion.div>
   );
 }
 
@@ -177,167 +85,63 @@ interface MatchReportProps {
 }
 
 export default function MatchReport({ matchResult, profileA, profileB }: MatchReportProps) {
-  const scoreA = profileA.result.emotional_damage_score;
-  const scoreB = profileB.result.emotional_damage_score;
-  const aIsMoreSawi = scoreA >= scoreB;
-
-  const combinedThreatColor = getThreatColor(matchResult.combined_threat_level);
-
-  const compatScore = matchResult.compatibility_score;
-  const compatColor =
-    compatScore >= 70 ? "#ffd000" : compatScore >= 40 ? "#ff8c00" : "#ff3252";
+  const aIsMoreSawi = profileA.result.emotional_damage_score >= profileB.result.emotional_damage_score;
+  const combined = threatTone(matchResult.combined_threat_level);
+  const compat = matchResult.compatibility_score;
 
   return (
-    <div className="flex flex-col gap-5 sm:gap-6 px-4 py-8 max-w-[680px] mx-auto w-full overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-col items-center gap-3 text-center">
+    <motion.div
+      variants={listVariants}
+      initial="hidden"
+      animate="show"
+      className="flex flex-col gap-5 px-4 py-8 max-w-[680px] mx-auto w-full"
+    >
+      {/* Hero */}
+      <motion.header
+        variants={itemVariants}
+        className="relative overflow-hidden rounded-[28px] px-5 py-7 sm:px-7 text-white text-center flex flex-col items-center gap-4 shadow-[var(--shadow-lift)]"
+        style={{
+          background:
+            "radial-gradient(120% 80% at 100% 0%, rgba(224,48,107,0.55) 0%, transparent 55%), radial-gradient(90% 70% at 0% 100%, rgba(139,63,217,0.5) 0%, transparent 60%), linear-gradient(160deg, #3b1d4a 0%, #2a1834 60%, #1f1228 100%)",
+        }}
+      >
+        <span className="text-[13px] font-medium text-white/70">Senti.AI match report</span>
+        <RevealText text={matchResult.match_headline} as="h1" className="text-[24px] sm:text-[30px] font-extrabold leading-[1.15]" />
+        <ScoreRing value={compat} max={100} color={combined.color} label="Compatibility" delay={0.5} />
+        <p className="text-[14px] text-white/80">
+          Compatibility ·{" "}
+          {compat >= 70 ? "Suspiciously okay. Mag-ingat." : compat >= 40 ? "Mabubuhay kayo. Barely." : "God help you both."}
+        </p>
         <span
-          className="font-mono text-xs tracking-[0.2em] px-3 py-1 rounded-full"
-          style={{
-            background: "rgba(255,50,82,0.08)",
-            border: "1px solid rgba(255,50,82,0.2)",
-            color: "#ff3252",
-          }}
+          className="text-[12px] font-extrabold uppercase tracking-wide rounded-lg px-2.5 py-1 border-2"
+          style={{ color: combined.color, borderColor: combined.color, background: `${combined.color}1f` }}
         >
-          SENTI.AI MATCH REPORT
+          Combined threat: {combined.label}
         </span>
-        <GlitchText
-          text={matchResult.match_headline}
-          as="h1"
-          className="text-xl md:text-2xl font-bold leading-tight"
-        />
-        {/* Combined threat level */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono text-sm font-bold"
-          style={{
-            background: `${combinedThreatColor}12`,
-            border: `1px solid ${combinedThreatColor}35`,
-            color: combinedThreatColor,
-          }}
-        >
-          <span
-            className="w-2 h-2 rounded-full animate-pulse"
-            style={{ background: combinedThreatColor }}
-          />
-          COMBINED THREAT: {matchResult.combined_threat_level}
-        </div>
-      </div>
+      </motion.header>
 
-      {/* Compatibility score */}
-      <div
-        className="rounded-xl border p-5 flex flex-col items-center gap-3"
-        style={{
-          background: "rgba(255,255,255,0.02)",
-          borderColor: "rgba(255,255,255,0.06)",
-        }}
-      >
-        <span className="font-mono text-xs tracking-wider" style={{ color: "#555555" }}>
-          COMPATIBILITY SCORE
-        </span>
-        <div className="flex items-baseline gap-1">
-          <span className="text-5xl font-bold" style={{ color: compatColor }}>
-            {compatScore}
-          </span>
-          <span className="text-xl" style={{ color: "#555555" }}>
-            /100
-          </span>
-        </div>
-        {/* Progress bar */}
-        <div
-          className="w-full h-2 rounded-full overflow-hidden"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-        >
-          <div
-            className="h-full rounded-full transition-all duration-1000"
-            style={{
-              width: `${compatScore}%`,
-              background: `linear-gradient(90deg, #ff0040, ${compatColor})`,
-              boxShadow: `0 0 8px ${compatColor}60`,
-            }}
-          />
-        </div>
-        <p className="text-xs text-center" style={{ color: "#555555" }}>
-          {compatScore >= 70
-            ? "Suspiciously okay. Mag-ingat."
-            : compatScore >= 40
-            ? "Mabubuhay kayo. Barely."
-            : "God help you both."}
-        </p>
-      </div>
-
-      {/* Side-by-side profiles — stacked on mobile, side-by-side on sm+ */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <ProfileCard profile={profileA} label="PERSON A" isWinner={aIsMoreSawi} />
-        <ProfileCard profile={profileB} label="PERSON B" isWinner={!aIsMoreSawi} />
+        <ProfileCard profile={profileA} label="Person A" isWinner={aIsMoreSawi} />
+        <ProfileCard profile={profileB} label="Person B" isWinner={!aIsMoreSawi} />
       </div>
 
-      {/* Detail cards: who texts / who ghosts */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <DetailCard label="📱 WHO TEXTS FIRST" value={matchResult.who_texts_first} />
-        <DetailCard label="👻 WHO GHOSTS FIRST" value={matchResult.who_ghosts_first} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <DetailCard emoji="📱" label="Who texts first" value={matchResult.who_texts_first} />
+        <DetailCard emoji="👻" label="Who ghosts first" value={matchResult.who_ghosts_first} />
       </div>
+      <DetailCard emoji="⏳" label="Talking stage duration" value={matchResult.talking_stage_duration} />
+      <DetailCard emoji="🚩" label="Biggest red flag combo" value={matchResult.biggest_red_flag_combo} accent />
+      <DetailCard emoji="🎵" label="Playlist analysis" value={matchResult.song_overlap_roast} />
+      <DetailCard emoji="🔮" label="Relationship prediction" value={matchResult.relationship_prediction} />
 
-      {/* Talking stage + red flag */}
-      <DetailCard
-        label="⏳ TALKING STAGE DURATION"
-        value={matchResult.talking_stage_duration}
-      />
-      <DetailCard
-        label="🚩 BIGGEST RED FLAG COMBO"
-        value={matchResult.biggest_red_flag_combo}
-        accent
-      />
-
-      {/* Song overlap roast */}
-      <div
-        className="rounded-xl border p-5 flex flex-col gap-2"
-        style={{
-          background: "rgba(255,255,255,0.02)",
-          borderColor: "rgba(255,255,255,0.06)",
-        }}
+      <motion.div
+        variants={itemVariants}
+        className="rounded-3xl p-5 flex flex-col gap-2 text-white"
+        style={{ background: "var(--dusk-button)", boxShadow: "var(--shadow-glow)" }}
       >
-        <span className="font-mono text-xs tracking-wider" style={{ color: "#555555" }}>
-          🎵 PLAYLIST ANALYSIS
-        </span>
-        <p className="text-sm leading-relaxed" style={{ color: "#e8e8e8" }}>
-          {matchResult.song_overlap_roast}
-        </p>
-      </div>
-
-      {/* Relationship prediction */}
-      <div
-        className="rounded-xl border p-5 flex flex-col gap-2"
-        style={{
-          background: "rgba(255,255,255,0.02)",
-          borderColor: "rgba(255,255,255,0.06)",
-        }}
-      >
-        <span className="font-mono text-xs tracking-wider" style={{ color: "#555555" }}>
-          🔮 RELATIONSHIP PREDICTION
-        </span>
-        <p className="text-sm leading-relaxed" style={{ color: "#e8e8e8" }}>
-          {matchResult.relationship_prediction}
-        </p>
-      </div>
-
-      {/* Final match verdict */}
-      <div
-        className="rounded-xl border p-5 flex flex-col gap-3"
-        style={{
-          background: "rgba(255,8,68,0.05)",
-          borderColor: "rgba(255,50,82,0.3)",
-        }}
-      >
-        <span className="font-mono text-xs tracking-wider" style={{ color: "#ff3252" }}>
-          FINAL MATCH VERDICT
-        </span>
-        <p className="text-sm leading-relaxed font-medium" style={{ color: "#e8e8e8" }}>
-          {matchResult.final_match_verdict}
-        </p>
-        <p className="font-mono text-xs text-center pt-1" style={{ color: "#555555" }}>
-          —— SENTI.AI MATCH SYSTEM ——
-        </p>
-      </div>
-    </div>
+        <span className="text-[13px] font-semibold text-white/80">Final match verdict</span>
+        <p className="font-display text-[18px] font-semibold leading-snug">{matchResult.final_match_verdict}</p>
+      </motion.div>
+    </motion.div>
   );
 }

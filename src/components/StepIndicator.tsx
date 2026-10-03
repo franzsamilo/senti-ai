@@ -3,37 +3,30 @@
 import { motion } from "framer-motion";
 import { softSpring } from "@/components/ui/motion";
 
+/** Short names for each step, shown under the bar. */
+export const STEP_NAMES = ["Songs", "Type", "Attachment", "Love", "Sign", "Story"];
+
 interface StepIndicatorProps {
   current: number;
   total?: number;
-  /** Optional label replacing the generic "STEP" word, e.g. "INTAKE". */
-  kicker?: string;
-}
-
-function zeroPad(n: number): string {
-  return String(n).padStart(2, "0");
 }
 
 /**
- * Segmented progress readout. Each completed segment fills with a spring so
- * advancing a step reads as instrument feedback, not a page swap.
+ * Segmented progress bar. The active segment fills with the dusk gradient and
+ * done segments stay lit, so the bar reads as "how far you've come" at a
+ * glance — a friendlier signal than a step number on its own.
  */
-export default function StepIndicator({
-  current,
-  total = 6,
-  kicker = "STEP",
-}: StepIndicatorProps) {
+export default function StepIndicator({ current, total = 6 }: StepIndicatorProps) {
+  const name = STEP_NAMES[current - 1];
   return (
-    <div className="flex flex-col gap-2.5">
-      <div className="flex items-center justify-between gap-4">
-        <p className="font-mono text-[11px] text-text-muted tracking-[0.2em] uppercase">
-          {kicker}{" "}
-          <span className="text-accent">{zeroPad(current)}</span>
-          <span className="text-text-muted"> / {zeroPad(total)}</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-4 text-[13px]">
+        <p className="text-text-secondary">
+          Step <span className="font-semibold text-text-primary tabular-nums">{current}</span> of{" "}
+          {total}
+          {name && <span className="text-text-muted"> · {name}</span>}
         </p>
-        <p className="font-mono text-[11px] text-text-muted tracking-[0.2em] uppercase">
-          {Math.round((current / total) * 100)}%
-        </p>
+        <p className="text-text-muted tabular-nums">{Math.round(((current - 1) / total) * 100)}% done</p>
       </div>
 
       <div
@@ -51,8 +44,8 @@ export default function StepIndicator({
           return (
             <div
               key={index}
-              className="h-[3px] flex-1 rounded-full overflow-hidden"
-              style={{ background: "rgba(255,255,255,0.07)" }}
+              className="h-1.5 flex-1 rounded-full overflow-hidden"
+              style={{ background: "rgba(74,30,82,0.08)" }}
             >
               <motion.div
                 className="h-full rounded-full"
@@ -61,10 +54,7 @@ export default function StepIndicator({
                 transition={softSpring}
                 style={{
                   originX: 0,
-                  background: active
-                    ? "linear-gradient(90deg, #ff3252, #ff0844)"
-                    : "rgba(255,50,82,0.4)",
-                  boxShadow: active ? "0 0 10px rgba(255,50,82,0.5)" : "none",
+                  background: active ? "var(--dusk)" : "rgba(224,48,107,0.45)",
                 }}
               />
             </div>

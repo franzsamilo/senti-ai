@@ -204,6 +204,95 @@ export const IconTarget = (p: IconProps) => (
   </Svg>
 );
 
+export const IconMusic = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9 18V5.5l11-2.5V16" />
+    <circle cx="6.5" cy="18" r="2.5" />
+    <circle cx="17.5" cy="16" r="2.5" />
+  </Svg>
+);
+
+export const IconPlus = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 5v14M5 12h14" />
+  </Svg>
+);
+
+export const IconSparkle = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z" />
+    <path d="M19 15.5c.25 1.6.9 2.25 2.5 2.5-1.6.25-2.25.9-2.5 2.5-.25-1.6-.9-2.25-2.5-2.5 1.6-.25 2.25-.9 2.5-2.5Z" />
+  </Svg>
+);
+
+export const IconUsers = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+    <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6" />
+  </Svg>
+);
+
+export const IconTrophy = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+    <path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5" />
+    <path d="M12 14v3.5M8.5 21h7M9.5 17.5h5" />
+  </Svg>
+);
+
+export const IconHistory = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.5 12a8.5 8.5 0 1 0 2.5-6" />
+    <path d="M3 4v4h4" />
+    <path d="M12 7.5V12l3 2" />
+  </Svg>
+);
+
+export const IconCalendar = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+    <path d="M3.5 10h17M8 3v4M16 3v4" />
+  </Svg>
+);
+
+export const IconDownload = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 3v12" />
+    <path d="m7 10 5 5 5-5" />
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+  </Svg>
+);
+
+export const IconLink = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1" />
+    <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" />
+  </Svg>
+);
+
+export const IconRefresh = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M20 11.5A8 8 0 0 0 5.6 6.6L4 8.5" />
+    <path d="M4 4v4.5h4.5" />
+    <path d="M4 12.5a8 8 0 0 0 14.4 4.9l1.6-1.9" />
+    <path d="M20 20v-4.5h-4.5" />
+  </Svg>
+);
+
+export const IconHeart = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z" />
+  </Svg>
+);
+
+export const IconEdit = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z" />
+    <path d="m13.5 6.5 4 4" />
+  </Svg>
+);
+
 /* ────────────────────────────────────────────────
    Zodiac — constellation charts
    ──────────────────────────────────────────────── */

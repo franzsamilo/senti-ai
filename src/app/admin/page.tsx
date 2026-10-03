@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import NeuralNetworkBg from "@/components/NeuralNetworkBg";
-import GlitchText from "@/components/GlitchText";
 import StatBox from "@/components/ui/StatBox";
 
 interface TopSongEntry {
@@ -32,11 +30,11 @@ interface AnalyticsData {
 }
 
 const THREAT_COLORS: Record<string, string> = {
-  CRITICAL: "#ff0040",
-  SEVERE: "#ff3252",
-  ELEVATED: "#ff8c00",
-  MODERATE: "#ffd000",
-  LOW: "#00cc88",
+  CRITICAL: "#e11d48",
+  SEVERE: "#f2542d",
+  ELEVATED: "#f59e0b",
+  MODERATE: "#eab308",
+  LOW: "#10b981",
 };
 
 const ATTACHMENT_LABELS: Record<string, string> = {
@@ -50,7 +48,7 @@ function DistributionBar({
   label,
   count,
   max,
-  color = "#ff3252",
+  color = "#e0306b",
 }: {
   label: string;
   count: number;
@@ -63,7 +61,7 @@ function DistributionBar({
       <span className="font-mono text-xs text-text-secondary w-28 shrink-0 truncate">
         {label}
       </span>
-      <div className="flex-1 bg-white/5 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-[rgba(74,30,82,0.06)] rounded-full h-2 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
@@ -182,17 +180,12 @@ export default function AdminPage() {
     : [];
 
   return (
-    <div className="relative min-h-screen bg-bg-primary text-text-primary font-display">
-      <NeuralNetworkBg />
+    <div className="relative min-h-screen text-text-primary">
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-10 text-center">
-          <GlitchText
-            text="ADMIN"
-            as="h1"
-            className="text-5xl font-bold tracking-tight mb-2"
-          />
+          <h1 className="text-5xl font-extrabold tracking-tight mb-2 text-dusk">Admin</h1>
           <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
             Senti.AI — Analytics Dashboard
           </p>
@@ -222,7 +215,7 @@ export default function AdminPage() {
                   onChange={(e) => setInputVal(e.target.value)}
                   placeholder="Admin password"
                   autoFocus
-                  className="bg-white/5 border border-border-subtle rounded-lg px-4 py-3 font-mono text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors"
+                  className="bg-[rgba(74,30,82,0.06)] border border-border-subtle rounded-lg px-4 py-3 font-mono text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors"
                 />
                 <button
                   type="submit"
@@ -368,7 +361,7 @@ export default function AdminPage() {
                         label={mbti}
                         count={count}
                         max={maxMBTI}
-                        color="#ff8c00"
+                        color="#f59e0b"
                       />
                     ))
                   )}
@@ -388,7 +381,7 @@ export default function AdminPage() {
                         label={zodiac}
                         count={count}
                         max={maxZodiac}
-                        color="#ffd000"
+                        color="#eab308"
                       />
                     ))
                   )}
@@ -425,7 +418,7 @@ export default function AdminPage() {
                       {data.topSongs.map((song, i) => (
                         <tr
                           key={`${song.title}:::${song.artist}`}
-                          className="border-t border-border-subtle hover:bg-white/[0.02] transition-colors"
+                          className="border-t border-border-subtle hover:bg-white/60 transition-colors"
                         >
                           <td className="font-mono text-xs text-text-muted py-2.5 pr-4">
                             {i + 1}

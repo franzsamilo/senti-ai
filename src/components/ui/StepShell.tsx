@@ -9,27 +9,27 @@ import { headerVariants, listVariants, spring } from "@/components/ui/motion";
 interface StepShellProps {
   step: number;
   total?: number;
-  /** Short monospace kicker above the title, e.g. "INTAKE". */
-  kicker?: string;
   title: string;
   subtitle?: ReactNode;
   children: ReactNode;
-  /** Pinned action area at the bottom of the step. */
+  /**
+   * Action area. Pinned to the bottom of the viewport on phones so the main
+   * button is always under the thumb, however long the step's content gets.
+   */
   footer?: ReactNode;
-  /** Omit to hide the back control (first step of the flow). */
+  /** Omit to hide the back control. */
   onBack?: () => void;
   backLabel?: string;
 }
 
 /**
- * One layout for every step in the flow: progress, kicker, title, subtitle,
+ * One layout for every step in the flow: back, progress, title, subtitle,
  * body, action. Consistent rhythm is most of what separates a considered
  * product from a stack of pages that each invented their own spacing.
  */
 export default function StepShell({
   step,
   total = 6,
-  kicker,
   title,
   subtitle,
   children,
@@ -42,37 +42,49 @@ export default function StepShell({
       variants={listVariants}
       initial="hidden"
       animate="show"
-      className="flex flex-col gap-7 px-5 py-9 sm:py-12 max-w-[680px] mx-auto w-full"
+      className="flex flex-col gap-6 px-4 sm:px-5 pt-6 sm:pt-10 pb-6 max-w-[680px] mx-auto w-full min-h-[100dvh]"
     >
-      <motion.header variants={headerVariants} className="flex flex-col gap-3">
-        {onBack && (
-          <motion.button
-            type="button"
-            onClick={onBack}
-            whileHover={{ x: -3 }}
-            whileTap={{ scale: 0.96 }}
-            transition={spring}
-            className="self-start inline-flex items-center gap-1.5 -ml-1 px-1 py-1 font-mono text-[11px] tracking-[0.18em] uppercase text-text-muted hover:text-accent transition-colors cursor-pointer min-h-[36px]"
-          >
-            <IconArrowLeft size={15} />
-            {backLabel}
-          </motion.button>
-        )}
-        <StepIndicator current={step} total={total} kicker={kicker} />
-        <h2 className="text-[26px] sm:text-3xl font-bold tracking-tight text-text-primary leading-[1.15]">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="text-sm text-text-secondary leading-relaxed max-w-[52ch]">
-            {subtitle}
-          </p>
-        )}
+      <motion.header variants={headerVariants} className="flex flex-col gap-4">
+        <div className="flex items-center justify-between min-h-[40px]">
+          {onBack ? (
+            <motion.button
+              type="button"
+              onClick={onBack}
+              whileHover={{ x: -2 }}
+              whileTap={{ scale: 0.94 }}
+              transition={spring}
+              className="inline-flex items-center gap-1.5 rounded-full pl-2 pr-3.5 py-2 text-[13px] font-medium text-text-secondary hover:text-text-primary bg-white/60 hover:bg-white border border-white/90 cursor-pointer"
+            >
+              <IconArrowLeft size={16} />
+              {backLabel}
+            </motion.button>
+          ) : (
+            <span />
+          )}
+          <span className="font-display font-bold text-[15px] tracking-tight text-dusk">Senti.AI</span>
+        </div>
+        <StepIndicator current={step} total={total} />
+        <div className="flex flex-col gap-2 pt-1">
+          <h2 className="text-[28px] sm:text-[34px] font-bold text-text-primary leading-[1.1]">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-[15px] text-text-secondary leading-relaxed max-w-[54ch]">{subtitle}</p>
+          )}
+        </div>
       </motion.header>
 
-      {children}
+      <div className="flex flex-col gap-6 flex-1">{children}</div>
 
       {footer && (
-        <motion.div variants={headerVariants} className="pt-1">
+        <motion.div
+          variants={headerVariants}
+          className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] z-20"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(241,235,251,0) 0%, rgba(241,235,251,0.92) 38%, rgba(241,235,251,0.98) 100%)",
+          }}
+        >
           {footer}
         </motion.div>
       )}

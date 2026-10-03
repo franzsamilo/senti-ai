@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
-import { ZODIAC_ICONS } from "@/components/ui/icons";
+import { IconCalendar, ZODIAC_ICONS } from "@/components/ui/icons";
 import { gridVariants, itemVariants, spring } from "@/components/ui/motion";
 
 const ZODIACS: { value: string; label: string; window: string }[] = [
@@ -20,6 +20,30 @@ const ZODIACS: { value: string; label: string; window: string }[] = [
   { value: "pisces", label: "Pisces", window: "Feb 19 – Mar 20" },
 ];
 
+/** First day of each sign, in calendar order. */
+const SIGN_STARTS: [month: number, day: number, sign: string][] = [
+  [1, 20, "aquarius"],
+  [2, 19, "pisces"],
+  [3, 21, "aries"],
+  [4, 20, "taurus"],
+  [5, 21, "gemini"],
+  [6, 21, "cancer"],
+  [7, 23, "leo"],
+  [8, 23, "virgo"],
+  [9, 23, "libra"],
+  [10, 23, "scorpio"],
+  [11, 22, "sagittarius"],
+  [12, 22, "capricorn"],
+];
+
+export function signFromDate(month: number, day: number): string {
+  let sign = "capricorn"; // Jan 1–19 wraps around from December
+  for (const [m, d, s] of SIGN_STARTS) {
+    if (month > m || (month === m && day >= d)) sign = s;
+  }
+  return sign;
+}
+
 interface ZodiacStepProps {
   onBack?: () => void;
   selected: string;
@@ -31,15 +55,33 @@ export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepPro
     <StepShell
       step={5}
       onBack={onBack}
-      backLabel="Love language"
-      kicker="INTAKE"
-      title="Star sign"
-      subtitle="Included for completeness. The system weights it more heavily than it should."
+      backLabel="Love"
+      title="What's your sign?"
+      subtitle="The stars don't lie. Neither does this algorithm — though it does weigh this more than it should."
     >
-      <motion.div
-        variants={gridVariants}
-        className="grid grid-cols-3 sm:grid-cols-4 gap-2.5"
+      {/* Birthday shortcut — the native date picker is the fastest input on phones */}
+      <motion.label
+        variants={itemVariants}
+        className="glass rounded-2xl px-4 py-3 flex items-center gap-3 cursor-pointer"
       >
+        <span className="grid place-items-center w-10 h-10 rounded-xl bg-[rgba(139,63,217,0.1)] text-accent-secondary shrink-0">
+          <IconCalendar size={20} />
+        </span>
+        <span className="flex flex-col flex-1 min-w-0">
+          <span className="text-[15px] font-semibold text-text-primary">Not sure? Enter your birthday</span>
+          <input
+            type="date"
+            aria-label="Birthday"
+            onChange={(e) => {
+              const [, month, day] = e.target.value.split("-").map(Number);
+              if (month && day) onSelect(signFromDate(month, day));
+            }}
+            className="mt-1 w-full bg-transparent text-base text-text-secondary outline-none"
+          />
+        </span>
+      </motion.label>
+
+      <motion.div variants={gridVariants} className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
         {ZODIACS.map(({ value, label, window }) => {
           const Icon = ZODIAC_ICONS[value];
           const isSelected = selected === value;
@@ -49,21 +91,15 @@ export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepPro
               variants={itemVariants}
               onClick={() => onSelect(value)}
               whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.95 }}
               transition={spring}
               aria-pressed={isSelected}
-              title={window}
-              className="relative flex flex-col items-center justify-center gap-2 rounded-xl border py-4 cursor-pointer min-h-[92px] overflow-hidden"
+              className="relative flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3.5 px-1 cursor-pointer min-h-[104px] overflow-hidden border"
               style={{
-                borderColor: isSelected
-                  ? "rgba(255,50,82,0.55)"
-                  : "rgba(255,255,255,0.07)",
-                background: isSelected
-                  ? "rgba(255,50,82,0.07)"
-                  : "rgba(255,255,255,0.02)",
-                color: isSelected ? "#ff3252" : "#7d7d7d",
-                transition:
-                  "border-color 180ms ease, background 180ms ease, color 180ms ease",
+                borderColor: isSelected ? "transparent" : "rgba(255,255,255,0.9)",
+                background: isSelected ? "transparent" : "rgba(255,255,255,0.72)",
+                boxShadow: isSelected ? "var(--shadow-glow)" : "var(--shadow-card)",
+                color: isSelected ? "#ffffff" : "#8b3fd9",
               }}
             >
               {isSelected && (
@@ -71,18 +107,21 @@ export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepPro
                   layoutId="zodiac-selection"
                   transition={spring}
                   className="absolute inset-0 -z-10"
-                  style={{
-                    background:
-                      "radial-gradient(120% 90% at 50% 0%, rgba(255,50,82,0.20), transparent 70%)",
-                  }}
+                  style={{ background: "var(--dusk-button)" }}
                 />
               )}
               <Icon size={30} />
               <span
-                className="text-[10px] sm:text-[11px] font-mono tracking-wide leading-none text-center"
-                style={{ color: isSelected ? "#ff5470" : "#5f5f5f" }}
+                className="font-display text-[14px] font-semibold leading-none"
+                style={{ color: isSelected ? "#fff" : "#2a1834" }}
               >
                 {label}
+              </span>
+              <span
+                className="text-[10.5px] leading-none"
+                style={{ color: isSelected ? "rgba(255,255,255,0.8)" : "#7b6987" }}
+              >
+                {window}
               </span>
             </motion.button>
           );

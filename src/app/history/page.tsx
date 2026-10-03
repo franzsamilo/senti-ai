@@ -1,243 +1,245 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import NeuralNetworkBg from "@/components/NeuralNetworkBg";
-import GlitchText from "@/components/GlitchText";
-import { ThreatLevel } from "@/lib/types";
+import { motion } from "framer-motion";
+import BrandMark from "@/components/ui/BrandMark";
+import { LinkButton } from "@/components/ui/Button";
+import { IconArrowRight } from "@/components/ui/icons";
+import { loadHistory, type HistoryEntry } from "@/lib/reportStore";
+import { threatTone } from "@/lib/theme";
 
-interface HistoryEntry {
-  score: number;
-  threat_level: ThreatLevel;
-  headline: string;
-  mbti: string;
-  timestamp: number;
-}
+const LINE = "#e0306b";
 
-const THREAT_COLORS: Record<ThreatLevel, string> = {
-  CRITICAL: "#ff0040",
-  SEVERE: "#ff3252",
-  ELEVATED: "#ff8c00",
-  MODERATE: "#ffd000",
-  LOW: "#00cc88",
-};
-
-function formatDate(ts: number): string {
+function formatDate(ts: number, long = false): string {
   return new Date(ts).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+    ...(long ? { year: "numeric", hour: "numeric", minute: "2-digit" } : {}),
   });
 }
 
-function formatDateLong(ts: number): string {
-  return new Date(ts).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function ScoreChangeBanner({ entries }: { entries: HistoryEntry[] }) {
+/** The "seek help" banner: compares the two latest scans. */
+function ChangeBanner({ entries }: { entries: HistoryEntry[] }) {
   if (entries.length < 2) return null;
-
   const latest = entries[entries.length - 1];
   const previous = entries[entries.length - 2];
   const diff = latest.score - previous.score;
-  const pct = Math.abs(Math.round((diff / previous.score) * 100));
+  const pct = previous.score > 0 ? Math.abs(Math.round((diff / previous.score) * 100)) : 0;
+
+  // Prefer the delulu meter when both scans have it — it's the funnier read.
+  const deluluDiff =
+    latest.delulu !== undefined && previous.delulu !== undefined ? latest.delulu - previous.delulu : null;
 
   let message: string;
-  let color: string;
-
-  if (diff > 0) {
-    message = `Your emotional damage has increased ${pct}% since last time. Seek help.`;
-    color = "#ff3252";
+  let tone: { ink: string; soft: string };
+  if (deluluDiff !== null && Math.abs(deluluDiff) >= 5) {
+    message =
+      deluluDiff > 0
+        ? `Your delulu index went up ${deluluDiff} points since last time. Seek help.`
+        : `Delulu index down ${Math.abs(deluluDiff)} points. Growth? Or better at lying to the app?`;
+    tone = deluluDiff > 0 ? { ink: "#be123c", soft: "#ffe4ea" } : { ink: "#047857", soft: "#dcf7eb" };
+  } else if (diff > 0) {
+    message = `Emotional damage up ${pct}% since last time. Seek help.`;
+    tone = { ink: "#be123c", soft: "#ffe4ea" };
   } else if (diff < 0) {
-    message = `Suspicious. Are you lying? Your score decreased ${pct}%.`;
-    color = "#00cc88";
+    message = `Suspicious. Your score dropped ${pct}%. Are you lying?`;
+    tone = { ink: "#047857", soft: "#dcf7eb" };
   } else {
     message = "Consistent emotional damage. At least you're stable.";
-    color = "#ffd000";
+    tone = { ink: "#a16207", soft: "#fef6cd" };
   }
 
   return (
-    <div
-      className="rounded-xl p-4 border font-mono text-sm text-center"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.02)",
-        borderColor: color,
-        color,
-      }}
-    >
+    <div className="rounded-2xl px-4 py-3.5 text-[15px] font-medium" style={{ color: tone.ink, background: tone.soft }}>
       {message}
     </div>
   );
 }
 
-function BarChart({ entries }: { entries: HistoryEntry[] }) {
-  return (
-    <div
-      className="rounded-xl p-4 sm:p-5 border overflow-hidden"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.02)",
-        borderColor: "rgba(255,255,255,0.06)",
-      }}
-    >
-      <p className="font-mono text-xs text-[#555555] uppercase tracking-widest mb-5">
-        DAMAGE OVER TIME
-      </p>
-      <div className="flex items-end gap-1.5 sm:gap-3 h-32 overflow-x-auto pb-1">
-        {entries.map((entry, i) => {
-          const heightPct = (entry.score / 10) * 100;
-          const color = THREAT_COLORS[entry.threat_level];
-          return (
-            <div key={i} className="flex flex-col items-center gap-1 flex-1 min-w-[24px]">
-              <span
-                className="font-mono text-[9px] sm:text-[10px] font-bold leading-none"
-                style={{ color }}
-              >
-                {entry.score.toFixed(1)}
-              </span>
-              <div className="w-full flex items-end" style={{ height: "80px" }}>
-                <div
-                  className="w-full rounded-t transition-all duration-700"
-                  style={{
-                    height: `${heightPct}%`,
-                    backgroundColor: color,
-                    opacity: 0.8,
-                    minHeight: "4px",
-                  }}
-                />
-              </div>
-              <span className="font-mono text-[8px] sm:text-[10px] text-[#555555] truncate w-full text-center">
-                {formatDate(entry.timestamp)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+/**
+ * Damage over time — one series, so no legend; the title names it. Fixed
+ * 0–10 axis so a 9.0 always looks like a 9.0, recessive grid, direct label on
+ * the latest point only, hover/tap for any other point's value.
+ */
+function DamageChart({ entries }: { entries: HistoryEntry[] }) {
+  const [hover, setHover] = useState<number | null>(null);
+  // Drawn at the container's real pixel width so axis text stays 11px on a
+  // phone instead of being scaled down with a fixed viewBox.
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [W, setW] = useState(600);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => setW(Math.max(260, Math.round(entry.contentRect.width))));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const H = 200;
+  const pad = { top: 22, right: 22, bottom: 30, left: 30 };
+  const innerW = W - pad.left - pad.right;
+  const innerH = H - pad.top - pad.bottom;
+  const x = (i: number) => pad.left + (entries.length === 1 ? innerW / 2 : (i / (entries.length - 1)) * innerW);
+  const y = (score: number) => pad.top + innerH * (1 - score / 10);
 
-function EntryCard({ entry }: { entry: HistoryEntry }) {
-  const color = THREAT_COLORS[entry.threat_level];
-  const truncatedHeadline =
-    entry.headline.length > 80
-      ? entry.headline.slice(0, 77) + "..."
-      : entry.headline;
+  const points = entries.map((e, i) => [x(i), y(e.score)] as const);
+  const path = points.map(([px, py], i) => `${i === 0 ? "M" : "L"}${px},${py}`).join(" ");
+  const area = `${path} L${points[points.length - 1][0]},${y(0)} L${points[0][0]},${y(0)} Z`;
+  const last = entries.length - 1;
+  const active = hover ?? last;
 
   return (
-    <div
-      className="rounded-xl p-4 border flex flex-col gap-2"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.02)",
-        borderColor: "rgba(255,255,255,0.06)",
-      }}
-    >
-      <p className="text-[#e8e8e8] text-sm leading-snug">{truncatedHeadline}</p>
-      <div className="flex items-center gap-2 flex-wrap">
-        <span
-          className="font-mono text-xs font-bold"
-          style={{ color }}
+    <div className="glass rounded-3xl p-4 sm:p-5">
+      <p className="font-display text-[16px] font-semibold text-text-primary">Emotional damage over time</p>
+      <p className="text-[13px] text-text-muted mb-3">Score out of 10 · last {entries.length} scan{entries.length > 1 ? "s" : ""}</p>
+      <div ref={boxRef} className="w-full">
+        <svg
+          width={W}
+          height={H}
+          viewBox={`0 0 ${W} ${H}`}
+          className="block touch-none"
+          role="img"
+          aria-label={`Emotional damage scores: ${entries.map((e) => e.score.toFixed(1)).join(", ")}`}
+          onMouseLeave={() => setHover(null)}
         >
-          {entry.score.toFixed(1)} / 10
-        </span>
-        <span
-          className="font-mono text-[10px] px-2 py-0.5 rounded border"
-          style={{ color, borderColor: color, backgroundColor: `${color}15` }}
-        >
-          {entry.threat_level}
-        </span>
-        {entry.mbti && (
-          <span className="font-mono text-[10px] text-[#888888]">
-            {entry.mbti}
-          </span>
-        )}
-        <span className="font-mono text-[10px] text-[#555555]">
-          {formatDateLong(entry.timestamp)}
-        </span>
+          <defs>
+            <linearGradient id="damage-area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={LINE} stopOpacity="0.18" />
+              <stop offset="100%" stopColor={LINE} stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {[0, 5, 10].map((tick) => (
+            <g key={tick}>
+              <line x1={pad.left} x2={W - pad.right} y1={y(tick)} y2={y(tick)} stroke="rgba(74,30,82,0.08)" strokeWidth={1} />
+              <text x={pad.left - 8} y={y(tick) + 4} textAnchor="end" fontSize="11" fill="#7b6987">
+                {tick}
+              </text>
+            </g>
+          ))}
+
+          {entries.length > 1 && <path d={area} fill="url(#damage-area)" />}
+          {entries.length > 1 && (
+            <motion.path
+              d={path}
+              fill="none"
+              stroke={LINE}
+              strokeWidth={2}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            />
+          )}
+
+          {/* Crosshair for the active point */}
+          <line x1={points[active][0]} x2={points[active][0]} y1={pad.top} y2={y(0)} stroke="rgba(74,30,82,0.18)" strokeDasharray="3 3" />
+
+          {points.map(([px, py], i) => (
+            <g key={i}>
+              <circle cx={px} cy={py} r={i === active ? 6 : 4} fill={LINE} stroke="#fff" strokeWidth={2} />
+              {/* Hit target larger than the mark */}
+              <rect
+                x={px - innerW / Math.max(2, entries.length * 2)}
+                y={pad.top}
+                width={innerW / Math.max(1, entries.length)}
+                height={innerH}
+                fill="transparent"
+                onMouseEnter={() => setHover(i)}
+                onClick={() => setHover(i)}
+              />
+            </g>
+          ))}
+
+          {/* Direct label on the active point (the latest by default) */}
+          <g transform={`translate(${Math.min(W - pad.right - 44, Math.max(pad.left + 44, points[active][0]))}, ${Math.max(14, points[active][1] - 14)})`}>
+            <text textAnchor="middle" fontSize="13" fontWeight="700" fill="#2a1834">
+              {entries[active].score.toFixed(1)}
+            </text>
+          </g>
+
+          {entries.map((e, i) =>
+            i === 0 || i === last || i === hover ? (
+              <text key={i} x={x(i)} y={H - 8} textAnchor="middle" fontSize="11" fill="#7b6987">
+                {formatDate(e.timestamp)}
+              </text>
+            ) : null
+          )}
+        </svg>
       </div>
     </div>
   );
 }
 
 export default function HistoryPage() {
-  const [entries, setEntries] = useState<HistoryEntry[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("senti_history");
-      if (stored) {
-        const parsed = JSON.parse(stored) as HistoryEntry[];
-        setEntries(parsed);
-      }
-    } catch {}
-    setLoaded(true);
+    // localStorage is browser-only; reading after mount is intended.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEntries(loadHistory());
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-[#0a0a0f] text-[#e8e8e8] overflow-x-hidden">
-      <NeuralNetworkBg />
+    <main className="min-h-screen max-w-[680px] mx-auto px-4 pb-16 flex flex-col gap-6">
+      <nav className="py-5 flex items-center justify-between">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <BrandMark size={32} />
+          <span className="font-display font-bold text-[18px] text-text-primary">Senti.AI</span>
+        </Link>
+      </nav>
 
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-4 py-8 sm:py-12 flex flex-col gap-6 sm:gap-8">
-        {/* Header */}
-        <div className="flex flex-col items-center text-center gap-2">
-          <GlitchText
-            text="HISTORY"
-            className="text-4xl sm:text-5xl font-bold tracking-tight text-[#e8e8e8]"
-            as="h1"
-          />
-          <p className="font-mono text-xs text-[#888888] uppercase tracking-widest">
-            EMOTIONAL DETERIORATION TRACKER
-          </p>
+      <header className="flex flex-col gap-2">
+        <h1 className="text-[34px] sm:text-[42px] font-extrabold leading-tight text-text-primary">
+          Your <span className="text-dusk">deterioration</span>{" "}tracker
+        </h1>
+        <p className="text-[15px] text-text-secondary">Every scan from this browser, newest last. Stored only on this device.</p>
+      </header>
+
+      {entries === null ? null : entries.length === 0 ? (
+        <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-4">
+          <p className="text-[15px] text-text-secondary">No scans yet. Wala pang ebidensya.</p>
+          <LinkButton href="/">
+            Take your first scan <IconArrowRight size={18} />
+          </LinkButton>
         </div>
+      ) : (
+        <>
+          <DamageChart entries={entries} />
+          <ChangeBanner entries={entries} />
 
-        {/* Content */}
-        {!loaded ? null : entries.length === 0 ? (
-          <div
-            className="rounded-xl p-8 border text-center"
-            style={{
-              backgroundColor: "rgba(255,255,255,0.02)",
-              borderColor: "rgba(255,255,255,0.06)",
-            }}
-          >
-            <p className="font-mono text-sm text-[#555555]">
-              No history yet. Complete your first scan.
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Bar chart */}
-            <BarChart entries={entries} />
-
-            {/* Score change comparison */}
-            <ScoreChangeBanner entries={entries} />
-
-            {/* Entry list — reverse chronological */}
-            <div className="flex flex-col gap-3">
-              <p className="font-mono text-xs text-[#555555] uppercase tracking-widest">
-                SCAN LOG — {entries.length} ENTR{entries.length === 1 ? "Y" : "IES"}
-              </p>
-              {[...entries].reverse().map((entry, i) => (
-                <EntryCard key={i} entry={entry} />
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* Back link */}
-        <div className="flex justify-center pt-2">
-          <Link
-            href="/"
-            className="font-mono text-xs text-[#888888] hover:text-[#ff3252] transition-colors"
-          >
-            ← Take another scan
-          </Link>
-        </div>
-      </div>
+          <section className="flex flex-col gap-2.5">
+            <h2 className="text-[17px] font-bold text-text-primary">
+              Scan log <span className="text-text-muted font-medium">· {entries.length}</span>
+            </h2>
+            {[...entries].reverse().map((entry, i) => {
+              const tone = threatTone(entry.threat_level);
+              return (
+                <motion.div
+                  key={entry.timestamp}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="glass rounded-2xl p-4 flex flex-col gap-2"
+                >
+                  <p className="text-[15px] text-text-primary leading-snug">{entry.headline}</p>
+                  <div className="flex items-center gap-2 flex-wrap text-[12px]">
+                    <span className="font-display text-[15px] font-bold" style={{ color: tone.ink }}>
+                      {entry.score.toFixed(1)}/10
+                    </span>
+                    <span className="font-semibold rounded-full px-2 py-0.5" style={{ color: tone.ink, background: tone.soft }}>
+                      {tone.label}
+                    </span>
+                    {entry.mbti && <span className="text-text-secondary">{entry.mbti}</span>}
+                    <span className="text-text-muted">{formatDate(entry.timestamp, true)}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </section>
+        </>
+      )}
     </main>
   );
 }
