@@ -14,8 +14,10 @@ const STATE_KEY = "sentiStep";
  * walks the flow in reverse and only exits from the landing screen.
  *
  * Steps that shouldn't be returned to (the analysis run, the rate-limit
- * screen) replace the current entry instead of pushing, so Back skips past
- * them to the last real question.
+ * screen) leave the history stack untouched, so Back skips past them to the
+ * last real question. (They used to *replace* the current entry, which put
+ * "loading" into the stack — Back from the results then re-entered the
+ * loader and fired a second paid analysis.)
  */
 export function useStepHistory<T extends string>(
   step: T,
@@ -27,7 +29,9 @@ export function useStepHistory<T extends string>(
   // push a duplicate entry back onto the stack.
   const poppingRef = useRef(false);
   const stepRef = useRef(step);
-  stepRef.current = step;
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
 
   // Tag the initial entry so popstate can recognise our own states.
   useEffect(() => {
@@ -65,8 +69,8 @@ export function useStepHistory<T extends string>(
     (next: T) => {
       setStep(next);
       if (typeof window === "undefined" || poppingRef.current) return;
-      const method = replaceFor.includes(next) ? "replaceState" : "pushState";
-      window.history[method]({ ...window.history.state, [STATE_KEY]: next }, "");
+      if (replaceFor.includes(next)) return;
+      window.history.pushState({ ...window.history.state, [STATE_KEY]: next }, "");
     },
     // replaceFor is a literal list defined at the call site; re-running on
     // identity change would rebind the callback every render.

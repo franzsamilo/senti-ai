@@ -36,6 +36,23 @@ export async function generateCodeChallenge(verifier: string): Promise<string> {
 
 // ─── OAuth flow ───────────────────────────────────────────────────────────────
 
+/**
+ * Whether the Spotify import can work at all. The env vars are inlined at
+ * build time, so this is safe to call during render — and lets the UI hide
+ * the button instead of showing one that silently does nothing.
+ */
+export function isSpotifyConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID && process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI
+  );
+}
+
+/** sessionStorage keys shared by the callback page and the flow. */
+export const SPOTIFY_TRACKS_KEY = "spotify_tracks";
+/** Set by the callback; tells the home page to open straight on the song step. */
+export const SPOTIFY_FRESH_KEY = "spotify_fresh";
+export const SPOTIFY_ERROR_KEY = "spotify_error";
+
 export async function initiateSpotifyAuth(): Promise<void> {
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;

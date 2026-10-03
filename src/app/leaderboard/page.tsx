@@ -3,43 +3,32 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import NeuralNetworkBg from "@/components/NeuralNetworkBg";
-import GlitchText from "@/components/GlitchText";
+import BrandMark from "@/components/ui/BrandMark";
+import { LinkButton } from "@/components/ui/Button";
+import { IconArrowRight } from "@/components/ui/icons";
+import { useCountUp } from "@/components/ui/StatBox";
 import type { ThreatLevel } from "@/lib/types";
 import type { LeaderboardEntry } from "@/app/api/leaderboard/route";
-
-const THREAT_COLORS: Record<ThreatLevel, string> = {
-  CRITICAL: "#ff0040",
-  SEVERE: "#ff3252",
-  ELEVATED: "#ff8c00",
-  MODERATE: "#ffd000",
-  LOW: "#00cc88",
-};
-
-const RANK_COLORS: Record<number, string> = {
-  1: "#FFD700",
-  2: "#C0C0C0",
-  3: "#CD7F32",
-};
+import { ATTACHMENT_LABELS, RANK_COLORS, THREAT, threatTone } from "@/lib/theme";
 
 const MBTI_TYPES = [
-  "INFP","INFJ","INTP","INTJ","ISFP","ISFJ","ISTP","ISTJ",
-  "ENFP","ENFJ","ENTP","ENTJ","ESFP","ESFJ","ESTP","ESTJ",
+  "INFP", "INFJ", "INTP", "INTJ", "ISFP", "ISFJ", "ISTP", "ISTJ",
+  "ENFP", "ENFJ", "ENTP", "ENTJ", "ESFP", "ESFJ", "ESTP", "ESTJ",
 ];
 const ATTACHMENT_STYLES = ["anxious", "avoidant", "disorganized", "secure"];
 const ZODIACS = [
-  "aries","taurus","gemini","cancer","leo","virgo",
-  "libra","scorpio","sagittarius","capricorn","aquarius","pisces",
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ];
-const THREAT_LEVELS: ThreatLevel[] = ["CRITICAL","SEVERE","ELEVATED","MODERATE","LOW"];
+const THREAT_LEVELS: ThreatLevel[] = ["CRITICAL", "SEVERE", "ELEVATED", "MODERATE", "LOW"];
+
+const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
 function getFunnyTitle(entry: LeaderboardEntry): string {
-  const feelers = ["INFP","INFJ","ISFP","ISFJ","ENFP","ENFJ","ESFP","ESFJ"];
-  const thinkers = ["INTP","INTJ","ISTP","ISTJ","ENTP","ENTJ","ESTP","ESTJ"];
-
+  const feeler = entry.mbti.includes("F");
   if (entry.score >= 9.5) return "Emotional Damage Speedrunner";
-  if (entry.attachmentStyle === "anxious" && feelers.includes(entry.mbti)) return "Certified Sawi";
-  if (entry.attachmentStyle === "avoidant" && thinkers.includes(entry.mbti)) return "Professional Ghoster";
+  if (entry.attachmentStyle === "anxious" && feeler) return "Certified Sawi";
+  if (entry.attachmentStyle === "avoidant" && !feeler) return "Professional Ghoster";
   if (entry.attachmentStyle === "disorganized") return "Push-Pull Champion";
   if (entry.attachmentStyle === "secure" && entry.threat_level === "LOW") return "Suspiciously Healthy";
   if (entry.score >= 9.0) return "Walking Emotional Hazard";
@@ -54,181 +43,85 @@ function getFunnyTitle(entry: LeaderboardEntry): string {
   return fallbacks[entry.threat_level];
 }
 
-function useCountUp(target: number, duration = 1500) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    setValue(0);
-    const start = performance.now();
-    let raf: number;
-    function tick(now: number) {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(parseFloat((eased * target).toFixed(1)));
-      if (progress < 1) raf = requestAnimationFrame(tick);
-    }
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
-  return value;
-}
-
-function FilterPill({
-  label,
-  active,
-  color,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  color?: string;
-  onClick: () => void;
-}) {
+function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-mono font-medium transition-all duration-150 shrink-0 cursor-pointer border capitalize"
-      style={{
-        color: active ? (color ?? "#ff3252") : "#888",
-        borderColor: active ? (color ?? "#ff3252") : "rgba(255,255,255,0.1)",
-        backgroundColor: active ? `${color ?? "#ff3252"}18` : "transparent",
-      }}
+      aria-pressed={active}
+      className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors cursor-pointer border ${
+        active ? "text-white border-transparent" : "text-text-secondary bg-white/70 border-white hover:bg-white"
+      }`}
+      style={active ? { background: "var(--dusk-button)" } : undefined}
     >
       {label}
     </button>
   );
 }
 
-function PodiumCard({
-  entry,
-  rank,
-  delay,
-}: {
-  entry: LeaderboardEntry;
-  rank: number;
-  delay: number;
-}) {
-  const color = RANK_COLORS[rank]!;
-  const threatColor = THREAT_COLORS[entry.threat_level];
-  const score = useCountUp(entry.score);
-  const isFirst = rank === 1;
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-0.5">
+      <span className="text-[12px] font-medium text-text-muted shrink-0 w-[68px]">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function PodiumCard({ entry, rank, delay }: { entry: LeaderboardEntry; rank: number; delay: number }) {
+  const medal = RANK_COLORS[rank]!;
+  const tone = threatTone(entry.threat_level);
+  const score = useCountUp(entry.score, 1, true);
+  const first = rank === 1;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, type: "spring", stiffness: 260, damping: 24 }}
-      className={`flex flex-col items-center gap-2 rounded-xl p-4 sm:p-5 text-center ${isFirst ? "sm:order-2 order-1" : rank === 2 ? "sm:order-1 order-2" : "sm:order-3 order-3"}`}
-      style={{
-        background: "rgba(255,255,255,0.02)",
-        border: `1px solid ${color}55`,
-        boxShadow: `0 0 20px ${color}22`,
-        flex: isFirst ? "1.2" : "1",
-      }}
+      className={`glass rounded-3xl flex flex-col items-center gap-2 p-4 sm:p-5 text-center ${
+        first ? "sm:order-2 order-1 sm:-translate-y-3" : rank === 2 ? "sm:order-1 order-2" : "sm:order-3 order-3"
+      }`}
+      style={{ flex: first ? "1.2" : "1", boxShadow: `var(--shadow-lift), inset 0 0 0 1.5px ${medal}66` }}
     >
-      <div
-        className={`inline-flex items-center justify-center rounded-full border-2 font-bold font-mono ${isFirst ? "w-12 h-12 text-lg" : "w-10 h-10 text-sm"}`}
-        style={{
-          color,
-          borderColor: color,
-          boxShadow: `0 0 12px ${color}44`,
-        }}
+      <span
+        className={`grid place-items-center rounded-full font-bold text-white ${first ? "w-12 h-12 text-lg" : "w-10 h-10 text-sm"}`}
+        style={{ background: medal }}
       >
         #{rank}
-      </div>
-
-      <p
-        className={`font-bold font-mono ${isFirst ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"}`}
-        style={{ color: threatColor }}
-      >
-        {score}
-      </p>
-      <p className="text-[10px] font-mono text-[#555] uppercase tracking-wider">
-        Emotional Damage
-      </p>
-
-      <p className="text-xs font-mono font-medium" style={{ color }}>
-        {getFunnyTitle(entry)}
-      </p>
-
-      <div className="flex flex-wrap gap-1 justify-center">
-        <Chip label={entry.mbti} />
-        <Chip label={entry.attachmentStyle} />
-        <Chip label={entry.zodiac} />
-      </div>
-
-      <span
-        className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border"
-        style={{
-          color: threatColor,
-          borderColor: `${threatColor}55`,
-          backgroundColor: `${threatColor}18`,
-        }}
-      >
-        {entry.threat_level}
       </span>
+      <p className={`font-display font-extrabold tabular-nums ${first ? "text-[40px]" : "text-[32px]"} leading-none`} style={{ color: tone.ink }}>
+        {score.toFixed(1)}
+      </p>
+      <p className="text-[12px] text-text-muted">Emotional damage</p>
+      <p className="font-display text-[15px] font-semibold text-text-primary">{getFunnyTitle(entry)}</p>
+      <p className="text-[12px] text-text-secondary">
+        {entry.mbti} · {ATTACHMENT_LABELS[entry.attachmentStyle] ?? entry.attachmentStyle} · {cap(entry.zodiac)}
+      </p>
     </motion.div>
   );
 }
 
-function Chip({ label }: { label: string }) {
-  return (
-    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full capitalize border border-white/10 text-[#aaa] bg-white/[0.02]">
-      {label}
-    </span>
-  );
-}
-
-function EntryCard({
-  entry,
-  rank,
-  index,
-}: {
-  entry: LeaderboardEntry;
-  rank: number;
-  index: number;
-}) {
-  const threatColor = THREAT_COLORS[entry.threat_level];
-  const date = new Date(entry.timestamp).toLocaleDateString("en-PH", {
-    month: "short",
-    day: "numeric",
-  });
+function EntryRow({ entry, rank, index }: { entry: LeaderboardEntry; rank: number; index: number }) {
+  const tone = threatTone(entry.threat_level);
+  const date = new Date(entry.timestamp).toLocaleDateString("en-PH", { month: "short", day: "numeric" });
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, type: "spring", stiffness: 300, damping: 28 }}
-      className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 rounded-lg transition-all duration-200 hover:shadow-[0_0_12px_rgba(255,50,82,0.08)]"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.06)",
-      }}
+      transition={{ delay: Math.min(index, 12) * 0.04, type: "spring", stiffness: 300, damping: 28 }}
+      className="glass rounded-2xl flex items-center gap-3 px-4 py-3"
     >
-      <span className="w-8 text-center text-sm font-bold font-mono shrink-0 text-[#555]">
-        {rank}
-      </span>
-
-      <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
-        <Chip label={entry.mbti} />
-        <Chip label={entry.attachmentStyle} />
-        <Chip label={entry.zodiac} />
-        <span
-          className="text-[10px] font-mono font-bold px-2 py-0.5 rounded border"
-          style={{
-            color: threatColor,
-            borderColor: `${threatColor}55`,
-            backgroundColor: `${threatColor}18`,
-          }}
-        >
-          {entry.threat_level}
-        </span>
-        <span className="text-[10px] font-mono text-[#444]">{date}</span>
+      <span className="w-7 text-center text-[14px] font-bold text-text-muted tabular-nums shrink-0">{rank}</span>
+      <div className="flex-1 min-w-0">
+        <p className="text-[14px] font-medium text-text-primary truncate">
+          {entry.mbti} · {ATTACHMENT_LABELS[entry.attachmentStyle] ?? entry.attachmentStyle} · {cap(entry.zodiac)}
+        </p>
+        <p className="text-[12px] text-text-muted">
+          <span className="font-semibold" style={{ color: tone.ink }}>{tone.label}</span>{" "}· {date}
+        </p>
       </div>
-
-      <span
-        className="text-base sm:text-lg font-bold font-mono shrink-0"
-        style={{ color: threatColor }}
-      >
+      <span className="font-display text-[20px] font-bold tabular-nums shrink-0" style={{ color: tone.ink }}>
         {entry.score.toFixed(1)}
       </span>
     </motion.div>
@@ -244,18 +137,21 @@ export default function LeaderboardPage() {
   const [filterAttachment, setFilterAttachment] = useState<string | null>(null);
   const [filterZodiac, setFilterZodiac] = useState<string | null>(null);
   const [filterThreat, setFilterThreat] = useState<ThreatLevel | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
-  const hasFilters = filterMbti || filterAttachment || filterZodiac || filterThreat;
+  const hasFilters = Boolean(filterMbti || filterAttachment || filterZodiac || filterThreat);
 
-  const filtered = useMemo(() => {
-    return entries.filter((e) => {
-      if (filterMbti && e.mbti !== filterMbti) return false;
-      if (filterAttachment && e.attachmentStyle !== filterAttachment) return false;
-      if (filterZodiac && e.zodiac !== filterZodiac) return false;
-      if (filterThreat && e.threat_level !== filterThreat) return false;
-      return true;
-    });
-  }, [entries, filterMbti, filterAttachment, filterZodiac, filterThreat]);
+  const filtered = useMemo(
+    () =>
+      entries.filter(
+        (e) =>
+          (!filterMbti || e.mbti === filterMbti) &&
+          (!filterAttachment || e.attachmentStyle === filterAttachment) &&
+          (!filterZodiac || e.zodiac === filterZodiac) &&
+          (!filterThreat || e.threat_level === filterThreat)
+      ),
+    [entries, filterMbti, filterAttachment, filterZodiac, filterThreat]
+  );
 
   const clearFilters = () => {
     setFilterMbti(null);
@@ -265,10 +161,10 @@ export default function LeaderboardPage() {
   };
 
   useEffect(() => {
-    async function fetchLeaderboard() {
+    (async () => {
       try {
-        const res = await fetch("/api/leaderboard");
-        if (!res.ok) throw new Error("Failed to fetch leaderboard");
+        const res = await fetch("/api/leaderboard", { cache: "no-store" });
+        if (!res.ok) throw new Error("Couldn't load the leaderboard");
         const data = await res.json();
         setEntries(data.entries ?? []);
       } catch (err) {
@@ -276,111 +172,116 @@ export default function LeaderboardPage() {
       } finally {
         setLoading(false);
       }
-    }
-    fetchLeaderboard();
+    })();
   }, []);
 
   const top3 = filtered.slice(0, 3);
   const rest = filtered.slice(3);
 
   return (
-    <div className="relative min-h-screen bg-[#0a0a0f] text-[#e8e8e8] overflow-x-hidden">
-      <NeuralNetworkBg />
+    <main className="min-h-screen max-w-2xl mx-auto px-4 pb-16 flex flex-col gap-6">
+      <nav className="py-5">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <BrandMark size={32} />
+          <span className="font-display font-bold text-[18px] text-text-primary">Senti.AI</span>
+        </Link>
+      </nav>
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 sm:py-12">
-        <div className="text-center mb-6">
-          <p className="text-[#555] font-mono text-xs tracking-[0.3em] uppercase mb-3">
-            SENTI.AI — CLASSIFIED DATABASE
-          </p>
-          <GlitchText
-            text="MOST EMOTIONALLY DAMAGED"
-            as="h1"
-            className="text-2xl sm:text-5xl font-bold text-[#e8e8e8] mb-3"
-          />
-          <p className="text-[#888] font-mono text-xs tracking-[0.2em] uppercase">
-            {entries.length} profile{entries.length !== 1 ? "s" : ""} in the database
-          </p>
+      <header className="flex flex-col gap-2">
+        <h1 className="text-[34px] sm:text-[44px] font-extrabold leading-[1.05] text-text-primary">
+          Most <span className="text-dusk">emotionally damaged</span>
+        </h1>
+        <p className="text-[15px] text-text-secondary">
+          {entries.length} anonymous profile{entries.length !== 1 ? "s" : ""} · no names, just damage
+        </p>
+      </header>
+
+      <section className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowFilters((v) => !v)}
+            aria-expanded={showFilters}
+            className="rounded-full px-4 py-2 text-[14px] font-medium bg-white/80 border border-white text-text-primary cursor-pointer hover:bg-white"
+          >
+            {showFilters ? "Hide filters" : "Filter"}
+            {hasFilters ? " · on" : ""}
+          </button>
+          {hasFilters && (
+            <button onClick={clearFilters} className="text-[13px] font-medium text-accent-ink hover:underline cursor-pointer">
+              Clear all
+            </button>
+          )}
         </div>
-
-        <div className="mb-8 space-y-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">MBTI</span>
-            {MBTI_TYPES.map((t) => (
-              <FilterPill key={t} label={t} active={filterMbti === t} onClick={() => setFilterMbti(filterMbti === t ? null : t)} />
-            ))}
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Attach</span>
-            {ATTACHMENT_STYLES.map((a) => (
-              <FilterPill key={a} label={a} active={filterAttachment === a} onClick={() => setFilterAttachment(filterAttachment === a ? null : a)} />
-            ))}
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Zodiac</span>
-            {ZODIACS.map((z) => (
-              <FilterPill key={z} label={z} active={filterZodiac === z} onClick={() => setFilterZodiac(filterZodiac === z ? null : z)} />
-            ))}
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            <span className="text-[10px] font-mono text-[#555] uppercase tracking-wider shrink-0 w-12">Threat</span>
-            {THREAT_LEVELS.map((t) => (
-              <FilterPill key={t} label={t} active={filterThreat === t} color={THREAT_COLORS[t]} onClick={() => setFilterThreat(filterThreat === t ? null : t)} />
-            ))}
-            {hasFilters && (
-              <button onClick={clearFilters} className="text-[10px] font-mono text-[#ff3252] hover:text-white transition-colors shrink-0 ml-2 cursor-pointer">
-                Clear All
-              </button>
-            )}
-          </div>
-        </div>
-
-        {loading && (
-          <div className="flex flex-col items-center gap-3 py-20 text-[#555] font-mono text-sm">
-            <span className="animate-pulse">▶ LOADING RANKINGS...</span>
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="text-center py-20">
-            <p className="text-[#ff3252] font-mono text-sm">{error}</p>
-          </div>
-        )}
-
-        <AnimatePresence mode="wait">
-          {!loading && !error && filtered.length === 0 && (
-            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-20">
-              <GlitchText text="No emotional damage detected..." as="p" className="text-lg font-bold text-[#e8e8e8] mb-2" />
-              <p className="text-[#555] font-mono text-sm">...suspicious.</p>
+        <AnimatePresence initial={false}>
+          {showFilters && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="flex flex-col gap-2 overflow-hidden"
+            >
+              <FilterRow label="Type">
+                {MBTI_TYPES.map((t) => (
+                  <FilterPill key={t} label={t} active={filterMbti === t} onClick={() => setFilterMbti(filterMbti === t ? null : t)} />
+                ))}
+              </FilterRow>
+              <FilterRow label="Attachment">
+                {ATTACHMENT_STYLES.map((a) => (
+                  <FilterPill key={a} label={ATTACHMENT_LABELS[a]} active={filterAttachment === a} onClick={() => setFilterAttachment(filterAttachment === a ? null : a)} />
+                ))}
+              </FilterRow>
+              <FilterRow label="Sign">
+                {ZODIACS.map((z) => (
+                  <FilterPill key={z} label={cap(z)} active={filterZodiac === z} onClick={() => setFilterZodiac(filterZodiac === z ? null : z)} />
+                ))}
+              </FilterRow>
+              <FilterRow label="Threat">
+                {THREAT_LEVELS.map((t) => (
+                  <FilterPill key={t} label={THREAT[t].label} active={filterThreat === t} onClick={() => setFilterThreat(filterThreat === t ? null : t)} />
+                ))}
+              </FilterRow>
             </motion.div>
           )}
         </AnimatePresence>
+      </section>
 
-        {!loading && !error && filtered.length > 0 && (
-          <>
-            {top3.length > 0 && (
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                {top3.map((entry, i) => (
-                  <PodiumCard key={`podium-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 1} delay={i === 0 ? 0 : i === 1 ? 0.15 : 0.3} />
-                ))}
-              </div>
-            )}
-
-            {rest.length > 0 && (
-              <div className="flex flex-col gap-2">
-                {rest.map((entry, i) => (
-                  <EntryCard key={`entry-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 4} index={i} />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="mt-12 text-center">
-          <Link href="/" className="text-[#888] hover:text-[#ff3252] font-mono text-sm transition-colors duration-200">
-            ← Take your scan
-          </Link>
+      {loading && (
+        <div className="flex flex-col items-center gap-3 py-16">
+          <BrandMark size={44} />
+          <p className="text-[14px] text-text-secondary">Loading the rankings…</p>
         </div>
-      </div>
-    </div>
+      )}
+
+      {!loading && error && <p className="text-center py-16 text-[15px] text-accent-ink">{error}</p>}
+
+      {!loading && !error && filtered.length === 0 && (
+        <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-3">
+          <p className="font-display text-[20px] font-bold text-text-primary">No emotional damage detected…</p>
+          <p className="text-[14px] text-text-secondary">…suspicious. Be the first on the board.</p>
+          <LinkButton href="/">
+            Take your scan <IconArrowRight size={18} />
+          </LinkButton>
+        </div>
+      )}
+
+      {!loading && !error && filtered.length > 0 && (
+        <>
+          {top3.length > 0 && (
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-2">
+              {top3.map((entry, i) => (
+                <PodiumCard key={`podium-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 1} delay={i * 0.12} />
+              ))}
+            </div>
+          )}
+          {rest.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {rest.map((entry, i) => (
+                <EntryRow key={`entry-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 4} index={i} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </main>
   );
 }

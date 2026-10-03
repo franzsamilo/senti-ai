@@ -1,297 +1,240 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import NeuralNetworkBg from "@/components/NeuralNetworkBg";
 import LandingStep from "@/components/steps/LandingStep";
-import SongInputStep from "@/components/steps/SongInputStep";
-import MbtiStep from "@/components/steps/MbtiStep";
-import AttachmentStep from "@/components/steps/AttachmentStep";
-import LoveLanguageStep from "@/components/steps/LoveLanguageStep";
-import ZodiacStep from "@/components/steps/ZodiacStep";
-import PersonalContextStep from "@/components/steps/PersonalContextStep";
+import QuestionSteps, {
+  QUESTION_STEPS,
+  isQuestionStep,
+  type QuestionStep,
+} from "@/components/QuestionSteps";
 import AnalysisLoader from "@/components/AnalysisLoader";
 import ResultsDashboard from "@/components/ResultsDashboard";
 import RateLimitBlock from "@/components/RateLimitBlock";
+import { pageTransition, pageVariants } from "@/components/ui/motion";
+import { PENDING_BARKADA_KEY } from "@/components/ResultActions";
 
-import { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
-import { sanitizePersonalContext } from "@/lib/sanitize";
 import { useStepHistory } from "@/hooks/useStepHistory";
+import { useStepDirection } from "@/hooks/useStepDirection";
+import { isDraftComplete, useAssessmentDraft } from "@/hooks/useAssessmentDraft";
+import {
+  appendHistory,
+  loadLastReport,
+  saveLastReport,
+  type ReportSnapshot,
+} from "@/lib/reportStore";
+import { SPOTIFY_ERROR_KEY, SPOTIFY_FRESH_KEY, SPOTIFY_TRACKS_KEY } from "@/lib/spotify";
+import type { ProfileResult } from "@/lib/types";
 
-type Step =
-  | "landing"
-  | "songs"
-  | "mbti"
-  | "attachment"
-  | "love-language"
-  | "zodiac"
-  | "personal-context"
-  | "loading"
-  | "results"
-  | "blocked";
+type Step = "landing" | QuestionStep | "loading" | "results" | "blocked";
 
-const variants = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -12 },
-};
-
-const transition = { type: "spring" as const, stiffness: 320, damping: 30 };
+const ORDER: readonly Step[] = ["landing", ...QUESTION_STEPS, "loading", "results", "blocked"];
 
 /**
- * Reached automatically rather than chosen — Back should skip past these to
- * the last question the user actually answered.
+ * Reached automatically rather than chosen — they never enter the history
+ * stack, so Back skips past them to the last question actually answered.
  */
 const NON_RETURNABLE_STEPS = ["loading", "blocked"] as const;
+
+const DRAFT_KEY = "senti_draft";
 
 export default function Home() {
   const [step, setStep] = useState<Step>("landing");
   const { goTo, goBack } = useStepHistory<Step>(step, setStep, {
     replaceFor: NON_RETURNABLE_STEPS,
   });
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [mbti, setMbti] = useState<string>("");
-  const [attachmentStyle, setAttachmentStyle] = useState<AttachmentStyle>("anxious");
-  const [loveLanguage, setLoveLanguage] = useState<LoveLanguage[]>([]);
-  const [zodiac, setZodiac] = useState<string>("");
-  const [personalContext, setPersonalContext] = useState<string>("");
-  const [result, setResult] = useState<ProfileResult | null>(null);
+  const direction = useStepDirection(step, ORDER);
+  const { draft, setDraft, reset, hydrated } = useAssessmentDraft(DRAFT_KEY);
 
-  function handleMbtiSelect(value: string) {
-    setMbti(value);
-    goTo("attachment");
+  const [report, setReport] = useState<ReportSnapshot | null>(null);
+  const [lastReport, setLastReport] = useState<ReportSnapshot | null>(null);
+  const [spotifyError, setSpotifyError] = useState(false);
+  const [pendingBarkada, setPendingBarkada] = useState<string | null>(null);
+  const restoredRef = useRef(false);
+
+  /**
+   * Once the saved draft is loaded, decide where the user should land:
+   * straight onto the song list after Spotify, back on the question they
+   * were on before a refresh, or the landing page.
+   */
+  useEffect(() => {
+    if (!hydrated || restoredRef.current) return;
+    restoredRef.current = true;
+
+    const last = loadLastReport();
+    // Browser-only state (storage, history) — can't be read during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLastReport(last);
+
+    try {
+      // Arrived from a barkada group's "take your scan" link: remember the
+      // group for the results page and go straight to the first question.
+      const params = new URLSearchParams(window.location.search);
+      const barkada = params.get("barkada");
+      if (barkada && /^[a-z0-9]{4,16}$/i.test(barkada)) {
+        sessionStorage.setItem(PENDING_BARKADA_KEY, barkada);
+        params.delete("barkada");
+        const query = params.toString();
+        window.history.replaceState(window.history.state, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+        setPendingBarkada(barkada);
+        goTo("songs");
+        return;
+      }
+      setPendingBarkada(sessionStorage.getItem(PENDING_BARKADA_KEY));
+
+      if (sessionStorage.getItem(SPOTIFY_FRESH_KEY)) {
+        sessionStorage.removeItem(SPOTIFY_FRESH_KEY);
+        goTo("songs");
+        return;
+      }
+      if (sessionStorage.getItem(SPOTIFY_ERROR_KEY)) {
+        sessionStorage.removeItem(SPOTIFY_ERROR_KEY);
+        setSpotifyError(true);
+        return;
+      }
+    } catch {}
+
+    // A refresh keeps the history entry but resets React state; put the user
+    // back where that entry says they were.
+    const tagged = window.history.state?.sentiStep as Step | undefined;
+    if (isQuestionStep(tagged)) {
+      setStep(tagged);
+    } else if (tagged === "results" && last) {
+      setReport(last);
+      setStep("results");
+    }
+  }, [hydrated, goTo]);
+
+  const hasDraft =
+    draft.songs.length > 0 || Boolean(draft.mbti) || draft.attachmentStyle !== null;
+
+  function handleResult(result: ProfileResult) {
+    if (!draft.attachmentStyle) return;
+    const snapshot: ReportSnapshot = {
+      result,
+      songs: draft.songs,
+      mbti: draft.mbti,
+      attachmentStyle: draft.attachmentStyle,
+      loveLanguage: draft.loveLanguage,
+      zodiac: draft.zodiac,
+      createdAt: Date.now(),
+    };
+    setReport(snapshot);
+    setLastReport(snapshot);
+    saveLastReport(snapshot);
+    appendHistory(snapshot);
+    goTo("results");
   }
 
-  function handleAttachmentSelect(value: AttachmentStyle) {
-    setAttachmentStyle(value);
-    goTo("love-language");
+  function startOver() {
+    reset();
+    setReport(null);
+    try {
+      sessionStorage.removeItem(SPOTIFY_TRACKS_KEY);
+    } catch {}
+    goTo("songs");
   }
 
-  function handleLoveLanguageNext() {
-    goTo("zodiac");
+  function goToQuestion(next: QuestionStep | "loading") {
+    // Never start a paid analysis on a half-finished draft (e.g. after
+    // jumping around with the answer summary) — send them to the gap.
+    if (next === "loading" && !isDraftComplete(draft)) {
+      const gap: QuestionStep =
+        draft.songs.length < 3
+          ? "songs"
+          : !draft.mbti
+          ? "mbti"
+          : !draft.attachmentStyle
+          ? "attachment"
+          : draft.loveLanguage.length === 0
+          ? "love-language"
+          : "zodiac";
+      goTo(gap);
+      return;
+    }
+    goTo(next);
   }
 
-  function handleZodiacSelect(value: string) {
-    setZodiac(value);
-    goTo("personal-context");
+  let content: React.ReactNode = null;
+
+  if (step === "landing") {
+    content = (
+      <LandingStep
+        onStart={() => goTo("songs")}
+        hasDraft={hasDraft}
+        spotifyError={spotifyError}
+        onOpenLastReport={
+          lastReport
+            ? () => {
+                setReport(lastReport);
+                goTo("results");
+              }
+            : undefined
+        }
+      />
+    );
+  } else if (isQuestionStep(step)) {
+    content = (
+      <QuestionSteps
+        step={step}
+        draft={draft}
+        setDraft={setDraft}
+        goTo={goToQuestion}
+        goBack={goBack}
+      />
+    );
+  } else if (step === "loading" && draft.attachmentStyle) {
+    content = (
+      <AnalysisLoader
+        songs={draft.songs}
+        mbti={draft.mbti}
+        attachmentStyle={draft.attachmentStyle}
+        loveLanguage={draft.loveLanguage}
+        zodiac={draft.zodiac}
+        personalContext={draft.personalContext}
+        onComplete={handleResult}
+        onBlocked={() => goTo("blocked")}
+      />
+    );
+  } else if (step === "results" && (report ?? lastReport)) {
+    // Back/forward can land here with nothing in memory; the saved copy of
+    // the latest report stands in.
+    const shown = (report ?? lastReport)!;
+    content = (
+      <ResultsDashboard
+        key={shown.createdAt}
+        result={shown.result}
+        songs={shown.songs}
+        mbti={shown.mbti}
+        attachmentStyle={shown.attachmentStyle}
+        loveLanguage={shown.loveLanguage}
+        zodiac={shown.zodiac}
+        onRunAgain={startOver}
+        onEditAnswers={() => goTo("personal-context")}
+        onHome={() => goTo("landing")}
+        pendingBarkadaId={pendingBarkada}
+      />
+    );
+  } else if (step === "blocked") {
+    content = <RateLimitBlock />;
   }
 
   return (
-    <div className="relative min-h-screen bg-bg-primary text-text-primary overflow-x-hidden">
-      <NeuralNetworkBg />
-
-      <main className="relative z-10 w-full max-w-[680px] mx-auto">
-        <AnimatePresence mode="wait">
-          {step === "landing" && (
-            <motion.div
-              key="landing"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <LandingStep onStart={() => goTo("songs")} />
-            </motion.div>
-          )}
-
-          {step === "songs" && (
-            <motion.div
-              key="songs"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <SongInputStep
-                onBack={goBack}
-                songs={songs}
-                onSongsChange={setSongs}
-                onNext={() => {
-                  // Background-classify any songs that were manually entered (mood === "unknown")
-                  const unknownSongs = songs.filter((s) => s.mood === "unknown");
-                  if (unknownSongs.length > 0) {
-                    fetch("/api/classify-songs", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ songs: unknownSongs }),
-                    })
-                      .then((res) => res.json())
-                      .then((classified) => {
-                        setSongs((prev) =>
-                          prev.map((s) => {
-                            const match = classified.find(
-                              (c: { title: string; artist: string; mood: string; painIndex: number }) =>
-                                c.title.toLowerCase() === s.title.toLowerCase() &&
-                                c.artist.toLowerCase() === s.artist.toLowerCase()
-                            );
-                            return match
-                              ? { ...s, mood: match.mood, painIndex: match.painIndex }
-                              : s;
-                          })
-                        );
-                      })
-                      .catch(() => {}); // Silent failure — fallback values are fine
-                  }
-                  goTo("mbti");
-                }}
-              />
-            </motion.div>
-          )}
-
-          {step === "mbti" && (
-            <motion.div
-              key="mbti"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <MbtiStep onBack={goBack} selected={mbti} onSelect={handleMbtiSelect} />
-            </motion.div>
-          )}
-
-          {step === "attachment" && (
-            <motion.div
-              key="attachment"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <AttachmentStep
-                onBack={goBack}
-                selected={attachmentStyle}
-                onSelect={handleAttachmentSelect}
-              />
-            </motion.div>
-          )}
-
-          {step === "love-language" && (
-            <motion.div
-              key="love-language"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <LoveLanguageStep
-                onBack={goBack}
-                selected={loveLanguage}
-                onSelect={setLoveLanguage}
-                onNext={handleLoveLanguageNext}
-              />
-            </motion.div>
-          )}
-
-          {step === "zodiac" && (
-            <motion.div
-              key="zodiac"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <ZodiacStep onBack={goBack} selected={zodiac} onSelect={handleZodiacSelect} />
-            </motion.div>
-          )}
-
-          {step === "personal-context" && (
-            <motion.div
-              key="personal-context"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <PersonalContextStep
-                onBack={goBack}
-                context={personalContext}
-                onContextChange={setPersonalContext}
-                onNext={() => {
-                  setPersonalContext(sanitizePersonalContext(personalContext));
-                  goTo("loading");
-                }}
-              />
-            </motion.div>
-          )}
-
-          {step === "loading" && (
-            <motion.div
-              key="loading"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <AnalysisLoader
-                songs={songs}
-                mbti={mbti}
-                attachmentStyle={attachmentStyle}
-                loveLanguage={loveLanguage}
-                zodiac={zodiac}
-                personalContext={personalContext}
-                onComplete={(r: ProfileResult) => {
-                  setResult(r);
-                  goTo("results");
-                }}
-                onBlocked={() => goTo("blocked")}
-              />
-            </motion.div>
-          )}
-
-          {step === "results" && result && (
-            <motion.div
-              key="results"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <ResultsDashboard
-                result={result}
-                songs={songs}
-                mbti={mbti}
-                attachmentStyle={attachmentStyle}
-                loveLanguage={loveLanguage}
-                zodiac={zodiac}
-                onRunAgain={() => {
-                  setSongs([]);
-                  setMbti("");
-                  setAttachmentStyle("anxious");
-                  setLoveLanguage([]);
-                  setZodiac("");
-                  setPersonalContext("");
-                  setResult(null);
-                  goTo("landing");
-                }}
-              />
-            </motion.div>
-          )}
-
-          {step === "blocked" && (
-            <motion.div
-              key="blocked"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={transition}
-            >
-              <RateLimitBlock />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-    </div>
+    <main className="relative min-h-screen overflow-x-hidden">
+      <AnimatePresence mode="wait" custom={direction} initial={false}>
+        <motion.div
+          key={step}
+          custom={direction}
+          variants={pageVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={pageTransition}
+        >
+          {content}
+        </motion.div>
+      </AnimatePresence>
+    </main>
   );
 }

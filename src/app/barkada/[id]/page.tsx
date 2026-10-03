@@ -2,112 +2,83 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import NeuralNetworkBg from "@/components/NeuralNetworkBg";
-import GlitchText from "@/components/GlitchText";
 import BarkadaGroup from "@/components/BarkadaGroup";
-import { BarkadaMember } from "@/app/api/barkada/route";
+import BrandMark from "@/components/ui/BrandMark";
+import { LinkButton } from "@/components/ui/Button";
+import { IconArrowRight } from "@/components/ui/icons";
+import type { BarkadaMember } from "@/app/api/barkada/route";
 
 type FetchState = "loading" | "error" | "success";
+
+/** Refresh cadence while the page is open — "updates as friends finish". */
+const POLL_MS = 20000;
 
 export default function BarkadaPage() {
   const params = useParams();
   const groupId = typeof params.id === "string" ? params.id : Array.isArray(params.id) ? params.id[0] : "";
 
-  const [state, setState] = useState<FetchState>("loading");
+  const [state, setState] = useState<FetchState>(groupId ? "loading" : "error");
   const [members, setMembers] = useState<BarkadaMember[]>([]);
 
   useEffect(() => {
-    if (!groupId) {
-      setState("error");
-      return;
-    }
+    if (!groupId) return;
+    let cancelled = false;
 
-    fetch(`/api/barkada?id=${encodeURIComponent(groupId)}`)
-      .then(async (res) => {
+    async function load() {
+      try {
+        const res = await fetch(`/api/barkada?id=${encodeURIComponent(groupId)}`, { cache: "no-store" });
         if (!res.ok) throw new Error("not found");
         const data = await res.json();
+        if (cancelled) return;
         setMembers(data.members ?? []);
         setState("success");
-      })
-      .catch(() => setState("error"));
+      } catch {
+        if (!cancelled) setState((prev) => (prev === "success" ? prev : "error"));
+      }
+    }
+
+    load();
+    const id = setInterval(load, POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, [groupId]);
 
   return (
-    <main
-      className="relative min-h-screen flex flex-col items-center"
-      style={{ background: "#0a0a0f", color: "#e8e8e8" }}
-    >
-      <NeuralNetworkBg />
+    <main className="relative min-h-screen flex flex-col items-center pb-16">
+      {state === "loading" && (
+        <div className="flex flex-col items-center justify-center min-h-[80vh] gap-4">
+          <BrandMark size={52} />
+          <p className="text-[14px] text-text-secondary">Loading the barkada…</p>
+        </div>
+      )}
 
-      <div className="relative z-10 w-full flex flex-col items-center pt-8 pb-16 px-4">
-        {state === "loading" && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-            <div
-              className="w-12 h-12 rounded-full border-2 border-transparent animate-spin"
-              style={{
-                borderTopColor: "#ff3252",
-                borderRightColor: "#ff3252",
-              }}
-            />
-            <p
-              className="text-xs tracking-[0.3em] uppercase animate-pulse"
-              style={{ fontFamily: "var(--font-mono, monospace)", color: "#555555" }}
-            >
-              Loading group data...
-            </p>
-          </div>
-        )}
+      {state === "error" && (
+        <div className="flex flex-col items-center justify-center min-h-[80vh] gap-5 px-6 text-center">
+          <span className="text-[13px] font-semibold rounded-full px-3 py-1 bg-accent-soft text-accent-ink">Group not found</span>
+          <h1 className="text-[30px] font-extrabold text-text-primary">Wala na &apos;tong barkada.</h1>
+          <p className="text-[15px] text-text-secondary max-w-xs">
+            This group doesn&apos;t exist or has expired — barkadas last 7 days.
+          </p>
+          <LinkButton href="/barkada">
+            Start a new one <IconArrowRight size={18} />
+          </LinkButton>
+        </div>
+      )}
 
-        {state === "error" && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center">
-            <GlitchText
-              text="GROUP NOT FOUND"
-              as="h1"
-              className="text-3xl font-bold"
-            />
-            <p
-              className="text-sm max-w-xs"
-              style={{ color: "#888888", fontFamily: "var(--font-mono, monospace)" }}
-            >
-              This barkada does not exist or has expired (barkadas last 7 days).
-            </p>
-            <Link
-              href="/"
-              className="px-6 py-3 rounded-lg font-medium transition-all duration-200 text-sm inline-flex items-center justify-center"
-              style={{
-                background:
-                  "linear-gradient(135deg, #ff3252, #ff0844)",
-                color: "#ffffff",
-                boxShadow: "0 0 20px rgba(255,50,82,0.4)",
-              }}
-            >
-              Go Back Home
-            </Link>
-          </div>
-        )}
-
-        {state === "success" && (
-          <>
-            <BarkadaGroup members={members} groupId={groupId} />
-
-            <Link
-              href="/"
-              className="mt-4 px-6 py-3 rounded-lg font-medium transition-all duration-200 text-sm inline-flex items-center gap-2"
-              style={{
-                background:
-                  "linear-gradient(135deg, #ff3252, #ff0844)",
-                color: "#ffffff",
-                boxShadow: "0 0 20px rgba(255,50,82,0.4)",
-              }}
-            >
-              <span>Join</span>
-              <span style={{ opacity: 0.8 }}>—</span>
-              <span>Take Your Scan</span>
-            </Link>
-          </>
-        )}
-      </div>
+      {state === "success" && (
+        <>
+          <BarkadaGroup members={members} groupId={groupId} />
+          {members.length < 10 && (
+            <div className="px-4 w-full max-w-2xl">
+              <LinkButton href={`/?barkada=${encodeURIComponent(groupId)}`} className="w-full py-4">
+                Join — take your scan <IconArrowRight size={18} />
+              </LinkButton>
+            </div>
+          )}
+        </>
+      )}
     </main>
   );
 }

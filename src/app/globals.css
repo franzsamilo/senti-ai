@@ -1,30 +1,69 @@
 @import "tailwindcss";
 
+/*
+ * Takipsilim — the dusk palette.
+ *
+ * Light, warm and a little sentimental: a sunset sky over Manila Bay rather
+ * than a situation room. Ink is a deep plum instead of black so the page
+ * never reads as cold; the one saturated move is the rose → violet "dusk"
+ * gradient, reserved for primary actions and the brand.
+ *
+ * Token names are kept from the original dark theme so every Tailwind class
+ * already in the codebase (bg-bg-primary, text-text-secondary, ...) picks up
+ * the new values without a rename.
+ */
 @theme inline {
-  --color-bg-primary: #0a0a0f;
-  --color-bg-card: rgba(255, 255, 255, 0.02);
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
-  --color-accent: #ff3252;
-  --color-accent-secondary: #ff0844;
-  --color-accent-success: #22aa55;
-  --color-text-primary: #e8e8e8;
-  --color-text-secondary: #888888;
-  --color-text-muted: #555555;
-  --color-threat-critical: #ff0040;
-  --color-threat-severe: #ff3252;
-  --color-threat-elevated: #ff8c00;
-  --color-threat-moderate: #ffd000;
-  --color-threat-low: #00cc88;
-  --font-display: var(--font-outfit);
+  --color-bg-primary: #fcf3f5;
+  --color-bg-card: rgba(255, 255, 255, 0.72);
+  --color-surface: #ffffff;
+  --color-surface-sunk: #f6eef3;
+  --color-border-subtle: rgba(74, 30, 82, 0.1);
+  --color-border-strong: rgba(74, 30, 82, 0.2);
+
+  --color-accent: #e0306b;
+  --color-accent-ink: #c21f59;
+  --color-accent-secondary: #8b3fd9;
+  --color-accent-warm: #ff7a59;
+  --color-accent-soft: #ffe6ee;
+  --color-accent-success: #0e9f6e;
+
+  --color-text-primary: #2a1834;
+  --color-text-secondary: #5e4a6b;
+  --color-text-muted: #7b6987;
+
+  --color-threat-critical: #e11d48;
+  --color-threat-severe: #f2542d;
+  --color-threat-elevated: #f59e0b;
+  --color-threat-moderate: #eab308;
+  --color-threat-low: #10b981;
+
+  --font-display: var(--font-bricolage);
+  --font-body: var(--font-outfit);
   --font-mono: var(--font-jetbrains-mono);
 }
 
+:root {
+  color-scheme: light;
+  --dusk: linear-gradient(120deg, #ff7a59 0%, #e0306b 48%, #8b3fd9 100%);
+  --dusk-button: linear-gradient(135deg, #e0306b 0%, #b0359f 55%, #8b3fd9 100%);
+  --shadow-card: 0 1px 2px rgba(74, 30, 82, 0.06), 0 8px 24px -12px rgba(74, 30, 82, 0.18);
+  --shadow-lift: 0 2px 4px rgba(74, 30, 82, 0.06), 0 18px 40px -16px rgba(74, 30, 82, 0.28);
+  --shadow-glow: 0 10px 28px -10px rgba(224, 48, 107, 0.6);
+}
+
+html {
+  background: #fcf3f5;
+}
+
 body {
-  background: var(--color-bg-primary);
+  /* The sky. Fixed so long pages scroll over it instead of through it. */
+  background:
+    linear-gradient(180deg, #fff0ea 0%, #fcecf3 38%, #f1ebfb 100%) fixed;
   color: var(--color-text-primary);
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
   max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
 }
 
 *,
@@ -34,7 +73,136 @@ body {
   min-width: 0;
 }
 
-/* Glitch text effect */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: rgba(224, 48, 107, 0.2);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* ── Surfaces ───────────────────────────────────────────── */
+
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+}
+
+.text-dusk {
+  background: var(--dusk);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Slow light sweep across the wordmark. */
+.text-shimmer {
+  background: linear-gradient(
+    100deg,
+    #e0306b 0%,
+    #8b3fd9 30%,
+    #ff7a59 50%,
+    #e0306b 70%,
+    #8b3fd9 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 9s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ── Aurora background ──────────────────────────────────── */
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8vw, 6vh, 0) scale(1.15);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-10vw, 4vh, 0) scale(0.95);
+  }
+}
+
+@keyframes drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5vw, -8vh, 0) scale(1.2);
+  }
+}
+
+/* Equalizer bars — used by the loader and the brand mark. */
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.eq-bar {
+  transform-origin: bottom;
+  animation: eq 1.1s ease-in-out infinite;
+}
+
+/* Vinyl spin for the loader. */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 3.2s linear infinite;
+}
+
+/* ── Glitch (kept for the rate-limit screen — it's the joke there) ── */
+
 .glitch {
   position: relative;
 }
@@ -50,47 +218,26 @@ body {
   background: transparent;
 }
 
-/*
- * The channel split sits at rest most of the time, so keep the offset and
- * opacity low — at full strength the wordmark reads as a rendering fault
- * rather than a deliberate effect. The animation keyframes still punch out
- * to full offset during the brief glitch bursts.
- */
 .glitch::before {
-  color: #ff3252;
-  opacity: 0.55;
+  color: #e0306b;
+  opacity: 0.5;
   clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
   transform: translate(-1px, -1px);
   animation: glitch-top 5s infinite linear;
 }
 
 .glitch::after {
-  color: #00e5ff;
+  color: #8b3fd9;
   opacity: 0.4;
   clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
   transform: translate(1px, 1px);
   animation: glitch-bottom 5s infinite linear;
 }
 
-/* Honour the OS-level reduced-motion preference across the whole app. */
-@media (prefers-reduced-motion: reduce) {
-  .glitch::before,
-  .glitch::after {
-    animation: none;
-    opacity: 0.25;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
 @keyframes glitch-top {
-  0%, 90%, 100% {
+  0%,
+  90%,
+  100% {
     transform: translate(-1px, -1px);
     clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
   }
@@ -109,7 +256,9 @@ body {
 }
 
 @keyframes glitch-bottom {
-  0%, 90%, 100% {
+  0%,
+  90%,
+  100% {
     transform: translate(1px, 1px);
     clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
   }
@@ -127,7 +276,8 @@ body {
   }
 }
 
-/* Utility: hide scrollbar on horizontal scroll areas */
+/* ── Scrollbars ─────────────────────────────────────────── */
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -136,10 +286,9 @@ body {
   scrollbar-width: none;
 }
 
-/* Dark scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 50, 82, 0.4) rgba(255, 255, 255, 0.04);
+  scrollbar-color: rgba(139, 63, 217, 0.35) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -148,15 +297,27 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 3px;
+  background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(255, 50, 82, 0.4);
+  background: rgba(139, 63, 217, 0.35);
   border-radius: 3px;
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 50, 82, 0.7);
+/* Honour the OS-level reduced-motion preference across the whole app. */
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before,
+  .glitch::after {
+    animation: none;
+    opacity: 0.25;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
