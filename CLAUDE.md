@@ -6,7 +6,7 @@
 
 ## Aesthetic & Vibe
 
-**Visual:** Military/intelligence threat dashboard. Think NORAD situation room meets Filipino hugot culture. Dark UI, neural network animations in the background, threat-level meters, clinical step labels, glitch text effects — all in service of emotional damage.
+**Visual (Oct 2026 redesign — "Takipsilim"/dusk):** Light, warm and welcoming — a Manila Bay sunset rather than a situation room. Peach → rose → lavender sky with slowly drifting aurora light, white glass cards, deep plum ink, and a rose → violet "dusk" gradient reserved for primary actions and the brand. The deadpan "assessment" humour now lives in the copy, threat badges and the results reveal (a dark plum hero card with a stamped threat level), not in a dark UI. The old dark/military look (neural-net canvas, glitch text everywhere) is retired — glitch text survives only on the rate-limit joke screen. See Design System below.
 
 **Tone of AI-generated content:** Brutally honest. Savage but funny. Heavy natural Taglish (Tagalog-English code-switching). Culturally hyper-specific to Filipino dating and hugot culture. Should feel like your most walang-awa na tropa who also has a psychology degree. NOT generic AI voice — see the Tone & Language Guide section for detailed prompt engineering instructions.
 
@@ -17,7 +17,8 @@
 - **Framework:** Next.js 14+ (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **AI:** Anthropic Claude API (`claude-sonnet-4-20250514`) for generating personalized roasts
+- **AI:** Anthropic Claude API — `claude-opus-5-5` (Opus 5.5) via `src/lib/claude.ts`, the single helper every route uses (structured outputs, explicit effort, server-side refusal fallbacks, streamed + `finalMessage()`). Thinking can't be disabled on Opus 5.5 — control depth with `effort` only (`medium` for analysis/match, `low` for song classification).
+- **Scoring:** Deterministic baseline in `src/lib/scoring.ts` (top-heavy pain index, mood vectors, attachment/MBTI/love-language effects → damage score + 5 independent meters). The model may move each number only within a band and must name why (`score_reason`); `normalizeResult.ts` enforces the bands and derives the threat level from the final score.
 - **Auth/Music:** Spotify Web API (OAuth 2.0 PKCE flow) for pulling user's top tracks
 - **Animations:** Framer Motion
 - **Image Generation:** html2canvas or `@vercel/og` / satori for shareable story cards
@@ -687,37 +688,36 @@ CRITICAL TONE RULES:
 ## Design System
 
 ### Colors
+Tokens live in `src/app/globals.css` (`@theme`); threat tones in `src/lib/theme.ts`.
 ```css
---bg-primary: #0a0a0f;
---bg-card: rgba(255,255,255,0.02);
---border-subtle: rgba(255,255,255,0.06);
---accent-primary: #ff3252;
---accent-secondary: #ff0844;
---accent-success: #22aa55;
---text-primary: #e8e8e8;
---text-secondary: #888888;
---text-muted: #555555;
---threat-critical: #ff0040;
---threat-severe: #ff3252;
---threat-elevated: #ff8c00;
---threat-moderate: #ffd000;
---threat-low: #00cc88;
+--bg-primary: #fcf3f5;            /* sky: linear-gradient #fff0ea → #fcecf3 → #f1ebfb */
+--bg-card: rgba(255,255,255,0.72); /* .glass: + white border, soft plum shadow, blur */
+--border-subtle: rgba(74,30,82,0.10);
+--accent: #e0306b;                 /* rose */
+--accent-ink: #c21f59;             /* accent as text — readable on white */
+--accent-secondary: #8b3fd9;       /* violet */
+--accent-warm: #ff7a59;            /* sunset */
+--text-primary: #2a1834;           /* deep plum ink, never pure black */
+--text-secondary: #5e4a6b;
+--text-muted: #7b6987;
+--dusk: linear-gradient(120deg, #ff7a59, #e0306b 48%, #8b3fd9);
 ```
+Threat levels each have `color` (bars/glows), `ink` (text — dark enough for white) and `soft` (tint behind the ink): CRITICAL #e11d48, SEVERE #f2542d, ELEVATED #f59e0b, MODERATE #eab308, LOW #10b981. Always render threat text in `ink`, never the bright `color`.
 
 ### Typography
-- **Display / Headings:** A bold, distinctive sans-serif (try Outfit, Syne, or Clash Display — pick one that feels right, avoid generic choices like Inter or Roboto)
-- **Monospace / Labels:** JetBrains Mono or IBM Plex Mono
-- **Body:** Same as display font at weight 400
+- **Display / Headings:** Bricolage Grotesque (`font-display`)
+- **Body:** Outfit (`font-body`)
+- **Monospace:** JetBrains Mono — numbers only, sparingly. No uppercase monospace labels or "01/02" section numbering.
 
 ### Visual Effects
-- **Neural network background:** Canvas-based, ~40 floating nodes with connecting lines when within proximity, red-tinted, opacity ~0.3
-- **Glitch text:** CSS pseudo-elements with slight positional offset + clip-path, red and cyan color channels
-- **Threat meters:** Thin horizontal progress bars, animate from 0 → value on reveal, subtle glow
-- **Cards:** Near-transparent background with thin border, 8-12px border radius
-- **Buttons:** Gradient on enabled state with box-shadow glow, muted/dark when disabled
-- **Step transitions:** Framer Motion — fade + slide up with spring easing
-- **Results reveal:** Staggered section animation
-- **Number counters:** Animate from 0 to final value on stat boxes
+- **Background:** `AuroraBackground` (in the root layout) — 3 large blurred colour fields drifting via CSS keyframes, plus faint grain. No canvas, no per-frame JS.
+- **Cards:** `.glass` — translucent white, 16–28px radius.
+- **Buttons:** Dusk gradient with a soft rose glow; muted lilac when disabled. Use `LinkButton` for navigation (never a `<Button>` inside a `<Link>`).
+- **Step transitions:** Direction-aware slide (forward slides left, Back slides right) via `pageVariants` + `useStepDirection`. Never put `filter`/blur on the page wrapper — it breaks the fixed share bar.
+- **Selections:** Springy pops; auto-advance ~260ms after a single-choice pick.
+- **Loader:** Spinning record labelled with the heaviest track, one message at a time, progress bar, trail of completed checks.
+- **Results reveal:** Headline delivered word by word (`RevealText`), threat badge "stamps" in, score ring sweeps, meters and stats count up on scroll.
+- **Share card:** `ShareCard.tsx`, 540×960 inline-styled, captured at 2× (1080×1920). Off-screen positioning must stay on the wrapper, never on the captured node (html-to-image copies `inset-inline` and the PNG comes out blank).
 
 ### Responsive Design
 - Max-width container: ~680px centered
