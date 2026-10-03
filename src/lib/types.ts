@@ -34,6 +34,12 @@ export type AttachmentStyle = "anxious" | "avoidant" | "disorganized" | "secure"
 export type LoveLanguage = "words" | "acts" | "gifts" | "time" | "touch";
 export type ThreatLevel = "CRITICAL" | "SEVERE" | "ELEVATED" | "MODERATE" | "LOW";
 
+/** The five threat meters on the results page. */
+export type MetricKey = "instability" | "toxicity" | "delulu" | "sadness" | "healing";
+
+/** 0–100 per meter, with the model's one-line read of why. */
+export type Metrics = Record<MetricKey, { value: number; note: string }>;
+
 export interface AnalysisRequest {
   songs: Song[];
   mbti: string;
@@ -56,6 +62,15 @@ export interface ProfileResult {
   final_verdict: string;
   recommended_action: string;
   compatibility_warning: string;
+  /**
+   * Per-meter scores. Optional because profiles stored before scoring was
+   * split out (match partners, barkada members, history) don't carry them.
+   */
+  metrics?: Metrics;
+  /** One sentence naming what pushed the damage score to where it is. */
+  score_reason?: string;
+  /** Top-heavy pain index of the playlist (see lib/scoring.ts). */
+  pain_index?: number;
   /**
    * True when this came from the offline template instead of the model.
    * Optional so results stored before this field existed still parse.

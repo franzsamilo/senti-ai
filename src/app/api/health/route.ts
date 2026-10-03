@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { PROFILE_RESULT_SCHEMA } from "@/lib/resultSchema";
-
-const MODEL = "claude-opus-5";
+import { MODEL } from "@/lib/claude";
 
 /**
  * Diagnostic endpoint: hit /api/health in production to confirm the model,

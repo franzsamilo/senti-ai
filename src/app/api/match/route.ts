@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { buildMatchPrompt } from "@/lib/buildMatchPrompt";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { MATCH_RESULT_SCHEMA } from "@/lib/resultSchema";
 import { normalizeMatchResult } from "@/lib/normalizeResult";
+import { MODEL, describeError, generateJson } from "@/lib/claude";
 import type { UserProfile, MatchResult } from "@/lib/types";
 
 interface MatchEntry {
@@ -135,35 +135,16 @@ export async function POST(req: NextRequest) {
     try {
       const { system, user } = buildMatchPrompt(entry.profileA, body.profileB);
 
-      const anthropic = new Anthropic();
-
-      const message = await anthropic.messages.create({
-        model: "claude-opus-5",
-        // Adaptive thinking counts against max_tokens on Opus 5.
-        max_tokens: 8000,
-        system: [
-          { type: "text", text: system, cache_control: { type: "ephemeral" } },
-        ],
-        messages: [{ role: "user", content: user }],
-        output_config: {
-          effort: "medium",
-          format: { type: "json_schema", schema: MATCH_RESULT_SCHEMA },
-        },
+      const { data } = await generateJson({
+        system,
+        user,
+        schema: MATCH_RESULT_SCHEMA,
+        effort: "medium",
+        maxTokens: 12000,
+        cacheSystem: true,
       });
 
-      if (message.stop_reason === "refusal") {
-        throw new Error("Analysis declined");
-      }
-
-      const textBlock = message.content.find((block) => block.type === "text");
-      if (!textBlock || textBlock.type !== "text") {
-        throw new Error("No text content in API response");
-      }
-
-      let raw = textBlock.text.trim();
-      raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
-
-      const matchResult: MatchResult = normalizeMatchResult(JSON.parse(raw));
+      const matchResult: MatchResult = normalizeMatchResult(data);
 
       // Persist to store
       entry.matchResult = matchResult;
@@ -174,7 +155,7 @@ export async function POST(req: NextRequest) {
         profileB: body.profileB,
       });
     } catch (err) {
-      console.error("[/api/match] error:", err);
+      console.error("[/api/match] FAILED", { model: MODEL, ...describeError(err) });
       // Fallback match result so users always get something
       const fallbackResult: MatchResult = generateFallbackMatch(entry.profileA, body.profileB);
       entry.matchResult = fallbackResult;
