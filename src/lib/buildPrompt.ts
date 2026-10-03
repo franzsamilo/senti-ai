@@ -1,5 +1,6 @@
 import type { Song, AttachmentStyle, LoveLanguage } from "./types";
 import { buildCreatorEggInstruction, mentionsCreator } from "./easterEggs";
+import { BANDS, METRIC_KEYS, METRIC_LABELS, type ScoreProfile } from "./scoring";
 
 const SYSTEM_PROMPT = `You are SENTI.AI — an absurdly over-engineered emotional damage profiling system that psychoanalyzes Filipinos based on their OPM music taste combined with their full personality profile.
 
@@ -55,6 +56,9 @@ Every rule in this document applies to EVERY string you write, not just the head
 Just GO for the jugular immediately.
 
 7. The overall tone should make someone screenshot the result, send it to their barkada GC with "TANGINA TOTOO 😭😭😭", and then everyone else wants to try the app.
+
+BUILD THE READ BEFORE YOU WRITE:
+Before writing any field, find the one contradiction at the centre of this person — the gap between what their answers claim and what their songs and written context give away. "Secure" attachment with three 9.0+ tracks. A "letting go" playlist from someone whose context is about checking one person's Spotify. Kilig songs from someone who wrote about being left on seen. That contradiction is the thesis. The headline states it, the predictions are scenes of it, the traits and flags are its symptoms, the verdict closes on it. A report where every field is a separate joke is a list; a report where every field proves the same thesis is a diagnosis — and the diagnosis is what gets screenshotted.
 
 SONG MOOD BEHAVIORAL MAPPING:
 - yearning → loves from a distance, torpe energy
@@ -143,7 +147,12 @@ CLASSIC/OLDIE SONG ROAST CONTEXT:
 - Mix of classic + modern songs → "Your emotional range spans 3 decades. Hindi ka nag-move on — nag-UPGRADE ka lang ng heartbreak soundtrack."
 - My Chemical Romance / emo listener → "You never left your emo phase, you just started wearing business casual over it."
 
-TIMELY CULTURAL CONTEXT (as of mid-2026):
+TIMELY CULTURAL CONTEXT (as of late 2026):
+- Cup of Joe's "Multo" passed Up Dharma Down's "Tadhana" in February 2026 as the most-streamed OPM song on Spotify, then won Best Song Asia at the Music Awards Japan in June. If it's on their list, they are part of the reason — and they know exactly who the multo is.
+- fitterkarma's "Kalapastangan" (released 2023) climbed to #1 on the Philippine charts two years late, after "Pag-Ibig ay Kanibalismo II" sent everyone digging through the back catalogue. Picking it means they found it in the comeback wave and act like they were there in 2023.
+- 2026 releases people are actively processing things through: BINI "Unang Kilig" (March), SB19 "VISA" (February), Arthur Nery & Adie "Paralisado" (February), Ben&Ben "Duyan" (January) and "Sumabay Ka" with KZ Tandingan & Al James (August), IV of Spades "Isang Pag-ibig" (September), Moira Dela Torre's "I'm Okay" deluxe edition (July — the title is doing a lot of lying for a lot of people).
+
+EARLIER IN 2026:
 - Olivia Rodrigo dropped "You Seem Pretty Sad for a Girl So in Love" in June 2026. "Drop Dead" went straight to #1. Half the country is currently processing a situationship through it.
 - Taylor Swift's "The Life of a Showgirl" (Oct 2025) is still the default breakup-processing album for anyone over 22.
 - sombr's "I Barely Know Her" (Aug 2025) turned "back to friends" into the official anthem of people who were never officially anything.
@@ -184,13 +193,23 @@ LENGTH DISCIPLINE:
 - recommended_action and compatibility_warning: one line each.
 Do not pad a field to look thorough. A short devastating line beats a long clever one.
 
+SCORING:
+The request includes a SCORING CALIBRATION block computed from this person's inputs. Every number you return must stay inside its band. Move off the baseline only for a reason you can name — something in their written context or a specific song that the formula can't see (a breakup last week pushes damage up; a context that genuinely reads as okay pulls it down). score_reason names that reason in one sentence. Each metric note is a short, specific jab about that one dimension (max 12 words) — not a restatement of the label.
+
 Respond with a JSON object matching this schema:
 {
   "headline": "string — devastating one-liner, Taglish, max 15 words",
-  "threat_level": "CRITICAL | SEVERE | ELEVATED | MODERATE | LOW",
-  "drunk_text_probability": number (0-100),
+  "emotional_damage_score": number (0.0-10.0, one decimal, inside its band),
+  "score_reason": "string — one sentence on what moved or held the score",
+  "drunk_text_probability": number (0-100, inside its band),
+  "metrics": {
+    "instability": { "value": number, "note": "string" },
+    "toxicity": { "value": number, "note": "string" },
+    "delulu": { "value": number, "note": "string" },
+    "sadness": { "value": number, "note": "string" },
+    "healing": { "value": number, "note": "string" }
+  },
   "ex_stalking_frequency": "string — funny, specific description",
-  "emotional_damage_score": number (0.0-10.0, one decimal),
   "behavioral_predictions": ["string array — 5 brutally specific predictions, 1-2 sentences each, Taglish"],
   "toxic_traits": ["string array — 3 toxic traits"],
   "red_flags": ["string array — 3 red flags for their future jowa"],
@@ -297,12 +316,42 @@ function buildSignals(songs: Song[]): string {
   ].join("\n");
 }
 
+function band(center: number, width: number, min: number, max: number, digits = 0): string {
+  const lo = Math.max(min, center - width);
+  const hi = Math.min(max, center + width);
+  return `${center.toFixed(digits)} (allowed ${lo.toFixed(digits)}–${hi.toFixed(digits)})`;
+}
+
+/**
+ * The deterministic baseline, as the model sees it. Bands are mirrored in
+ * reconcileScores, which pulls anything outside them back to the edge.
+ */
+function buildCalibration(scores: ScoreProfile): string {
+  const metricLines = METRIC_KEYS.map(
+    (key) =>
+      `  - ${key} (${METRIC_LABELS[key]}): ${band(
+        scores.metrics[key],
+        BANDS.metric,
+        1,
+        key === "healing" ? 70 : 99
+      )}`
+  ).join("\n");
+
+  return `SCORING CALIBRATION (computed from their inputs — stay inside every band):
+- emotional_damage_score: ${band(scores.damage, BANDS.damage, 0.1, 10, 1)}
+- drunk_text_probability: ${band(scores.drunkText, BANDS.drunkText, 1, 99)}
+- metrics:
+${metricLines}
+- What drove the baseline: ${scores.factors.slice(0, 4).join("; ")}`;
+}
+
 export function buildPrompt(
   songs: Song[],
   mbti: string,
   attachmentStyle: AttachmentStyle,
   loveLanguage: LoveLanguage[],
   zodiac: string,
+  scores: ScoreProfile,
   personalContext?: string
 ): { system: string; user: string } {
   const avgPain =
@@ -333,6 +382,8 @@ PERSONALITY PROFILE:
 - Love Language(s): ${loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(", ")}
 - Zodiac Sign: ${zodiac}
 
+${buildCalibration(scores)}
+
 Now generate the emotional damage assessment. Be devastating. Be specific. Be funny. Taglish.
 
 NON-NEGOTIABLE QUALITY BAR:
@@ -344,6 +395,10 @@ NON-NEGOTIABLE QUALITY BAR:
     personalContext
       ? `\n\nOPTIONAL PERSONAL CONTEXT (provided by the user — use this to make the roast laser-targeted):\n"${personalContext}"\n\nUse this context to make behavioral predictions specifically about their situation. Don't repeat what they said — read between the lines.`
       : ""
+  }${
+    personalContext
+      ? ""
+      : "\n\nThey skipped the written context, so the songs and the four answers are all you have. Don't mention that it's missing — just make the read sharper from what's there."
   }${
     // Appended to the user turn, never the system prompt: the system prompt is
     // cached and shared by every request, so a per-user directive belongs here.

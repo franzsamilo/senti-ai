@@ -1,4 +1,5 @@
 import type { ProfileResult, MatchResult, ThreatLevel } from "./types";
+import { reconcileScores, threatFromScore, type ScoreProfile } from "./scoring";
 
 /**
  * Structured outputs guarantee the SHAPE of the model's response — the right
@@ -73,31 +74,39 @@ function threatLevel(value: unknown, score: number): ThreatLevel {
     return match;
   }
   // Nothing usable — derive from the score
-  if (score >= 9) return "CRITICAL";
-  if (score >= 7.5) return "SEVERE";
-  if (score >= 6) return "ELEVATED";
-  if (score >= 4) return "MODERATE";
-  return "LOW";
+  return threatFromScore(score);
 }
 
-export function normalizeProfileResult(raw: unknown): ProfileResult {
+/**
+ * @param baseline The deterministic score profile for this subject. The
+ *   model's numbers are pulled into its bands; when they're missing the
+ *   baseline stands in, so a report never ships without meters.
+ */
+export function normalizeProfileResult(
+  raw: unknown,
+  baseline: ScoreProfile
+): ProfileResult {
   const data = (raw ?? {}) as Record<string, unknown>;
 
-  const score = Number(
-    clamp(data.emotional_damage_score, 0, 10, 7.5).toFixed(1)
-  );
+  const scores = reconcileScores(baseline, {
+    damage: data.emotional_damage_score,
+    drunkText: data.drunk_text_probability,
+    metrics: data.metrics as Parameters<typeof reconcileScores>[1]["metrics"],
+  });
 
   return {
     headline: str(data.headline, "Diagnosis: hindi ka okay, pero alam mo na 'yan."),
-    threat_level: threatLevel(data.threat_level, score),
-    drunk_text_probability: Math.round(
-      clamp(data.drunk_text_probability, 0, 100, 72)
-    ),
+    // Derived, never trusted: the badge has to agree with the number.
+    threat_level: threatFromScore(scores.damage),
+    drunk_text_probability: scores.drunkText,
     ex_stalking_frequency: str(
       data.ex_stalking_frequency,
       "Tuwing may bagong story. So, araw-araw."
     ),
-    emotional_damage_score: score,
+    emotional_damage_score: scores.damage,
+    score_reason: str(data.score_reason, ""),
+    metrics: scores.metrics,
+    pain_index: baseline.pain.weighted,
     behavioral_predictions: upTo(data.behavioral_predictions, 5),
     toxic_traits: upTo(data.toxic_traits, 3),
     red_flags: upTo(data.red_flags, 3),

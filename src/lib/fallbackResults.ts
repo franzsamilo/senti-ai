@@ -2,9 +2,11 @@ import type {
   Song,
   AttachmentStyle,
   LoveLanguage,
+  Metrics,
+  MetricKey,
   ProfileResult,
-  ThreatLevel,
 } from "./types";
+import { computeScoreProfile, METRIC_KEYS } from "./scoring";
 
 const ATTACHMENT_LABELS: Record<AttachmentStyle, string> = {
   anxious: "Anxious",
@@ -47,38 +49,44 @@ function seededPicker(seed: string): <T>(options: T[]) => T {
   };
 }
 
-function computeThreatLevel(avgPain: number): ThreatLevel {
-  if (avgPain >= 8) return "CRITICAL";
-  if (avgPain >= 6.5) return "SEVERE";
-  if (avgPain >= 5) return "ELEVATED";
-  if (avgPain >= 3) return "MODERATE";
-  return "LOW";
-}
+/** Offline meter notes — picked by how high the meter reads, not by who you are. */
+const METRIC_NOTES: Record<MetricKey, [string, string, string]> = {
+  instability: [
+    "Steady-ish. Suspicious, pero sige.",
+    "Okay ka hanggang may mag-'haha' sa'yo.",
+    "Isang seen-zone lang, gumuguho na ang lahat.",
+  ],
+  toxicity: [
+    "Mostly harmless. Mostly.",
+    "May resibo ka sa bawat away, naka-folder pa.",
+    "Ikaw yung red flag na akala mo pa-fall lang.",
+  ],
+  delulu: [
+    "Grounded. Halos boring na.",
+    "May script ka na ng first date na hindi pa nangyayari.",
+    "Ikaw na lang ang naniniwala sa talking stage na 'yan.",
+  ],
+  sadness: [
+    "Paminsan-minsan lang umiiyak sa jeep.",
+    "Sad playlist on shuffle, 'chill' daw.",
+    "Ang Spotify Wrapped mo, may trigger warning.",
+  ],
+  healing: [
+    "Hindi pa nagsisimula. Nag-download ka lang ng meditation app.",
+    "May progress, pero babalik ka sa kanya pag nag-story siya.",
+    "Mukhang okay ka na talaga. Hindi kami naniniwala.",
+  ],
+};
 
-function computeDrunkTextProbability(
-  avgPain: number,
-  attachmentStyle: AttachmentStyle
-): number {
-  let base = Math.round(avgPain * 8);
-  if (attachmentStyle === "anxious") base += 20;
-  if (attachmentStyle === "disorganized") base += 12;
-  if (attachmentStyle === "avoidant") base -= 5;
-  if (attachmentStyle === "secure") base -= 15;
-  return Math.min(99, Math.max(5, base));
-}
-
-function computeEmotionalDamageScore(
-  avgPain: number,
-  attachmentStyle: AttachmentStyle,
-  mbti: string
-): number {
-  let score = avgPain;
-  if (attachmentStyle === "anxious") score += 0.8;
-  if (attachmentStyle === "disorganized") score += 0.6;
-  if (attachmentStyle === "avoidant") score += 0.3;
-  if (mbti.includes("F")) score += 0.4;
-  if (mbti.includes("N")) score += 0.2;
-  return Math.min(10.0, Math.max(0.1, parseFloat(score.toFixed(1))));
+function fallbackMetrics(values: Record<MetricKey, number>): Metrics {
+  const metrics = {} as Metrics;
+  for (const key of METRIC_KEYS) {
+    const value = values[key];
+    // Healing reads the other way round: a high value is the good news.
+    const bucket = value >= 66 ? 2 : value >= 36 ? 1 : 0;
+    metrics[key] = { value, note: METRIC_NOTES[key][bucket] };
+  }
+  return metrics;
 }
 
 function getBehavioralPredictions(
@@ -195,8 +203,10 @@ export function generateFallback(
   mbti: string,
   attachmentStyle: AttachmentStyle,
   loveLanguage: LoveLanguage[],
-  zodiac: string
+  rawZodiac: string
 ): ProfileResult {
+  // Signs are stored lower-case ("pisces"); the copy needs them as names.
+  const zodiac = rawZodiac ? rawZodiac[0].toUpperCase() + rawZodiac.slice(1) : rawZodiac;
   const avgPain =
     songs.length > 0
       ? songs.reduce((sum, s) => sum + s.painIndex, 0) / songs.length
@@ -207,9 +217,10 @@ export function generateFallback(
       ? songs.reduce((max, s) => (s.painIndex > max.painIndex ? s : max), songs[0])
       : { title: "Paubaya", artist: "Moira Dela Torre", mood: "letting_go" as const, painIndex: 9.8 };
 
-  const threat_level = computeThreatLevel(avgPain);
-  const drunk_text_probability = computeDrunkTextProbability(avgPain, attachmentStyle);
-  const emotional_damage_score = computeEmotionalDamageScore(avgPain, attachmentStyle, mbti);
+  const scores = computeScoreProfile(songs, mbti, attachmentStyle, loveLanguage);
+  const threat_level = scores.threat;
+  const drunk_text_probability = scores.drunkText;
+  const emotional_damage_score = scores.damage;
   const attachLabel = ATTACHMENT_LABELS[attachmentStyle];
   const llLabel = loveLanguage.map((l) => LOVE_LANGUAGE_LABELS[l]).join(" + ");
 
@@ -286,6 +297,11 @@ export function generateFallback(
         ? "Minsan sa isang linggo, kapag may lumabas na bagong post sila"
         : "Bihirang-bihira — nag-uunfollow ka na kaya mas madali",
     emotional_damage_score,
+    score_reason: scores.factors[0]
+      ? `Biggest factor: ${scores.factors[0]}.`
+      : "",
+    metrics: fallbackMetrics(scores.metrics),
+    pain_index: scores.pain.weighted,
     behavioral_predictions,
     toxic_traits,
     red_flags,

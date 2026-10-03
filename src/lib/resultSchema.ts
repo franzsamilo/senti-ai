@@ -8,15 +8,35 @@
  * count or range requirements live in the prompt text instead.
  */
 
+/** One threat meter: a 0–100 value inside its band, plus a one-line read. */
+const METRIC = {
+  type: "object",
+  additionalProperties: false,
+  required: ["value", "note"],
+  properties: {
+    value: { type: "number", description: "0 to 100, inside its calibration band." },
+    note: {
+      type: "string",
+      description: "Max 12 words, Taglish. Why this meter reads what it reads, for this person.",
+    },
+  },
+} as const;
+
+/**
+ * The threat level is not asked for: it's derived from the final score
+ * (lib/scoring.ts threatFromScore), so the badge can never contradict the
+ * number next to it.
+ */
 export const PROFILE_RESULT_SCHEMA = {
   type: "object",
   additionalProperties: false,
   required: [
     "headline",
-    "threat_level",
-    "drunk_text_probability",
-    "ex_stalking_frequency",
     "emotional_damage_score",
+    "score_reason",
+    "drunk_text_probability",
+    "metrics",
+    "ex_stalking_frequency",
     "behavioral_predictions",
     "toxic_traits",
     "red_flags",
@@ -30,21 +50,35 @@ export const PROFILE_RESULT_SCHEMA = {
       type: "string",
       description: "Devastating Taglish one-liner, max 15 words.",
     },
-    threat_level: {
+    emotional_damage_score: {
+      type: "number",
+      description:
+        "0.0 to 10.0, one decimal place, inside the calibration band given in the request.",
+    },
+    score_reason: {
       type: "string",
-      enum: ["CRITICAL", "SEVERE", "ELEVATED", "MODERATE", "LOW"],
+      description:
+        "One sentence, Taglish: the specific input that moved the score off its baseline (or held it there).",
     },
     drunk_text_probability: {
       type: "number",
-      description: "0 to 100.",
+      description: "0 to 100, inside the calibration band given in the request.",
+    },
+    metrics: {
+      type: "object",
+      additionalProperties: false,
+      required: ["instability", "toxicity", "delulu", "sadness", "healing"],
+      properties: {
+        instability: METRIC,
+        toxicity: METRIC,
+        delulu: METRIC,
+        sadness: METRIC,
+        healing: METRIC,
+      },
     },
     ex_stalking_frequency: {
       type: "string",
       description: "Funny, specific description of their stalking cadence.",
-    },
-    emotional_damage_score: {
-      type: "number",
-      description: "0.0 to 10.0, one decimal place.",
     },
     behavioral_predictions: {
       type: "array",
