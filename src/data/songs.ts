@@ -1430,80 +1430,226 @@ export const songDatabase: Song[] = [
   { title: "Zebbiana", artist: "Skusta Clee", mood: "yearning", painIndex: 6.5 },
   { title: "Kahit Sandali", artist: "NOBITA", mood: "yearning", painIndex: 7.5 },
   { title: "Bakit Ba Ikaw", artist: "Michael Pangilinan", mood: "heartbreak", painIndex: 8.5 },
+
+  // ───────────────────────────────────────────────
+  // 2026 releases (Wikipedia "2026 in Philippine music").
+  // Moods for the newest tracks are read from title and context, the same
+  // way /api/classify-songs treats an unknown song — adjust as they settle.
+  // ───────────────────────────────────────────────
+  { title: "Paralisado", artist: "Arthur Nery & Adie", mood: "infatuation", painIndex: 5.5 },
+  { title: "Duyan", artist: "Ben&Ben", mood: "warmth", painIndex: 5.0 },
+  { title: "Naghihilom", artist: "Sponge Cola & Gigi de Lana", mood: "letting_go", painIndex: 7.0 },
+  { title: "Sumabay Ka", artist: "Ben&Ben, KZ Tandingan & Al James", mood: "devotion", painIndex: 4.5 },
+  { title: "Baybayin", artist: "Ben&Ben", mood: "belonging", painIndex: 5.0 },
+  { title: "Isang Pag-ibig", artist: "IV of Spades", mood: "devotion", painIndex: 5.5 },
+  { title: "Sabihin Mo Lang", artist: "Hey June!", mood: "hopeless_crush", painIndex: 6.5 },
+  { title: "Masunog Man", artist: "Maymay Entrata", mood: "devotion", painIndex: 6.5 },
+  { title: "Lunod", artist: "Hori7on", mood: "infatuation", painIndex: 6.0 },
+  { title: "Sulong", artist: "BINI ft. Kaia & Hori7on", mood: "belonging", painIndex: 3.0 },
+  { title: "Floating", artist: "Barbie's Cradle", mood: "existential", painIndex: 5.0 },
+
+  // ───────────────────────────────────────────────
+  // OPM staples that were missing
+  // ───────────────────────────────────────────────
+  { title: "Museo", artist: "Eliza Maturan", mood: "lost_love", painIndex: 8.0 },
+  { title: "Bawat Piyesa", artist: "Munimuni", mood: "lost_love", painIndex: 7.5 },
+  { title: "Hanggang Kailan", artist: "Orange & Lemons", mood: "yearning", painIndex: 7.0 },
+  { title: "Huwag Na Huwag Mong Sasabihin", artist: "Kitchie Nadal", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Buko", artist: "Jireh Lim", mood: "devotion", painIndex: 4.5 },
+  { title: "Maybe the Night", artist: "Ben&Ben", mood: "yearning", painIndex: 7.0 },
+  { title: "Tensionado", artist: "Soapdish", mood: "hopeless_crush", painIndex: 5.5 },
+  { title: "Dati", artist: "Sam Concepcion, Tippy Dos Santos & Quest", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Dahil Sa'yo", artist: "Iñigo Pascual", mood: "kilig", painIndex: 3.5 },
+  { title: "Tatsulok", artist: "Bamboo", mood: "existential", painIndex: 5.0 },
+
+  // Videoke / balladeer canon
+  { title: "Forevermore", artist: "Side A", mood: "devotion", painIndex: 5.5 },
+  { title: "Ngayon at Kailanman", artist: "Basil Valdez", mood: "devotion", painIndex: 5.0 },
+  { title: "Bakit Pa", artist: "Jessa Zaragoza", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Nandito Ako", artist: "Ogie Alcasid", mood: "hopeless_crush", painIndex: 7.5 },
+  { title: "Kahit Isang Saglit", artist: "Martin Nievera", mood: "yearning", painIndex: 7.5 },
+  { title: "Sana Dalawa ang Puso", artist: "Bodjie's Law of Gravity", mood: "forbidden", painIndex: 7.5 },
+  { title: "Sana Ngayong Pasko", artist: "Ariel Rivera", mood: "yearning", painIndex: 7.5 },
+
+  // International staples that were missing
+  { title: "Can't Help Falling in Love", artist: "Elvis Presley", mood: "devotion", painIndex: 4.0 },
+  { title: "WILDFLOWER", artist: "Billie Eilish", mood: "forbidden", painIndex: 7.5 },
+  { title: "Golden Hour", artist: "JVKE", mood: "adoration", painIndex: 3.0 },
+  { title: "Until I Found You", artist: "Stephen Sanchez", mood: "devotion", painIndex: 3.5 },
+  { title: "Those Eyes", artist: "New West", mood: "adoration", painIndex: 4.0 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs
 const GROUP_ALIASES: Record<string, string[]> = {
-  bts: ["jin (bts)", "jimin (bts)", "v (bts)", "rm", "suga", "j-hope", "jungkook"],
-  blackpink: ["rosé", "rose", "jennie", "lisa", "jisoo"],
-  "rose": ["rosé"],
-  "rosé": ["rose"],
+  bts: ["jin bts", "jimin bts", "v bts", "rm", "suga", "j hope", "jungkook"],
+  blackpink: ["rose", "jennie", "lisa", "jisoo"],
+  eheads: ["eraserheads"],
+  udd: ["up dharma down"],
+  bnb: ["ben and ben"],
 };
+
+/**
+ * Lower-case, strip accents and punctuation, spell out "&". So "rose" finds
+ * Rosé, "ben and ben" and "ben&ben" both find Ben&Ben, and "sayo" or "sa yo"
+ * both find "Sa'yo" — which is how people actually type on a phone.
+ */
+export function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+interface IndexedSong {
+  song: Song;
+  title: string;
+  artist: string;
+  /** Same as title/artist with the spaces removed, for "sayo" → "Sa'yo". */
+  titleCompact: string;
+  artistCompact: string;
+}
+
+let index: IndexedSong[] | null = null;
+function getIndex(): IndexedSong[] {
+  index ??= songDatabase.map((song) => {
+    const title = normalizeText(song.title);
+    const artist = normalizeText(song.artist);
+    return {
+      song,
+      title,
+      artist,
+      titleCompact: title.replace(/ /g, ""),
+      artistCompact: artist.replace(/ /g, ""),
+    };
+  });
+  return index;
+}
 
 /**
  * Search songs with ranked results.
  * Prioritizes: exact title match > title starts with > title contains > artist match.
- * Supports multi-word queries, group aliases (BTS finds solo members too).
+ * Every query word must appear somewhere in the title or artist. Group
+ * aliases expand artist matches (BTS finds the solo members too).
  */
 export function searchSongs(query: string): Song[] {
-  if (!query || query.trim() === "") return [];
-  const q = query.toLowerCase().trim();
-  const words = q.split(/\s+/).filter(Boolean);
+  const q = normalizeText(query ?? "");
+  if (!q) return [];
+  const qCompact = q.replace(/ /g, "");
+  const words = q.split(" ");
 
-  // Expand search terms with group aliases
-  const expandedArtistTerms = new Set<string>();
-  for (const w of words) {
-    expandedArtistTerms.add(w);
-    const aliases = GROUP_ALIASES[w];
-    if (aliases) {
-      for (const alias of aliases) expandedArtistTerms.add(alias);
-    }
-  }
-
-  // Filter: every word must appear in title or artist (with alias expansion for artist)
-  const matches = songDatabase.filter((song) => {
-    const title = song.title.toLowerCase();
-    const artist = song.artist.toLowerCase();
-
-    return words.every((w) => {
-      // Direct match in title or artist
-      if (title.includes(w) || artist.includes(w)) return true;
-      // Check if any alias of this word matches the artist
-      const aliases = GROUP_ALIASES[w];
-      if (aliases) {
-        return aliases.some((alias) => artist.includes(alias));
+  const matches = getIndex().filter((entry) =>
+    words.every((w) => {
+      if (
+        entry.title.includes(w) ||
+        entry.artist.includes(w) ||
+        entry.titleCompact.includes(w) ||
+        entry.artistCompact.includes(w)
+      ) {
+        return true;
       }
-      return false;
-    });
-  });
+      const aliases = GROUP_ALIASES[w];
+      return aliases ? aliases.some((alias) => entry.artist.includes(alias)) : false;
+    })
+  );
 
-  // Score and rank
   return matches
-    .map((song) => {
-      const title = song.title.toLowerCase();
-      const artist = song.artist.toLowerCase();
+    .map((entry) => {
+      const { title, artist, titleCompact, artistCompact } = entry;
       let score = 0;
 
-      // Exact title match
-      if (title === q) score += 100;
-      // Title starts with query
-      else if (title.startsWith(q)) score += 80;
-      // Title contains full query
-      else if (title.includes(q)) score += 60;
-      // Artist exact match
-      if (artist === q) score += 50;
-      // Artist starts with query
-      else if (artist.startsWith(q)) score += 40;
-      // Artist contains full query
-      else if (artist.includes(q)) score += 30;
-      // Alias match (still relevant but lower priority)
-      else if ([...expandedArtistTerms].some((t) => artist.includes(t))) score += 25;
+      if (title === q || titleCompact === qCompact) score += 100;
+      else if (title.startsWith(q) || titleCompact.startsWith(qCompact)) score += 80;
+      else if (title.includes(q) || titleCompact.includes(qCompact)) score += 60;
 
-      // Bonus for shorter titles (more relevant matches)
+      if (artist === q || artistCompact === qCompact) score += 50;
+      else if (artist.startsWith(q)) score += 40;
+      else if (artist.includes(q)) score += 30;
+      else if (words.some((w) => GROUP_ALIASES[w]?.some((a) => artist.includes(a)))) score += 25;
+
+      // Shorter titles are usually the more relevant hit
       score += Math.max(0, 20 - title.length);
 
-      return { song, score };
+      return { song: entry.song, score };
     })
     .sort((a, b) => b.score - a.score)
     .map((r) => r.song);
 }
+
+/**
+ * Curated one-tap picks for the song step, so nobody has to start from an
+ * empty search box. Each entry is resolved against the database at load, and
+ * anything that doesn't resolve is dropped rather than shown broken.
+ */
+const QUICK_PICK_SOURCE: { id: string; label: string; songs: [string, string][] }[] = [
+  {
+    id: "hugot",
+    label: "Hugot staples",
+    songs: [
+      ["Paubaya", "Moira Dela Torre"],
+      ["Multo", "Cup of Joe"],
+      ["Kathang Isip", "Ben&Ben"],
+      ["Pagsamo", "Arthur Nery"],
+      ["Kung Di Rin Lang Ikaw", "December Avenue ft. Moira"],
+      ["Isa Lang", "Arthur Nery"],
+      ["Hindi Tayo Pwede", "The Juans"],
+      ["Sa Susunod Na Habang Buhay", "Ben&Ben"],
+    ],
+  },
+  {
+    id: "kilig",
+    label: "Kilig era",
+    songs: [
+      ["Binibini", "Zack Tabudlo"],
+      ["Palagi", "TJ Monterde"],
+      ["Tahanan", "Adie"],
+      ["Pantropiko", "BINI"],
+      ["Unang Kilig", "BINI"],
+      ["Marilag", "Dionela"],
+      ["Dilaw", "Maki"],
+      ["Mahika", "Adie ft. Janine Berdin"],
+    ],
+  },
+  {
+    id: "throwback",
+    label: "Throwback",
+    songs: [
+      ["Ang Huling El Bimbo", "Eraserheads"],
+      ["Tadhana", "Up Dharma Down"],
+      ["The Day You Said Goodnight", "Hale"],
+      ["Burnout", "Sugarfree"],
+      ["Migraine", "Moonstar88"],
+      ["Harana", "Parokya ni Edgar"],
+      ["With A Smile", "Eraserheads"],
+      ["Basang-Basa Sa Ulan", "Aegis"],
+    ],
+  },
+  {
+    id: "global",
+    label: "International",
+    songs: [
+      ["back to friends", "sombr"],
+      ["Glimpse of Us", "Joji"],
+      ["Drop Dead", "Olivia Rodrigo"],
+      ["Someone Like You", "Adele"],
+      ["Back to December", "Taylor Swift"],
+      ["You Were Beautiful", "DAY6"],
+      ["Spring Day", "BTS"],
+      ["Golden", "HUNTR/X"],
+    ],
+  },
+];
+
+export const QUICK_PICKS: { id: string; label: string; songs: Song[] }[] =
+  QUICK_PICK_SOURCE.map((group) => ({
+    id: group.id,
+    label: group.label,
+    songs: group.songs
+      .map(([title, artist]) =>
+        songDatabase.find((s) => s.title === title && s.artist === artist)
+      )
+      .filter((s): s is Song => Boolean(s)),
+  }));
