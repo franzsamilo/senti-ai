@@ -6,7 +6,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   { title: "Pagsamo", artist: "Arthur Nery", mood: "yearning", painIndex: 8.5 },
   { title: "Isa Lang", artist: "Arthur Nery", mood: "heartbreak", painIndex: 8.0 },
-  { title: "Higa", artist: "Arthur Nery", mood: "yearning", painIndex: 7.0 },
+  { title: "Higa", artist: "Arthur Nery", mood: "infatuation", painIndex: 5.0 },
   { title: "Pelikula", artist: "Arthur Nery", mood: "sweet_pining", painIndex: 6.5 },
 
   // ───────────────────────────────────────────────
@@ -15,32 +15,32 @@ export const songDatabase: Song[] = [
   { title: "Paubaya", artist: "Moira Dela Torre", mood: "heartbreak", painIndex: 9.8 },
   { title: "Kumpas", artist: "Moira Dela Torre", mood: "letting_go", painIndex: 8.0 },
   { title: "Patawad", artist: "Moira Dela Torre", mood: "heartbreak", painIndex: 9.0 },
-  { title: "Torete", artist: "Moira Dela Torre", mood: "kilig", painIndex: 3.5 },
+  { title: "Torete", artist: "Moira Dela Torre", mood: "sweet_pining", painIndex: 5.0 },
 
   // ───────────────────────────────────────────────
   // OPM — Ben&Ben
   // ───────────────────────────────────────────────
   { title: "Kathang Isip", artist: "Ben&Ben", mood: "yearning", painIndex: 8.5 },
   { title: "Sa Susunod Na Habang Buhay", artist: "Ben&Ben", mood: "heartbreak", painIndex: 9.2 },
-  { title: "Araw-Araw", artist: "Ben&Ben", mood: "devotion", painIndex: 6.0 },
+  { title: "Araw-Araw", artist: "Ben&Ben", mood: "devotion", painIndex: 4.0 },
   { title: "Leaves", artist: "Ben&Ben", mood: "heartbreak", painIndex: 8.0 },
-  { title: "Pagtingin", artist: "Ben&Ben", mood: "sweet_pining", painIndex: 7.0 },
+  { title: "Pagtingin", artist: "Ben&Ben", mood: "sweet_pining", painIndex: 5.0 },
 
   // ───────────────────────────────────────────────
   // OPM — Juan Karlos
   // ───────────────────────────────────────────────
-  { title: "Buwan", artist: "Juan Karlos", mood: "devotion", painIndex: 7.2 },
-  { title: "Ere", artist: "Juan Karlos", mood: "kilig", painIndex: 6.5 },
-  { title: "Demonyo", artist: "Juan Karlos", mood: "toxic", painIndex: 8.8 },
+  { title: "Buwan", artist: "Juan Karlos", mood: "infatuation", painIndex: 4.5 },
+  { title: "Ere", artist: "Juan Karlos", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Demonyo", artist: "Juan Karlos", mood: "toxic", painIndex: 7.0 },
 
   // ───────────────────────────────────────────────
   // OPM — Zack Tabudlo
   // ───────────────────────────────────────────────
-  { title: "Binibini", artist: "Zack Tabudlo", mood: "kilig", painIndex: 4.5 },
+  { title: "Binibini", artist: "Zack Tabudlo", mood: "kilig", painIndex: 3.0 },
   { title: "Saan", artist: "Zack Tabudlo", mood: "yearning", painIndex: 8.2 },
-  { title: "Habang Buhay", artist: "Zack Tabudlo", mood: "devotion", painIndex: 6.0 },
+  { title: "Habang Buhay", artist: "Zack Tabudlo", mood: "devotion", painIndex: 4.0 },
   { title: "Nangangamba", artist: "Zack Tabudlo", mood: "anxiety", painIndex: 7.5 },
-  { title: "Give Me Your Forever", artist: "Zack Tabudlo", mood: "devotion", painIndex: 4.0 },
+  { title: "Give Me Your Forever", artist: "Zack Tabudlo", mood: "devotion", painIndex: 3.0 },
 
   // ───────────────────────────────────────────────
   // OPM — December Avenue
@@ -52,7 +52,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Adie
   // ───────────────────────────────────────────────
-  { title: "Tahanan", artist: "Adie", mood: "warmth", painIndex: 5.5 },
+  { title: "Tahanan", artist: "Adie", mood: "warmth", painIndex: 3.5 },
   { title: "Paraluman", artist: "Adie", mood: "adoration", painIndex: 3.5 },
   { title: "Daylight", artist: "Adie", mood: "kilig", painIndex: 3.0 },
   { title: "Mahika", artist: "Adie ft. Janine Berdin", mood: "kilig", painIndex: 3.0 },
@@ -60,8 +60,8 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — IV of Spades
   // ───────────────────────────────────────────────
-  { title: "Mundo", artist: "IV of Spades", mood: "existential", painIndex: 7.0 },
-  { title: "Come Inside of My Heart", artist: "IV of Spades", mood: "yearning", painIndex: 6.5 },
+  { title: "Mundo", artist: "IV of Spades", mood: "yearning", painIndex: 6.5 },
+  { title: "Come Inside of My Heart", artist: "IV of Spades", mood: "kilig", painIndex: 3.5 },
   { title: "Bawat Kaluluwa", artist: "IV of Spades", mood: "devotion", painIndex: 5.5 },
 
   // ───────────────────────────────────────────────
@@ -73,29 +73,29 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Maki
   // ───────────────────────────────────────────────
-  { title: "Dilaw", artist: "Maki", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Dilaw", artist: "Maki", mood: "kilig", painIndex: 3.0 },
   { title: "Saan Man Ako Magpunta", artist: "Maki", mood: "devotion", painIndex: 5.5 },
 
   // ───────────────────────────────────────────────
   // OPM — Dilaw (band)
   // ───────────────────────────────────────────────
-  { title: "Uhaw", artist: "Dilaw", mood: "yearning", painIndex: 4.0 },
+  { title: "Uhaw", artist: "Dilaw", mood: "infatuation", painIndex: 4.5 },
 
   // ───────────────────────────────────────────────
   // OPM — Cup of Joe
   // ───────────────────────────────────────────────
-  { title: "Tingin", artist: "Cup of Joe", mood: "sweet_pining", painIndex: 7.0 },
+  { title: "Tingin", artist: "Cup of Joe", mood: "kilig", painIndex: 3.5 },
 
   // ───────────────────────────────────────────────
   // OPM — NOBITA
   // ───────────────────────────────────────────────
-  { title: "Ikaw Lang", artist: "NOBITA", mood: "devotion", painIndex: 6.2 },
+  { title: "Ikaw Lang", artist: "NOBITA", mood: "devotion", painIndex: 4.0 },
   { title: "Duas", artist: "NOBITA", mood: "yearning", painIndex: 6.0 },
 
   // ───────────────────────────────────────────────
   // OPM — TJ Monterde
   // ───────────────────────────────────────────────
-  { title: "Palagi", artist: "TJ Monterde", mood: "devotion", painIndex: 6.8 },
+  { title: "Palagi", artist: "TJ Monterde", mood: "devotion", painIndex: 3.5 },
 
   // ───────────────────────────────────────────────
   // OPM — The Juans
@@ -105,8 +105,8 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Silent Sanctuary
   // ───────────────────────────────────────────────
-  { title: "Pasensya Ka Na", artist: "Silent Sanctuary", mood: "heartbreak", painIndex: 7.5 },
-  { title: "Sa'yo", artist: "Silent Sanctuary", mood: "devotion", painIndex: 6.0 },
+  { title: "Pasensya Ka Na", artist: "Silent Sanctuary", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Sa'yo", artist: "Silent Sanctuary", mood: "devotion", painIndex: 4.5 },
 
   // ───────────────────────────────────────────────
   // OPM — John Roa
@@ -123,7 +123,7 @@ export const songDatabase: Song[] = [
   // OPM — Eraserheads
   // ───────────────────────────────────────────────
   { title: "Ang Huling El Bimbo", artist: "Eraserheads", mood: "nostalgia", painIndex: 9.0 },
-  { title: "With A Smile", artist: "Eraserheads", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "With A Smile", artist: "Eraserheads", mood: "tragic_hope", painIndex: 5.0 },
 
   // ───────────────────────────────────────────────
   // OPM — Parokya ni Edgar
@@ -155,7 +155,7 @@ export const songDatabase: Song[] = [
   { title: "Glue Song", artist: "beabadoobee", mood: "kilig", painIndex: 2.5 },
   { title: "The Perfect Pair", artist: "beabadoobee", mood: "sweet_pining", painIndex: 4.0 },
   { title: "Cologne", artist: "beabadoobee", mood: "yearning", painIndex: 6.5 },
-  { title: "Coffee", artist: "beabadoobee", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Coffee", artist: "beabadoobee", mood: "warmth", painIndex: 4.0 },
   { title: "Ever Seen", artist: "beabadoobee", mood: "heartbreak", painIndex: 7.5 },
   { title: "Coming Home", artist: "beabadoobee", mood: "warmth", painIndex: 3.5 },
   { title: "Real Man", artist: "beabadoobee", mood: "existential", painIndex: 6.0 },
@@ -197,7 +197,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // International — NIKI
   // ───────────────────────────────────────────────
-  { title: "Every Summertime", artist: "NIKI", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Every Summertime", artist: "NIKI", mood: "kilig", painIndex: 3.5 },
   { title: "Before", artist: "NIKI", mood: "yearning", painIndex: 7.5 },
   { title: "Backburner", artist: "NIKI", mood: "heartbreak", painIndex: 8.0 },
   { title: "La La Lost You", artist: "NIKI", mood: "letting_go", painIndex: 7.0 },
@@ -220,35 +220,35 @@ export const songDatabase: Song[] = [
   // International — Bruno Mars
   // ───────────────────────────────────────────────
   { title: "Die With A Smile", artist: "Bruno Mars w/ Lady Gaga", mood: "devotion", painIndex: 5.5 },
-  { title: "APT.", artist: "Bruno Mars w/ Rose", mood: "kilig", painIndex: 3.0 },
+  { title: "APT.", artist: "Bruno Mars w/ Rose", mood: "infatuation", painIndex: 2.0 },
   { title: "When I Was Your Man", artist: "Bruno Mars", mood: "heartbreak", painIndex: 9.0 },
   { title: "Talking to the Moon", artist: "Bruno Mars", mood: "yearning", painIndex: 8.5 },
   { title: "It Will Rain", artist: "Bruno Mars", mood: "heartbreak", painIndex: 8.0 },
   { title: "Just the Way You Are", artist: "Bruno Mars", mood: "adoration", painIndex: 2.0 },
-  { title: "Grenade", artist: "Bruno Mars", mood: "toxic", painIndex: 8.5 },
+  { title: "Grenade", artist: "Bruno Mars", mood: "hopeless_crush", painIndex: 8.0 },
 
   // ───────────────────────────────────────────────
   // International — SZA
   // ───────────────────────────────────────────────
-  { title: "Kill Bill", artist: "SZA", mood: "toxic", painIndex: 7.5 },
+  { title: "Kill Bill", artist: "SZA", mood: "jealousy", painIndex: 7.5 },
   { title: "Snooze", artist: "SZA", mood: "devotion", painIndex: 6.0 },
   { title: "Good Days", artist: "SZA", mood: "letting_go", painIndex: 5.5 },
   { title: "The Weekend", artist: "SZA", mood: "forbidden", painIndex: 7.0 },
   { title: "Nobody Gets Me", artist: "SZA", mood: "heartbreak", painIndex: 8.5 },
   { title: "Shirt", artist: "SZA", mood: "toxic", painIndex: 7.0 },
-  { title: "Saturn", artist: "SZA", mood: "existential", painIndex: 8.0 },
+  { title: "Saturn", artist: "SZA", mood: "existential", painIndex: 7.0 },
 
   // ───────────────────────────────────────────────
   // International — Ariana Grande
   // ───────────────────────────────────────────────
   { title: "we can't be friends", artist: "Ariana Grande", mood: "letting_go", painIndex: 8.0 },
-  { title: "thank u next", artist: "Ariana Grande", mood: "letting_go", painIndex: 6.0 },
+  { title: "thank u next", artist: "Ariana Grande", mood: "letting_go", painIndex: 4.5 },
   { title: "pov", artist: "Ariana Grande", mood: "adoration", painIndex: 4.0 },
   { title: "ghostin", artist: "Ariana Grande", mood: "heartbreak", painIndex: 9.5 },
   { title: "needy", artist: "Ariana Grande", mood: "anxiety", painIndex: 7.0 },
   { title: "One Last Time", artist: "Ariana Grande", mood: "heartbreak", painIndex: 8.0 },
   { title: "imagine", artist: "Ariana Grande", mood: "yearning", painIndex: 7.5 },
-  { title: "Into You", artist: "Ariana Grande", mood: "infatuation", painIndex: 5.0 },
+  { title: "Into You", artist: "Ariana Grande", mood: "infatuation", painIndex: 3.5 },
 
   // ───────────────────────────────────────────────
   // International — Cigarettes After Sex
@@ -264,7 +264,7 @@ export const songDatabase: Song[] = [
   // International — Billie Eilish
   // ───────────────────────────────────────────────
   { title: "when the party's over", artist: "Billie Eilish", mood: "heartbreak", painIndex: 8.0 },
-  { title: "BIRDS OF A FEATHER", artist: "Billie Eilish", mood: "devotion", painIndex: 5.0 },
+  { title: "BIRDS OF A FEATHER", artist: "Billie Eilish", mood: "devotion", painIndex: 4.0 },
   { title: "lovely", artist: "Billie Eilish w/ Khalid", mood: "existential", painIndex: 8.5 },
   { title: "ocean eyes", artist: "Billie Eilish", mood: "sweet_pining", painIndex: 5.5 },
   { title: "everything i wanted", artist: "Billie Eilish", mood: "anxiety", painIndex: 7.5 },
@@ -273,7 +273,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // International — TV Girl
   // ───────────────────────────────────────────────
-  { title: "Lovers Rock", artist: "TV Girl", mood: "kilig", painIndex: 4.0 },
+  { title: "Lovers Rock", artist: "TV Girl", mood: "infatuation", painIndex: 5.0 },
   { title: "Not Allowed", artist: "TV Girl", mood: "forbidden", painIndex: 7.0 },
   { title: "Blue Hair", artist: "TV Girl", mood: "nostalgia", painIndex: 6.5 },
   { title: "Taking What's Not Yours", artist: "TV Girl", mood: "toxic", painIndex: 7.0 },
@@ -304,7 +304,7 @@ export const songDatabase: Song[] = [
   { title: "happier", artist: "Olivia Rodrigo", mood: "jealousy", painIndex: 8.0 },
   { title: "enough for you", artist: "Olivia Rodrigo", mood: "heartbreak", painIndex: 8.5 },
   { title: "favorite crime", artist: "Olivia Rodrigo", mood: "toxic", painIndex: 8.0 },
-  { title: "so american", artist: "Olivia Rodrigo", mood: "kilig", painIndex: 4.0 },
+  { title: "so american", artist: "Olivia Rodrigo", mood: "kilig", painIndex: 2.5 },
   { title: "vampire", artist: "Olivia Rodrigo", mood: "toxic", painIndex: 7.5 },
 
   // ───────────────────────────────────────────────
@@ -314,7 +314,7 @@ export const songDatabase: Song[] = [
   { title: "The Truth Untold", artist: "BTS", mood: "yearning", painIndex: 8.5 },
   { title: "Fake Love", artist: "BTS", mood: "heartbreak", painIndex: 7.5 },
   { title: "Butterfly", artist: "BTS", mood: "sweet_pining", painIndex: 6.5 },
-  { title: "Life Goes On", artist: "BTS", mood: "letting_go", painIndex: 6.0 },
+  { title: "Life Goes On", artist: "BTS", mood: "tragic_hope", painIndex: 6.0 },
   { title: "Film Out", artist: "BTS", mood: "heartbreak", painIndex: 7.0 },
 
   // ───────────────────────────────────────────────
@@ -327,7 +327,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // K-Pop — BLACKPINK / solos
   // ───────────────────────────────────────────────
-  { title: "Stay", artist: "BLACKPINK", mood: "devotion", painIndex: 5.5 },
+  { title: "Stay", artist: "BLACKPINK", mood: "yearning", painIndex: 7.0 },
   { title: "Lovesick Girls", artist: "BLACKPINK", mood: "heartbreak", painIndex: 7.0 },
   { title: "GONE", artist: "Rose", mood: "heartbreak", painIndex: 8.5 },
   { title: "On The Ground", artist: "Rose", mood: "existential", painIndex: 6.5 },
@@ -340,7 +340,7 @@ export const songDatabase: Song[] = [
   { title: "Letting Go", artist: "DAY6", mood: "letting_go", painIndex: 8.5 },
   { title: "When You Love Someone", artist: "DAY6", mood: "devotion", painIndex: 6.0 },
   { title: "Congratulations", artist: "DAY6", mood: "heartbreak", painIndex: 8.0 },
-  { title: "Happy", artist: "DAY6", mood: "warmth", painIndex: 3.0 },
+  { title: "Happy", artist: "DAY6", mood: "tragic_hope", painIndex: 6.0 },
   { title: "Maybe Tomorrow", artist: "DAY6", mood: "anxiety", painIndex: 6.5 },
 
   // ───────────────────────────────────────────────
@@ -353,7 +353,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // K-Pop — IU
   // ───────────────────────────────────────────────
-  { title: "Love wins all", artist: "IU", mood: "devotion", painIndex: 5.0 },
+  { title: "Love wins all", artist: "IU", mood: "tragic_hope", painIndex: 7.0 },
   { title: "Through the Night", artist: "IU", mood: "yearning", painIndex: 7.5 },
   { title: "Blueming", artist: "IU", mood: "kilig", painIndex: 3.5 },
   { title: "eight", artist: "IU ft. SUGA", mood: "nostalgia", painIndex: 7.0 },
@@ -420,7 +420,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Cup of Joe (expanded)
   // ───────────────────────────────────────────────
-  { title: "Multo", artist: "Cup of Joe", mood: "yearning", painIndex: 7.5 },
+  { title: "Multo", artist: "Cup of Joe", mood: "lost_love", painIndex: 8.0 },
   { title: "Sandali", artist: "Cup of Joe", mood: "sweet_pining", painIndex: 5.5 },
   { title: "Buhay Ka Pa Naman", artist: "Cup of Joe", mood: "devotion", painIndex: 5.0 },
 
@@ -464,7 +464,7 @@ export const songDatabase: Song[] = [
   // OPM — Rivermaya
   // ───────────────────────────────────────────────
   { title: "214", artist: "Rivermaya", mood: "devotion", painIndex: 5.0 },
-  { title: "Kisapmata", artist: "Rivermaya", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Kisapmata", artist: "Rivermaya", mood: "lost_love", painIndex: 8.0 },
   { title: "Hinahanap-Hanap Kita", artist: "Rivermaya", mood: "yearning", painIndex: 7.0 },
   { title: "You'll Be Safe Here", artist: "Rivermaya", mood: "devotion", painIndex: 4.5 },
   { title: "Himala", artist: "Rivermaya", mood: "tragic_hope", painIndex: 6.0 },
@@ -485,9 +485,9 @@ export const songDatabase: Song[] = [
   { title: "Jeepney", artist: "Spongecola", mood: "nostalgia", painIndex: 6.5 },
   { title: "Tuliro", artist: "Spongecola", mood: "infatuation", painIndex: 4.5 },
   { title: "Kay Tagal Kitang Hinintay", artist: "Spongecola", mood: "yearning", painIndex: 7.0 },
-  { title: "Torete", artist: "Moonstar88", mood: "kilig", painIndex: 3.5 },
+  { title: "Torete", artist: "Moonstar88", mood: "sweet_pining", painIndex: 4.5 },
   { title: "Migraine", artist: "Moonstar88", mood: "heartbreak", painIndex: 7.0 },
-  { title: "Narda", artist: "Kamikazee", mood: "devotion", painIndex: 4.5 },
+  { title: "Narda", artist: "Kamikazee", mood: "hopeless_crush", painIndex: 5.5 },
   { title: "Huling Sayaw", artist: "Kamikazee", mood: "heartbreak", painIndex: 8.0 },
   { title: "Magbalik", artist: "Callalily", mood: "yearning", painIndex: 7.5 },
   { title: "Stars", artist: "Callalily", mood: "sweet_pining", painIndex: 5.0 },
@@ -498,7 +498,7 @@ export const songDatabase: Song[] = [
   { title: "Kahit Kailan", artist: "South Border", mood: "devotion", painIndex: 5.0 },
   { title: "Sundo", artist: "Imago", mood: "devotion", painIndex: 4.5 },
   { title: "Tadhana", artist: "Up Dharma Down", mood: "tragic_hope", painIndex: 7.0 },
-  { title: "Oo", artist: "Up Dharma Down", mood: "yearning", painIndex: 6.5 },
+  { title: "Oo", artist: "Up Dharma Down", mood: "hopeless_crush", painIndex: 8.5 },
   { title: "Indak", artist: "Up Dharma Down", mood: "kilig", painIndex: 4.0 },
   { title: "Mga Awit Kay Aisa", artist: "Typecast", mood: "heartbreak", painIndex: 8.5 },
   { title: "Sandalan", artist: "6cyclemind", mood: "devotion", painIndex: 5.0 },
@@ -509,26 +509,26 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // OPM — Classic Balladeers
   // ───────────────────────────────────────────────
-  { title: "Bituing Walang Ningning", artist: "Sharon Cuneta", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Bituing Walang Ningning", artist: "Sharon Cuneta", mood: "existential", painIndex: 7.0 },
   { title: "Basang-Basa Sa Ulan", artist: "Aegis", mood: "heartbreak", painIndex: 8.5 },
-  { title: "Halik", artist: "Aegis", mood: "yearning", painIndex: 8.0 },
+  { title: "Halik", artist: "Aegis", mood: "heartbreak", painIndex: 8.0 },
   { title: "Luha", artist: "Aegis", mood: "heartbreak", painIndex: 9.0 },
-  { title: "Bakit Ngayon Ka Lang", artist: "Freestyle", mood: "yearning", painIndex: 7.0 },
+  { title: "Bakit Ngayon Ka Lang", artist: "Freestyle", mood: "forbidden", painIndex: 7.5 },
   { title: "Iniibig Kita", artist: "Roel Cortez", mood: "devotion", painIndex: 5.0 },
   { title: "Natutulog Ba Ang Diyos?", artist: "Gary Valenciano", mood: "existential", painIndex: 7.5 },
-  { title: "Kahit Maputi Na Ang Buhok Ko", artist: "Noel Cabangon", mood: "devotion", painIndex: 6.0 },
-  { title: "Ikaw", artist: "Yeng Constantino", mood: "devotion", painIndex: 4.5 },
+  { title: "Kahit Maputi Na Ang Buhok Ko", artist: "Noel Cabangon", mood: "devotion", painIndex: 3.5 },
+  { title: "Ikaw", artist: "Yeng Constantino", mood: "devotion", painIndex: 3.0 },
   { title: "Hawak Kamay", artist: "Yeng Constantino", mood: "warmth", painIndex: 3.5 },
-  { title: "Panalangin", artist: "APO Hiking Society", mood: "yearning", painIndex: 6.5 },
+  { title: "Panalangin", artist: "APO Hiking Society", mood: "sweet_pining", painIndex: 4.5 },
   { title: "When I Met You", artist: "APO Hiking Society", mood: "kilig", painIndex: 3.0 },
-  { title: "Kung Ako Na Lang Sana", artist: "Bituin Escalante", mood: "yearning", painIndex: 8.0 },
+  { title: "Kung Ako Na Lang Sana", artist: "Bituin Escalante", mood: "hopeless_crush", painIndex: 8.0 },
   { title: "Tuloy Pa Rin", artist: "Neocolours", mood: "tragic_hope", painIndex: 5.5 },
 
   // ───────────────────────────────────────────────
   // OPM — Charting (March 2026)
   // ───────────────────────────────────────────────
   { title: "Tahanan", artist: "El Manu", mood: "belonging", painIndex: 5.0 },
-  { title: "Libu-Libong Buwan (Uuwian)", artist: "Kyle Raphael", mood: "devotion", painIndex: 5.5 },
+  { title: "Libu-Libong Buwan (Uuwian)", artist: "Kyle Raphael", mood: "yearning", painIndex: 7.0 },
   { title: "Panaginip", artist: "nicole", mood: "sweet_pining", painIndex: 5.0 },
   { title: "Since Day One", artist: "Skusta Clee & Flow G", mood: "loyalty", painIndex: 4.0 },
   { title: "Rosas", artist: "Yuridope", mood: "adoration", painIndex: 4.0 },
@@ -544,7 +544,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // International — Taylor Swift (expanded)
   // ───────────────────────────────────────────────
-  { title: "Opalite", artist: "Taylor Swift", mood: "yearning", painIndex: 7.0 },
+  { title: "Opalite", artist: "Taylor Swift", mood: "warmth", painIndex: 4.0 },
 
   // ───────────────────────────────────────────────
   // International — Bruno Mars (expanded)
@@ -600,7 +600,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   // International — Maroon 5
   // ───────────────────────────────────────────────
-  { title: "She Will Be Loved", artist: "Maroon 5", mood: "devotion", painIndex: 6.0 },
+  { title: "She Will Be Loved", artist: "Maroon 5", mood: "hopeless_crush", painIndex: 7.0 },
   { title: "Sunday Morning", artist: "Maroon 5", mood: "warmth", painIndex: 3.0 },
   { title: "Memories", artist: "Maroon 5", mood: "nostalgia", painIndex: 7.0 },
   { title: "Payphone", artist: "Maroon 5", mood: "heartbreak", painIndex: 6.5 },
@@ -611,12 +611,12 @@ export const songDatabase: Song[] = [
   { title: "The Man Who Can't Be Moved", artist: "The Script", mood: "yearning", painIndex: 8.0 },
   { title: "Breakeven", artist: "The Script", mood: "heartbreak", painIndex: 8.5 },
   { title: "For the First Time", artist: "The Script", mood: "tragic_hope", painIndex: 7.0 },
-  { title: "If You Could See Me Now", artist: "The Script", mood: "nostalgia", painIndex: 8.5 },
+  { title: "If You Could See Me Now", artist: "The Script", mood: "lost_love", painIndex: 8.5 },
 
   // ───────────────────────────────────────────────
   // International — Westlife / Backstreet Boys / *NSYNC / Aerosmith
   // ───────────────────────────────────────────────
-  { title: "My Love", artist: "Westlife", mood: "devotion", painIndex: 5.0 },
+  { title: "My Love", artist: "Westlife", mood: "yearning", painIndex: 6.5 },
   { title: "I Don't Wanna Miss a Thing", artist: "Aerosmith", mood: "devotion", painIndex: 5.5 },
   { title: "I Want It That Way", artist: "Backstreet Boys", mood: "yearning", painIndex: 5.5 },
   { title: "As Long As You Love Me", artist: "Backstreet Boys", mood: "devotion", painIndex: 4.5 },
@@ -643,7 +643,7 @@ export const songDatabase: Song[] = [
   { title: "Summertime Sadness", artist: "Lana Del Rey", mood: "nostalgia", painIndex: 7.0 },
   { title: "Video Games", artist: "Lana Del Rey", mood: "devotion", painIndex: 6.5 },
   { title: "Born to Die", artist: "Lana Del Rey", mood: "toxic", painIndex: 7.5 },
-  { title: "Young and Beautiful", artist: "Lana Del Rey", mood: "yearning", painIndex: 7.0 },
+  { title: "Young and Beautiful", artist: "Lana Del Rey", mood: "anxiety", painIndex: 7.0 },
   { title: "Say Yes to Heaven", artist: "Lana Del Rey", mood: "sweet_pining", painIndex: 6.0 },
 
   // ───────────────────────────────────────────────
@@ -651,7 +651,7 @@ export const songDatabase: Song[] = [
   // ───────────────────────────────────────────────
   { title: "Fix You", artist: "Coldplay", mood: "tragic_hope", painIndex: 8.0 },
   { title: "The Scientist", artist: "Coldplay", mood: "heartbreak", painIndex: 8.5 },
-  { title: "Yellow", artist: "Coldplay", mood: "devotion", painIndex: 5.0 },
+  { title: "Yellow", artist: "Coldplay", mood: "adoration", painIndex: 3.5 },
   { title: "Sparks", artist: "Coldplay", mood: "sweet_pining", painIndex: 6.0 },
   { title: "Everglow", artist: "Coldplay", mood: "nostalgia", painIndex: 7.0 },
 
@@ -661,7 +661,7 @@ export const songDatabase: Song[] = [
   { title: "Welcome to the Black Parade", artist: "My Chemical Romance", mood: "existential", painIndex: 7.0 },
   { title: "I Don't Love You", artist: "My Chemical Romance", mood: "heartbreak", painIndex: 8.0 },
   { title: "Famous Last Words", artist: "My Chemical Romance", mood: "tragic_hope", painIndex: 7.5 },
-  { title: "Helena", artist: "My Chemical Romance", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Helena", artist: "My Chemical Romance", mood: "lost_love", painIndex: 8.5 },
 
   // ───────────────────────────────────────────────
   // International — Dashboard Confessional / Neck Deep / Mayday Parade
@@ -674,7 +674,7 @@ export const songDatabase: Song[] = [
   { title: "Terrible Things", artist: "Mayday Parade", mood: "heartbreak", painIndex: 9.5 },
 
   // === LANY ===
-  { title: "ILYSB", artist: "LANY", mood: "devotion", painIndex: 4.0 },
+  { title: "ILYSB", artist: "LANY", mood: "devotion", painIndex: 3.0 },
   { title: "Malibu Nights", artist: "LANY", mood: "heartbreak", painIndex: 8.5 },
   { title: "Thick and Thin", artist: "LANY", mood: "devotion", painIndex: 5.0 },
   { title: "13", artist: "LANY", mood: "heartbreak", painIndex: 8.0 },
@@ -700,12 +700,12 @@ export const songDatabase: Song[] = [
 
   // === Shawn Mendes ===
   { title: "Stitches", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 7.5 },
-  { title: "Treat You Better", artist: "Shawn Mendes", mood: "yearning", painIndex: 6.5 },
+  { title: "Treat You Better", artist: "Shawn Mendes", mood: "hopeless_crush", painIndex: 6.5 },
   { title: "If I Can't Have You", artist: "Shawn Mendes", mood: "yearning", painIndex: 7.0 },
   { title: "In My Blood", artist: "Shawn Mendes", mood: "anxiety", painIndex: 7.5 },
   { title: "Mercy", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 7.5 },
   { title: "Wonder", artist: "Shawn Mendes", mood: "sweet_pining", painIndex: 5.5 },
-  { title: "It'll Be Okay", artist: "Shawn Mendes", mood: "letting_go", painIndex: 7.0 },
+  { title: "It'll Be Okay", artist: "Shawn Mendes", mood: "letting_go", painIndex: 8.0 },
   { title: "When You're Gone", artist: "Shawn Mendes", mood: "heartbreak", painIndex: 8.0 },
   { title: "There's Nothing Holdin' Me Back", artist: "Shawn Mendes", mood: "infatuation", painIndex: 4.0 },
   { title: "Señorita", artist: "Shawn Mendes & Camila Cabello", mood: "infatuation", painIndex: 4.0 },
@@ -735,16 +735,16 @@ export const songDatabase: Song[] = [
   { title: "It's Not Living (If It's Not with You)", artist: "The 1975", mood: "obsession", painIndex: 7.0 },
   { title: "Chocolate", artist: "The 1975", mood: "nostalgia", painIndex: 5.0 },
   { title: "Me & You Together Song", artist: "The 1975", mood: "kilig", painIndex: 3.5 },
-  { title: "I'm In Love With You", artist: "The 1975", mood: "devotion", painIndex: 8.0 },
+  { title: "I'm In Love With You", artist: "The 1975", mood: "kilig", painIndex: 3.0 },
 
   // === Sabrina Carpenter ===
   { title: "Espresso", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.5 },
   { title: "Please Please Please", artist: "Sabrina Carpenter", mood: "anxiety", painIndex: 6.0 },
-  { title: "Feather", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 5.5 },
+  { title: "Feather", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 4.0 },
   { title: "Nonsense", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.0 },
   { title: "because i liked a boy", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.0 },
   { title: "Skin", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.5 },
-  { title: "Taste", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.0 },
+  { title: "Taste", artist: "Sabrina Carpenter", mood: "jealousy", painIndex: 5.0 },
   { title: "Bed Chem", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.0 },
   { title: "Lie to Girls", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
   { title: "Slim Pickins", artist: "Sabrina Carpenter", mood: "existential", painIndex: 5.5 },
@@ -755,10 +755,9 @@ export const songDatabase: Song[] = [
   { title: "Fallin' All in You", artist: "Shawn Mendes", mood: "devotion", painIndex: 4.0 },
 
   // === Love Me Not (Filipino artist) ===
-  { title: "Love Me Not", artist: "Love Me Not", mood: "heartbreak", painIndex: 7.0 },
 
   // === Radiohead ===
-  { title: "Creep", artist: "Radiohead", mood: "yearning", painIndex: 8.0 },
+  { title: "Creep", artist: "Radiohead", mood: "hopeless_crush", painIndex: 8.0 },
   { title: "No Surprises", artist: "Radiohead", mood: "existential", painIndex: 7.5 },
   { title: "Fake Plastic Trees", artist: "Radiohead", mood: "existential", painIndex: 7.0 },
   { title: "Exit Music (For a Film)", artist: "Radiohead", mood: "heartbreak", painIndex: 9.0 },
@@ -772,7 +771,7 @@ export const songDatabase: Song[] = [
   { title: "Videotape", artist: "Radiohead", mood: "letting_go", painIndex: 8.0 },
 
   // === Suki Waterhouse ===
-  { title: "Good Looking", artist: "Suki Waterhouse", mood: "kilig", painIndex: 3.5 },
+  { title: "Good Looking", artist: "Suki Waterhouse", mood: "jealousy", painIndex: 6.5 },
   { title: "Moves", artist: "Suki Waterhouse", mood: "infatuation", painIndex: 4.0 },
   { title: "Melrose Meltdown", artist: "Suki Waterhouse", mood: "existential", painIndex: 6.5 },
   { title: "Blackout Drunk", artist: "Suki Waterhouse", mood: "toxic", painIndex: 7.0 },
@@ -796,7 +795,7 @@ export const songDatabase: Song[] = [
   { title: "Open a Window", artist: "Rex Orange County", mood: "anxiety", painIndex: 7.0 },
 
   // === Lola Amour ===
-  { title: "Raining in Manila", artist: "Lola Amour", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Raining in Manila", artist: "Lola Amour", mood: "yearning", painIndex: 7.0 },
   { title: "Fallen", artist: "Lola Amour", mood: "sweet_pining", painIndex: 5.5 },
   { title: "Pwede Ba", artist: "Lola Amour", mood: "yearning", painIndex: 6.5 },
   { title: "Sayo", artist: "Lola Amour", mood: "devotion", painIndex: 5.0 },
@@ -809,12 +808,11 @@ export const songDatabase: Song[] = [
   { title: "Left and Right", artist: "Charlie Puth ft. Jung Kook", mood: "infatuation", painIndex: 4.5 },
   { title: "How Long", artist: "Charlie Puth", mood: "toxic", painIndex: 6.0 },
   { title: "Light Switch", artist: "Charlie Puth", mood: "infatuation", painIndex: 3.5 },
-  { title: "See You Again", artist: "Wiz Khalifa ft. Charlie Puth", mood: "nostalgia", painIndex: 8.5 },
+  { title: "See You Again", artist: "Wiz Khalifa ft. Charlie Puth", mood: "lost_love", painIndex: 8.0 },
 
   // === Sam Smith (additions) ===
-  { title: "Unholy", artist: "Sam Smith ft. Kim Petras", mood: "toxic", painIndex: 5.5 },
+  { title: "Unholy", artist: "Sam Smith ft. Kim Petras", mood: "forbidden", painIndex: 4.5 },
   { title: "Lay Me Down", artist: "Sam Smith", mood: "heartbreak", painIndex: 9.0 },
-  { title: "I Know I'm Not the Only One", artist: "Sam Smith", mood: "heartbreak", painIndex: 8.0 },
   { title: "Like I Can", artist: "Sam Smith", mood: "devotion", painIndex: 5.0 },
   { title: "Dancing with a Stranger", artist: "Sam Smith & Normani", mood: "letting_go", painIndex: 6.0 },
 
@@ -843,7 +841,7 @@ export const songDatabase: Song[] = [
   { title: "Me and My Broken Heart", artist: "Rixton", mood: "heartbreak", painIndex: 6.5 },
 
   // === Sarah Geronimo ===
-  { title: "Maybe This Time", artist: "Sarah Geronimo", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "Maybe This Time", artist: "Sarah Geronimo", mood: "tragic_hope", painIndex: 6.0 },
   { title: "God Gave Me You", artist: "Sarah Geronimo", mood: "devotion", painIndex: 3.5 },
   { title: "Tala", artist: "Sarah Geronimo", mood: "kilig", painIndex: 2.5 },
   { title: "Kilometro", artist: "Sarah Geronimo", mood: "yearning", painIndex: 6.5 },
@@ -862,15 +860,15 @@ export const songDatabase: Song[] = [
   { title: "Like Real People Do", artist: "Hozier", mood: "sweet_pining", painIndex: 5.0 },
   { title: "From Eden", artist: "Hozier", mood: "forbidden", painIndex: 7.0 },
   { title: "Work Song", artist: "Hozier", mood: "devotion", painIndex: 5.5 },
-  { title: "Too Sweet", artist: "Hozier", mood: "toxic", painIndex: 5.5 },
+  { title: "Too Sweet", artist: "Hozier", mood: "infatuation", painIndex: 4.0 },
   { title: "Movement", artist: "Hozier", mood: "obsession", painIndex: 6.5 },
   { title: "Francesca", artist: "Hozier", mood: "forbidden", painIndex: 7.5 },
   { title: "Unknown / Nth", artist: "Hozier", mood: "yearning", painIndex: 7.0 },
   { title: "Almost (Sweet Music)", artist: "Hozier", mood: "nostalgia", painIndex: 6.0 },
 
   // === Steve Lacy ===
-  { title: "Bad Habit", artist: "Steve Lacy", mood: "yearning", painIndex: 7.0 },
-  { title: "Dark Red", artist: "Steve Lacy", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Bad Habit", artist: "Steve Lacy", mood: "hopeless_crush", painIndex: 6.0 },
+  { title: "Dark Red", artist: "Steve Lacy", mood: "anxiety", painIndex: 7.0 },
   { title: "Some", artist: "Steve Lacy", mood: "infatuation", painIndex: 4.5 },
   { title: "Sunshine", artist: "Steve Lacy ft. Fousheé", mood: "toxic", painIndex: 6.0 },
   { title: "Mercury", artist: "Steve Lacy", mood: "existential", painIndex: 6.5 },
@@ -878,19 +876,17 @@ export const songDatabase: Song[] = [
   { title: "Buttons", artist: "Steve Lacy", mood: "infatuation", painIndex: 4.0 },
 
   // === Morisette ===
-  { title: "Akin Ka Na Lang", artist: "Morisette", mood: "yearning", painIndex: 7.0 },
-  { title: "Throwback", artist: "Morisette", mood: "nostalgia", painIndex: 7.5 },
-  { title: "Mahal Na Mahal", artist: "Morisette", mood: "devotion", painIndex: 5.5 },
-  { title: "Oh Bakit", artist: "Morisette", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Akin Ka Na Lang", artist: "Morissette", mood: "forbidden", painIndex: 7.5 },
+  { title: "Throwback", artist: "Morissette", mood: "nostalgia", painIndex: 7.5 },
 
   // === Roselle Nava ===
   { title: "Bakit Nga Ba Mahal Kita", artist: "Roselle Nava", mood: "yearning", painIndex: 8.0 },
 
   // === Paramore ===
-  { title: "The Only Exception", artist: "Paramore", mood: "sweet_pining", painIndex: 6.0 },
-  { title: "Still Into You", artist: "Paramore", mood: "devotion", painIndex: 4.5 },
+  { title: "The Only Exception", artist: "Paramore", mood: "devotion", painIndex: 4.5 },
+  { title: "Still Into You", artist: "Paramore", mood: "devotion", painIndex: 3.0 },
   { title: "Decode", artist: "Paramore", mood: "yearning", painIndex: 7.0 },
-  { title: "Misery Business", artist: "Paramore", mood: "toxic", painIndex: 6.0 },
+  { title: "Misery Business", artist: "Paramore", mood: "jealousy", painIndex: 5.5 },
   { title: "crushcrushcrush", artist: "Paramore", mood: "infatuation", painIndex: 5.5 },
   { title: "That's What You Get", artist: "Paramore", mood: "heartbreak", painIndex: 7.0 },
   { title: "Brick by Boring Brick", artist: "Paramore", mood: "denial", painIndex: 6.5 },
@@ -905,28 +901,28 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Sabrina Carpenter — Man's Best Friend (2025)
   // ═══════════════════════════════════════════════
-  { title: "Manchild", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 6.5 },
-  { title: "Tears", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
-  { title: "My Man on Willpower", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.0 },
+  { title: "Manchild", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 5.0 },
+  { title: "Tears", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 3.0 },
+  { title: "My Man on Willpower", artist: "Sabrina Carpenter", mood: "anxiety", painIndex: 5.5 },
   { title: "Sugar Talking", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.5 },
   { title: "We Almost Broke Up Again Last Night", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 7.0 },
-  { title: "Nobody's Son", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Nobody's Son", artist: "Sabrina Carpenter", mood: "heartbreak", painIndex: 6.5 },
   { title: "Never Getting Laid", artist: "Sabrina Carpenter", mood: "existential", painIndex: 5.0 },
   { title: "When Did You Get Hot?", artist: "Sabrina Carpenter", mood: "infatuation", painIndex: 4.0 },
-  { title: "Go Go Juice", artist: "Sabrina Carpenter", mood: "kilig", painIndex: 3.0 },
+  { title: "Go Go Juice", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 4.5 },
   { title: "Don't Worry I'll Make You Worry", artist: "Sabrina Carpenter", mood: "toxic", painIndex: 6.5 },
   { title: "House Tour", artist: "Sabrina Carpenter", mood: "nostalgia", painIndex: 5.5 },
-  { title: "Goodbye", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 7.0 },
+  { title: "Goodbye", artist: "Sabrina Carpenter", mood: "letting_go", painIndex: 6.0 },
 
   // ═══════════════════════════════════════════════
   // Aerosmith (expanded)
   // ═══════════════════════════════════════════════
-  { title: "Crazy", artist: "Aerosmith", mood: "obsession", painIndex: 6.5 },
+  { title: "Crazy", artist: "Aerosmith", mood: "infatuation", painIndex: 5.0 },
   { title: "Cryin'", artist: "Aerosmith", mood: "heartbreak", painIndex: 7.5 },
   { title: "Amazing", artist: "Aerosmith", mood: "tragic_hope", painIndex: 6.0 },
   { title: "Angel", artist: "Aerosmith", mood: "devotion", painIndex: 5.0 },
   { title: "Dream On", artist: "Aerosmith", mood: "existential", painIndex: 7.0 },
-  { title: "Janie's Got a Gun", artist: "Aerosmith", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Janie's Got a Gun", artist: "Aerosmith", mood: "existential", painIndex: 8.0 },
   { title: "Walk This Way", artist: "Aerosmith", mood: "infatuation", painIndex: 3.5 },
   { title: "Sweet Emotion", artist: "Aerosmith", mood: "nostalgia", painIndex: 5.0 },
   { title: "Livin' on the Edge", artist: "Aerosmith", mood: "existential", painIndex: 6.5 },
@@ -935,13 +931,6 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Juan Karlos (expanded)
   // ═══════════════════════════════════════════════
-  { title: "Ilang Araw", artist: "Juan Karlos", mood: "yearning", painIndex: 7.5 },
-  { title: "Kunwari", artist: "Juan Karlos", mood: "denial", painIndex: 7.0 },
-  { title: "Medyo", artist: "Juan Karlos", mood: "sweet_pining", painIndex: 5.5 },
-  { title: "Hindi Na Nga", artist: "Juan Karlos", mood: "heartbreak", painIndex: 8.5 },
-  { title: "Ganyan Talaga", artist: "Juan Karlos", mood: "letting_go", painIndex: 7.0 },
-  { title: "Bikini", artist: "Juan Karlos", mood: "infatuation", painIndex: 4.0 },
-  { title: "Pragmatic", artist: "Juan Karlos", mood: "existential", painIndex: 6.0 },
 
   // ═══════════════════════════════════════════════
   // Camila Cabello
@@ -998,7 +987,7 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Eraserheads (expanded)
   // ═══════════════════════════════════════════════
-  { title: "Magasin", artist: "Eraserheads", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Magasin", artist: "Eraserheads", mood: "hopeless_crush", painIndex: 6.5 },
   { title: "Toyang", artist: "Eraserheads", mood: "adoration", painIndex: 4.0 },
   { title: "Overdrive", artist: "Eraserheads", mood: "infatuation", painIndex: 4.5 },
   { title: "Spolarium", artist: "Eraserheads", mood: "existential", painIndex: 7.0 },
@@ -1007,7 +996,7 @@ export const songDatabase: Song[] = [
   { title: "Wag Ka Nang Umiyak", artist: "Eraserheads", mood: "warmth", painIndex: 5.0 },
   { title: "Torpedo", artist: "Eraserheads", mood: "nostalgia", painIndex: 6.0 },
   { title: "Maselang Bahaghari", artist: "Eraserheads", mood: "sweet_pining", painIndex: 5.5 },
-  { title: "Kung Ayaw Mo Huwag Mo", artist: "Eraserheads", mood: "letting_go", painIndex: 6.5 },
+  { title: "Kung Ayaw Mo Huwag Mo", artist: "Eraserheads", mood: "letting_go", painIndex: 5.0 },
   { title: "Kailan", artist: "Eraserheads", mood: "yearning", painIndex: 7.5 },
 
   // ═══════════════════════════════════════════════
@@ -1036,7 +1025,7 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   { title: "Bewitched", artist: "Laufey", mood: "kilig", painIndex: 3.5 },
   { title: "Haunted", artist: "Laufey", mood: "yearning", painIndex: 6.5 },
-  { title: "Lovesick", artist: "Laufey", mood: "obsession", painIndex: 6.0 },
+  { title: "Lovesick", artist: "Laufey", mood: "hopeless_crush", painIndex: 6.0 },
   { title: "Second Best", artist: "Laufey", mood: "heartbreak", painIndex: 7.5 },
   { title: "Must Be Love", artist: "Laufey", mood: "kilig", painIndex: 3.0 },
   { title: "California and Me", artist: "Laufey", mood: "nostalgia", painIndex: 6.0 },
@@ -1075,7 +1064,7 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Parokya ni Edgar (expanded)
   // ═══════════════════════════════════════════════
-  { title: "Bagsakan", artist: "Parokya ni Edgar ft. Gloc-9 & Frank Magalona", mood: "loyalty", painIndex: 4.0 },
+  { title: "Bagsakan", artist: "Parokya ni Edgar ft. Gloc-9 & Frank Magalona", mood: "belonging", painIndex: 3.0 },
   { title: "Buloy", artist: "Parokya ni Edgar", mood: "nostalgia", painIndex: 6.5 },
   { title: "Para Sa'yo", artist: "Parokya ni Edgar", mood: "devotion", painIndex: 4.5 },
   { title: "The Yes Yes Show", artist: "Parokya ni Edgar", mood: "kilig", painIndex: 3.0 },
@@ -1102,7 +1091,7 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Silent Sanctuary (expanded)
   // ═══════════════════════════════════════════════
-  { title: "Ikaw Lamang", artist: "Silent Sanctuary", mood: "devotion", painIndex: 5.5 },
+  { title: "Ikaw Lamang", artist: "Silent Sanctuary", mood: "devotion", painIndex: 4.0 },
   { title: "Kundiman", artist: "Silent Sanctuary", mood: "yearning", painIndex: 7.0 },
   { title: "Bumalik Ka Na Sa Akin", artist: "Silent Sanctuary", mood: "yearning", painIndex: 8.0 },
   { title: "Meron Ka Nang Iba", artist: "Silent Sanctuary", mood: "heartbreak", painIndex: 8.5 },
@@ -1116,8 +1105,6 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Kitchie Nadal
   // ═══════════════════════════════════════════════
-  { title: "Wag Na Wag Mong Sasabihin", artist: "Kitchie Nadal", mood: "heartbreak", painIndex: 8.5 },
-  { title: "Huwag Na Huwag", artist: "Kitchie Nadal", mood: "letting_go", painIndex: 7.5 },
   { title: "Same Ground", artist: "Kitchie Nadal", mood: "tragic_hope", painIndex: 7.0 },
   { title: "Bulong", artist: "Kitchie Nadal", mood: "sweet_pining", painIndex: 6.0 },
   { title: "Ligaya", artist: "Kitchie Nadal", mood: "warmth", painIndex: 4.0 },
@@ -1146,14 +1133,14 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   { title: "Drop Dead", artist: "Olivia Rodrigo", mood: "toxic", painIndex: 7.5 },
   { title: "Stupid Song", artist: "Olivia Rodrigo", mood: "denial", painIndex: 7.0 },
-  { title: "Honeybee", artist: "Olivia Rodrigo", mood: "devotion", painIndex: 5.0 },
+  { title: "Honeybee", artist: "Olivia Rodrigo", mood: "anxiety", painIndex: 5.5 },
   { title: "Maggots for Brains", artist: "Olivia Rodrigo", mood: "obsession", painIndex: 8.0 },
   { title: "U + Me = <3", artist: "Olivia Rodrigo", mood: "kilig", painIndex: 3.0 },
   { title: "My Way", artist: "Olivia Rodrigo", mood: "letting_go", painIndex: 7.0 },
   { title: "Purple", artist: "Olivia Rodrigo", mood: "yearning", painIndex: 7.5 },
   { title: "The Cure", artist: "Olivia Rodrigo", mood: "tragic_hope", painIndex: 7.5 },
   { title: "Begged", artist: "Olivia Rodrigo", mood: "heartbreak", painIndex: 9.0 },
-  { title: "What's Wrong with Me", artist: "Olivia Rodrigo ft. Robert Smith", mood: "anxiety", painIndex: 8.5 },
+  { title: "What's Wrong with Me", artist: "Olivia Rodrigo", mood: "anxiety", painIndex: 8.5 },
   { title: "Less", artist: "Olivia Rodrigo", mood: "heartbreak", painIndex: 8.5 },
   { title: "Expectations", artist: "Olivia Rodrigo", mood: "anxiety", painIndex: 7.5 },
   { title: "Cigarette Smoke", artist: "Olivia Rodrigo", mood: "nostalgia", painIndex: 8.0 },
@@ -1167,7 +1154,7 @@ export const songDatabase: Song[] = [
   { title: "brutal", artist: "Olivia Rodrigo", mood: "existential", painIndex: 6.5 },
   { title: "jealousy, jealousy", artist: "Olivia Rodrigo", mood: "jealousy", painIndex: 6.5 },
   { title: "1 step forward, 3 steps back", artist: "Olivia Rodrigo", mood: "toxic", painIndex: 8.0 },
-  { title: "hope ur ok", artist: "Olivia Rodrigo", mood: "warmth", painIndex: 6.0 },
+  { title: "hope ur ok", artist: "Olivia Rodrigo", mood: "nostalgia", painIndex: 6.5 },
   { title: "bad idea right?", artist: "Olivia Rodrigo", mood: "toxic", painIndex: 6.0 },
   { title: "lacy", artist: "Olivia Rodrigo", mood: "obsession", painIndex: 7.0 },
   { title: "making the bed", artist: "Olivia Rodrigo", mood: "existential", painIndex: 7.5 },
@@ -1227,9 +1214,9 @@ export const songDatabase: Song[] = [
   // ═══════════════════════════════════════════════
   // Laufey — A Matter of Time (Aug 2025)
   // ═══════════════════════════════════════════════
-  { title: "Silver Lining", artist: "Laufey", mood: "tragic_hope", painIndex: 6.0 },
-  { title: "Lover Girl", artist: "Laufey", mood: "denial", painIndex: 6.5 },
-  { title: "Snow White", artist: "Laufey", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Silver Lining", artist: "Laufey", mood: "devotion", painIndex: 4.5 },
+  { title: "Lover Girl", artist: "Laufey", mood: "infatuation", painIndex: 4.0 },
+  { title: "Snow White", artist: "Laufey", mood: "existential", painIndex: 7.5 },
   { title: "Tough Luck", artist: "Laufey", mood: "letting_go", painIndex: 6.0 },
   { title: "Castle in Hollywood", artist: "Laufey", mood: "existential", painIndex: 6.5 },
   { title: "Clockwork", artist: "Laufey", mood: "anxiety", painIndex: 7.0 },
@@ -1256,7 +1243,7 @@ export const songDatabase: Song[] = [
   { title: "Us.", artist: "Gracie Abrams ft. Taylor Swift", mood: "forbidden", painIndex: 8.0 },
   { title: "Good Luck, Babe!", artist: "Chappell Roan", mood: "denial", painIndex: 8.0 },
   { title: "Pink Pony Club", artist: "Chappell Roan", mood: "belonging", painIndex: 5.0 },
-  { title: "Casual", artist: "Chappell Roan", mood: "toxic", painIndex: 8.5 },
+  { title: "Casual", artist: "Chappell Roan", mood: "toxic", painIndex: 7.5 },
   { title: "The Subway", artist: "Chappell Roan", mood: "lost_love", painIndex: 8.5 },
   { title: "HOT TO GO!", artist: "Chappell Roan", mood: "kilig", painIndex: 2.5 },
   { title: "Sally, When The Wine Runs Out", artist: "Role Model", mood: "letting_go", painIndex: 5.5 },
@@ -1266,11 +1253,11 @@ export const songDatabase: Song[] = [
   { title: "greedy", artist: "Tate McRae", mood: "letting_go", painIndex: 4.0 },
   { title: "exes", artist: "Tate McRae", mood: "denial", painIndex: 5.5 },
   { title: "Just Keep Watching", artist: "Tate McRae", mood: "infatuation", painIndex: 4.0 },
-  { title: "you broke me first", artist: "Tate McRae", mood: "heartbreak", painIndex: 8.0 },
+  { title: "you broke me first", artist: "Tate McRae", mood: "letting_go", painIndex: 6.5 },
   { title: "Diet Pepsi", artist: "Addison Rae", mood: "infatuation", painIndex: 4.5 },
   { title: "Aquamarine", artist: "Addison Rae", mood: "obsession", painIndex: 5.5 },
   { title: "Beautiful Things", artist: "Benson Boone", mood: "anxiety", painIndex: 6.5 },
-  { title: "Slow It Down", artist: "Benson Boone", mood: "yearning", painIndex: 6.5 },
+  { title: "Slow It Down", artist: "Benson Boone", mood: "infatuation", painIndex: 4.0 },
   { title: "Mystical Magical", artist: "Benson Boone", mood: "kilig", painIndex: 3.5 },
   { title: "Lose Control", artist: "Teddy Swims", mood: "obsession", painIndex: 7.5 },
   { title: "The Door", artist: "Teddy Swims", mood: "heartbreak", painIndex: 8.0 },
@@ -1279,14 +1266,14 @@ export const songDatabase: Song[] = [
   { title: "Basic Being Basic", artist: "Djo", mood: "existential", painIndex: 5.5 },
   { title: "Anxiety", artist: "Doechii", mood: "anxiety", painIndex: 7.5 },
   { title: "Denial Is a River", artist: "Doechii", mood: "denial", painIndex: 7.0 },
-  { title: "luther", artist: "Kendrick Lamar & SZA", mood: "devotion", painIndex: 5.0 },
+  { title: "luther", artist: "Kendrick Lamar & SZA", mood: "devotion", painIndex: 3.5 },
   { title: "Juna", artist: "Clairo", mood: "infatuation", painIndex: 4.0 },
   { title: "Sexy to Someone", artist: "Clairo", mood: "existential", painIndex: 5.5 },
   { title: "Bags", artist: "Clairo", mood: "hopeless_crush", painIndex: 6.5 },
   { title: "Sofia", artist: "Clairo", mood: "infatuation", painIndex: 3.5 },
   { title: "American Teenager", artist: "Ethel Cain", mood: "existential", painIndex: 7.0 },
   { title: "A House in Nebraska", artist: "Ethel Cain", mood: "lost_love", painIndex: 9.0 },
-  { title: "Cinnamon Girl", artist: "Lana Del Rey", mood: "toxic", painIndex: 8.0 },
+  { title: "Cinnamon Girl", artist: "Lana Del Rey", mood: "toxic", painIndex: 7.0 },
   { title: "Kiss Me More", artist: "Doja Cat ft. SZA", mood: "infatuation", painIndex: 3.0 },
   { title: "Cry For Me", artist: "The Weeknd", mood: "heartbreak", painIndex: 8.0 },
   { title: "Timeless", artist: "The Weeknd & Playboi Carti", mood: "infatuation", painIndex: 4.0 },
@@ -1326,7 +1313,7 @@ export const songDatabase: Song[] = [
   { title: "Magnetic", artist: "ILLIT", mood: "kilig", painIndex: 3.0 },
   { title: "Sticky", artist: "KISS OF LIFE", mood: "kilig", painIndex: 3.0 },
   { title: "Time of Our Life", artist: "DAY6", mood: "nostalgia", painIndex: 6.0 },
-  { title: "Welcome to the Show", artist: "DAY6", mood: "tragic_hope", painIndex: 7.0 },
+  { title: "Welcome to the Show", artist: "DAY6", mood: "devotion", painIndex: 5.0 },
 
   // ═══════════════════════════════════════════════
   // OPM — 2026 charting & Spotify PH editors' picks
@@ -1373,11 +1360,9 @@ export const songDatabase: Song[] = [
   { title: "Play", artist: "Jason Dhakal", mood: "infatuation", painIndex: 4.5 },
   { title: "Ipaalam Sana", artist: "Yudino & Paradoxx", mood: "yearning", painIndex: 7.0 },
   { title: "Saglit", artist: "kiddotin", mood: "yearning", painIndex: 6.5 },
-  { title: "Panaginip", artist: "El Manu", mood: "yearning", painIndex: 7.0 },
-  { title: "Libu-Libong Buwan (Uuwian)", artist: "nicole", mood: "yearning", painIndex: 7.5 },
-  { title: "Kabisado", artist: "Yuridope", mood: "nostalgia", painIndex: 6.5 },
-  { title: "Pahintulot", artist: "Kyle Raphael", mood: "yearning", painIndex: 7.0 },
-  { title: "Pahina", artist: "Amiel Sol", mood: "letting_go", painIndex: 7.0 },
+  { title: "Kabisado", artist: "IV of Spades", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Pahintulot", artist: "Shirebound & Busking", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Pahina", artist: "Cup of Joe", mood: "nostalgia", painIndex: 7.0 },
   { title: "TORPE", artist: "HELLMERRY", mood: "hopeless_crush", painIndex: 6.0 },
 
   // ═══════════════════════════════════════════════
@@ -1402,17 +1387,17 @@ export const songDatabase: Song[] = [
   { title: "Nasa Iyo Na Ang Lahat", artist: "Zack Tabudlo", mood: "letting_go", painIndex: 8.0 },
   { title: "Pano", artist: "Zack Tabudlo", mood: "heartbreak", painIndex: 8.5 },
   { title: "Elizabeth", artist: "Zack Tabudlo", mood: "adoration", painIndex: 5.0 },
-  { title: "Pasilyo", artist: "SunKissed Lola", mood: "hopeless_crush", painIndex: 6.5 },
+  { title: "Pasilyo", artist: "SunKissed Lola", mood: "devotion", painIndex: 4.0 },
   { title: "Kahit Na", artist: "Earl Agustin", mood: "yearning", painIndex: 7.5 },
   { title: "Dala", artist: "TJ Monterde", mood: "devotion", painIndex: 5.5 },
   { title: "Ikaw At Ako", artist: "TJ Monterde", mood: "warmth", painIndex: 4.5 },
   { title: "Kahit Ayaw Mo Na", artist: "This Band", mood: "heartbreak", painIndex: 9.0 },
-  { title: "Tagpuan", artist: "Moira Dela Torre", mood: "yearning", painIndex: 8.0 },
+  { title: "Tagpuan", artist: "Moira Dela Torre", mood: "yearning", painIndex: 6.5 },
   { title: "Malaya", artist: "Moira Dela Torre", mood: "letting_go", painIndex: 8.5 },
   { title: "Ikaw At Ako", artist: "Moira Dela Torre & Jason Marvin", mood: "devotion", painIndex: 4.5 },
-  { title: "Titibo-tibo", artist: "Moira Dela Torre", mood: "belonging", painIndex: 5.0 },
+  { title: "Titibo-tibo", artist: "Moira Dela Torre", mood: "kilig", painIndex: 3.0 },
   { title: "Doors", artist: "Ben&Ben", mood: "letting_go", painIndex: 7.5 },
-  { title: "Lifetime", artist: "Ben&Ben", mood: "devotion", painIndex: 5.5 },
+  { title: "Lifetime", artist: "Ben&Ben", mood: "devotion", painIndex: 4.0 },
   { title: "Magpahinga", artist: "Ben&Ben", mood: "warmth", painIndex: 5.0 },
   { title: "Paninindigan Kita", artist: "Ben&Ben", mood: "loyalty", painIndex: 4.5 },
   { title: "Upuan", artist: "Ben&Ben", mood: "existential", painIndex: 5.5 },
@@ -1454,7 +1439,7 @@ export const songDatabase: Song[] = [
   { title: "Museo", artist: "Eliza Maturan", mood: "lost_love", painIndex: 8.0 },
   { title: "Bawat Piyesa", artist: "Munimuni", mood: "lost_love", painIndex: 7.5 },
   { title: "Hanggang Kailan", artist: "Orange & Lemons", mood: "yearning", painIndex: 7.0 },
-  { title: "Huwag Na Huwag Mong Sasabihin", artist: "Kitchie Nadal", mood: "heartbreak", painIndex: 7.5 },
+  { title: "Huwag Na Huwag Mong Sasabihin", artist: "Kitchie Nadal", mood: "yearning", painIndex: 7.5 },
   { title: "Buko", artist: "Jireh Lim", mood: "devotion", painIndex: 4.5 },
   { title: "Maybe the Night", artist: "Ben&Ben", mood: "yearning", painIndex: 7.0 },
   { title: "Tensionado", artist: "Soapdish", mood: "hopeless_crush", painIndex: 5.5 },
@@ -1477,6 +1462,172 @@ export const songDatabase: Song[] = [
   { title: "Golden Hour", artist: "JVKE", mood: "adoration", painIndex: 3.0 },
   { title: "Until I Found You", artist: "Stephen Sanchez", mood: "devotion", painIndex: 3.5 },
   { title: "Those Eyes", artist: "New West", mood: "adoration", painIndex: 4.0 },
+
+  // ───────────────────────────────────────────────
+  // 2026 risers & hits
+  // ───────────────────────────────────────────────
+  // ADÉLA — Slovak pop breakout; debut album Prima (2026). "Nicole Kidman" is
+  // about feeling like a movie star; "Ain't in LA" is a love letter to home.
+  { title: "Nicole Kidman", artist: "ADÉLA", mood: "adoration", painIndex: 2.5 },
+  { title: "Ain't in LA", artist: "ADÉLA", mood: "belonging", painIndex: 4.5 },
+  { title: "Red Bottoms", artist: "ADÉLA", mood: "adoration", painIndex: 3.0 },
+  { title: "Homewrecked", artist: "ADÉLA", mood: "forbidden", painIndex: 6.5 },
+  { title: "Death by Devotion", artist: "ADÉLA", mood: "obsession", painIndex: 6.5 },
+  { title: "Machine Girl", artist: "ADÉLA", mood: "existential", painIndex: 4.5 },
+  { title: "Sex on the Beat", artist: "ADÉLA", mood: "infatuation", painIndex: 2.5 },
+
+  // Ariana Grande — petal (Jul 2026)
+  { title: "hate that i made you love me", artist: "Ariana Grande", mood: "lost_love", painIndex: 8.0 },
+  { title: "petal", artist: "Ariana Grande", mood: "existential", painIndex: 6.0 },
+  { title: "stay", artist: "Ariana Grande", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "oh well", artist: "Ariana Grande", mood: "letting_go", painIndex: 6.5 },
+  { title: "(warning signs)", artist: "Ariana Grande", mood: "heartbreak", painIndex: 7.0 },
+  { title: "nowhere, nobody", artist: "Ariana Grande", mood: "tragic_hope", painIndex: 6.0 },
+  { title: "kiss me", artist: "Ariana Grande", mood: "infatuation", painIndex: 3.0 },
+  { title: "big feelings", artist: "Ariana Grande", mood: "infatuation", painIndex: 3.0 },
+  { title: "freak", artist: "Ariana Grande", mood: "existential", painIndex: 5.5 },
+  { title: "like i do", artist: "Ariana Grande", mood: "existential", painIndex: 4.5 },
+  { title: "never get over me", artist: "Ariana Grande", mood: "infatuation", painIndex: 3.5 },
+  { title: "bad thing (bunny hop)", artist: "Ariana Grande", mood: "forbidden", painIndex: 4.5 },
+
+  // Big 2026 singles
+  { title: "I Knew It, I Knew You", artist: "Taylor Swift", mood: "nostalgia", painIndex: 6.5 },
+  { title: "Boston", artist: "Stella Lefty", mood: "infatuation", painIndex: 4.0 },
+
+  // ───────────────────────────────────────────────
+  // Ashe
+  // ───────────────────────────────────────────────
+  { title: "Moral of the Story", artist: "Ashe", mood: "letting_go", painIndex: 8.0 },
+  { title: "Till Forever Falls Apart", artist: "Ashe & FINNEAS", mood: "devotion", painIndex: 5.0 },
+  { title: "Another Man's Jeans", artist: "Ashe", mood: "jealousy", painIndex: 7.5 },
+  { title: "Hope You're Not Happy", artist: "Ashe", mood: "jealousy", painIndex: 7.0 },
+  { title: "I'm Fine", artist: "Ashe", mood: "denial", painIndex: 7.0 },
+  { title: "Me Without You", artist: "Ashe", mood: "letting_go", painIndex: 5.5 },
+  { title: "I Hope You Die First", artist: "Ashe", mood: "devotion", painIndex: 6.0 },
+  { title: "Stop the Wedding!", artist: "Ashe", mood: "lost_love", painIndex: 8.0 },
+
+  // ───────────────────────────────────────────────
+  // Indie / folk heartbreak canon
+  // ───────────────────────────────────────────────
+  // Gregory Alan Isakov
+  { title: "The Stable Song", artist: "Gregory Alan Isakov", mood: "lost_love", painIndex: 8.0 },
+  { title: "Big Black Car", artist: "Gregory Alan Isakov", mood: "nostalgia", painIndex: 7.0 },
+  { title: "If I Go, I'm Goin'", artist: "Gregory Alan Isakov", mood: "letting_go", painIndex: 7.0 },
+  { title: "Amsterdam", artist: "Gregory Alan Isakov", mood: "yearning", painIndex: 6.5 },
+  { title: "Second Chances", artist: "Gregory Alan Isakov", mood: "tragic_hope", painIndex: 6.5 },
+  { title: "Dandelion Wine", artist: "Gregory Alan Isakov", mood: "sweet_pining", painIndex: 5.0 },
+  { title: "San Luis", artist: "Gregory Alan Isakov", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Liars", artist: "Gregory Alan Isakov", mood: "existential", painIndex: 6.0 },
+
+  // The Paper Kites
+  { title: "Bloom", artist: "The Paper Kites", mood: "adoration", painIndex: 3.5 },
+  { title: "Featherstone", artist: "The Paper Kites", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "Willow Tree March", artist: "The Paper Kites", mood: "nostalgia", painIndex: 5.5 },
+  { title: "St. Clarity", artist: "The Paper Kites", mood: "yearning", painIndex: 6.0 },
+  { title: "Revelator Eyes", artist: "The Paper Kites", mood: "devotion", painIndex: 5.0 },
+  { title: "Halcyon", artist: "The Paper Kites", mood: "warmth", painIndex: 4.0 },
+  { title: "Without Your Love", artist: "The Paper Kites", mood: "heartbreak", painIndex: 7.5 },
+
+  // Bon Iver
+  { title: "Skinny Love", artist: "Bon Iver", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Holocene", artist: "Bon Iver", mood: "existential", painIndex: 7.5 },
+  { title: "re: Stacks", artist: "Bon Iver", mood: "letting_go", painIndex: 8.0 },
+  { title: "Flume", artist: "Bon Iver", mood: "existential", painIndex: 7.0 },
+  { title: "Blood Bank", artist: "Bon Iver", mood: "sweet_pining", painIndex: 5.5 },
+  { title: "The Wolves (Act I and II)", artist: "Bon Iver", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Hey, Ma", artist: "Bon Iver", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Michicant", artist: "Bon Iver", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Speyside", artist: "Bon Iver", mood: "tragic_hope", painIndex: 7.0 },
+
+  // Mitski
+  { title: "My Love Mine All Mine", artist: "Mitski", mood: "devotion", painIndex: 6.0 },
+  { title: "Nobody", artist: "Mitski", mood: "existential", painIndex: 8.0 },
+  { title: "Washing Machine Heart", artist: "Mitski", mood: "toxic", painIndex: 7.0 },
+  { title: "Francis Forever", artist: "Mitski", mood: "yearning", painIndex: 7.5 },
+  { title: "First Love / Late Spring", artist: "Mitski", mood: "yearning", painIndex: 8.0 },
+  { title: "Your Best American Girl", artist: "Mitski", mood: "heartbreak", painIndex: 8.0 },
+  { title: "I Bet on Losing Dogs", artist: "Mitski", mood: "tragic_hope", painIndex: 8.5 },
+  { title: "Strawberry Blond", artist: "Mitski", mood: "hopeless_crush", painIndex: 6.5 },
+  { title: "Two Slow Dancers", artist: "Mitski", mood: "nostalgia", painIndex: 8.0 },
+  { title: "Me and My Husband", artist: "Mitski", mood: "denial", painIndex: 6.5 },
+  { title: "I Don't Smoke", artist: "Mitski", mood: "toxic", painIndex: 7.5 },
+  { title: "Working for the Knife", artist: "Mitski", mood: "existential", painIndex: 7.0 },
+  { title: "Pink in the Night", artist: "Mitski", mood: "infatuation", painIndex: 6.0 },
+
+  // The Lumineers
+  { title: "Ho Hey", artist: "The Lumineers", mood: "devotion", painIndex: 3.5 },
+  { title: "Ophelia", artist: "The Lumineers", mood: "infatuation", painIndex: 4.5 },
+  { title: "Stubborn Love", artist: "The Lumineers", mood: "tragic_hope", painIndex: 7.0 },
+  { title: "Cleopatra", artist: "The Lumineers", mood: "lost_love", painIndex: 8.0 },
+  { title: "Sleep on the Floor", artist: "The Lumineers", mood: "devotion", painIndex: 5.5 },
+  { title: "Angela", artist: "The Lumineers", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Flowers in Your Hair", artist: "The Lumineers", mood: "nostalgia", painIndex: 5.0 },
+  { title: "Brightside", artist: "The Lumineers", mood: "devotion", painIndex: 4.5 },
+
+  // Florence + The Machine
+  { title: "Dog Days Are Over", artist: "Florence + The Machine", mood: "letting_go", painIndex: 5.0 },
+  { title: "Shake It Out", artist: "Florence + The Machine", mood: "letting_go", painIndex: 6.5 },
+  { title: "Cosmic Love", artist: "Florence + The Machine", mood: "devotion", painIndex: 7.0 },
+  { title: "Never Let Me Go", artist: "Florence + The Machine", mood: "heartbreak", painIndex: 8.0 },
+  { title: "No Light, No Light", artist: "Florence + The Machine", mood: "tragic_hope", painIndex: 7.5 },
+  { title: "You've Got the Love", artist: "Florence + The Machine", mood: "devotion", painIndex: 4.0 },
+  { title: "Kiss with a Fist", artist: "Florence + The Machine", mood: "toxic", painIndex: 6.0 },
+  { title: "Hunger", artist: "Florence + The Machine", mood: "existential", painIndex: 7.0 },
+  { title: "Big God", artist: "Florence + The Machine", mood: "yearning", painIndex: 7.5 },
+  { title: "Delilah", artist: "Florence + The Machine", mood: "anxiety", painIndex: 7.0 },
+  { title: "Ship to Wreck", artist: "Florence + The Machine", mood: "toxic", painIndex: 6.5 },
+  { title: "What Kind of Man", artist: "Florence + The Machine", mood: "toxic", painIndex: 7.5 },
+  { title: "The End of Love", artist: "Florence + The Machine", mood: "letting_go", painIndex: 8.5 },
+  { title: "King", artist: "Florence + The Machine", mood: "existential", painIndex: 6.0 },
+  { title: "Free", artist: "Florence + The Machine", mood: "anxiety", painIndex: 6.5 },
+
+  // Hozier — more
+  { title: "Would That I", artist: "Hozier", mood: "devotion", painIndex: 5.0 },
+  { title: "Shrike", artist: "Hozier", mood: "heartbreak", painIndex: 8.0 },
+  { title: "Jackie and Wilson", artist: "Hozier", mood: "sweet_pining", painIndex: 4.0 },
+  { title: "Sedated", artist: "Hozier", mood: "toxic", painIndex: 7.0 },
+  { title: "Arsonist's Lullabye", artist: "Hozier", mood: "existential", painIndex: 6.5 },
+  { title: "Northern Attitude", artist: "Hozier", mood: "anxiety", painIndex: 6.0 },
+  { title: "Wasteland, Baby!", artist: "Hozier", mood: "devotion", painIndex: 6.0 },
+  { title: "Talk", artist: "Hozier", mood: "infatuation", painIndex: 4.5 },
+  { title: "Abstract (Psychopomp)", artist: "Hozier", mood: "lost_love", painIndex: 8.0 },
+
+  // Laufey — Everything I Know About Love (2022)
+  { title: "Fragile", artist: "Laufey", mood: "sweet_pining", painIndex: 6.0 },
+  { title: "Beautiful Stranger", artist: "Laufey", mood: "infatuation", painIndex: 4.0 },
+  { title: "Above the Chinese Restaurant", artist: "Laufey", mood: "nostalgia", painIndex: 5.5 },
+  { title: "Just Like Chet", artist: "Laufey", mood: "hopeless_crush", painIndex: 5.0 },
+  { title: "Dear Soulmate", artist: "Laufey", mood: "yearning", painIndex: 5.5 },
+  { title: "Everything I Know About Love", artist: "Laufey", mood: "heartbreak", painIndex: 6.5 },
+
+  // The 1975 — more
+  { title: "Sincerity Is Scary", artist: "The 1975", mood: "anxiety", painIndex: 5.5 },
+  { title: "Love It If We Made It", artist: "The 1975", mood: "existential", painIndex: 6.5 },
+  { title: "Me", artist: "The 1975", mood: "existential", painIndex: 7.0 },
+  { title: "Girls", artist: "The 1975", mood: "infatuation", painIndex: 3.5 },
+  { title: "Sex", artist: "The 1975", mood: "forbidden", painIndex: 5.0 },
+  { title: "Medicine", artist: "The 1975", mood: "devotion", painIndex: 6.0 },
+  { title: "Settle Down", artist: "The 1975", mood: "toxic", painIndex: 5.0 },
+  { title: "Heart Out", artist: "The 1975", mood: "yearning", painIndex: 5.5 },
+  { title: "Happiness", artist: "The 1975", mood: "infatuation", painIndex: 3.5 },
+  { title: "Oh Caroline", artist: "The 1975", mood: "yearning", painIndex: 5.5 },
+  { title: "All I Need to Hear", artist: "The 1975", mood: "devotion", painIndex: 6.0 },
+  { title: "Paris", artist: "The 1975", mood: "existential", painIndex: 6.5 },
+  { title: "She's American", artist: "The 1975", mood: "infatuation", painIndex: 4.0 },
+  { title: "Menswear", artist: "The 1975", mood: "nostalgia", painIndex: 6.0 },
+  { title: "Guys", artist: "The 1975", mood: "nostalgia", painIndex: 6.0 },
+
+  // juan karlos — verified catalog (Sad Songs and Bullshit Part 1, 2023; singles)
+  { title: "may halaga pa ba ako sayo??", artist: "Juan Karlos", mood: "anxiety", painIndex: 8.0 },
+  { title: "Manhid", artist: "Juan Karlos", mood: "denial", painIndex: 7.5 },
+  { title: "Gabi", artist: "Juan Karlos", mood: "yearning", painIndex: 7.0 },
+  { title: "Lumisan", artist: "Juan Karlos", mood: "heartbreak", painIndex: 8.5 },
+  { title: "Tapusin Na Natin 'To", artist: "Juan Karlos ft. Paolo Benjamin", mood: "letting_go", painIndex: 8.5 },
+  { title: "Time Machine", artist: "Juan Karlos", mood: "nostalgia", painIndex: 7.0 },
+  { title: "Di Ka Man Lang Nagpaalam", artist: "Juan Karlos", mood: "heartbreak", painIndex: 8.5 },
+
+  // Morissette
+  { title: "Gusto Ko Nang Bumitaw", artist: "Morissette", mood: "letting_go", painIndex: 8.5 },
 ];
 
 // Group aliases — searching "BLACKPINK" also finds Rosé, Jennie, Lisa solo songs
@@ -1625,6 +1776,20 @@ const QUICK_PICK_SOURCE: { id: string; label: string; songs: [string, string][] 
       ["Harana", "Parokya ni Edgar"],
       ["With A Smile", "Eraserheads"],
       ["Basang-Basa Sa Ulan", "Aegis"],
+    ],
+  },
+  {
+    id: "indie",
+    label: "Indie & folk",
+    songs: [
+      ["Skinny Love", "Bon Iver"],
+      ["Bloom", "The Paper Kites"],
+      ["Cherry Wine", "Hozier"],
+      ["My Love Mine All Mine", "Mitski"],
+      ["The Stable Song", "Gregory Alan Isakov"],
+      ["Stubborn Love", "The Lumineers"],
+      ["Cosmic Love", "Florence + The Machine"],
+      ["Somebody Else", "The 1975"],
     ],
   },
   {
