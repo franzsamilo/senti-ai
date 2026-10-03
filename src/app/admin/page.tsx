@@ -15,10 +15,8 @@ interface AnalyticsData {
   totalShareTapped: number;
   totalMatchesCreated: number;
   totalMatchesCompleted: number;
-  totalBarkadaGroups: number;
   totalLeaderboardEntries: number;
   totalRateLimitHits: number;
-  totalSpotifyConnects: number;
   totalWithPersonalContext: number;
   totalSongRequests: number;
   avgEmotionalDamageScore: number;
@@ -285,11 +283,6 @@ export default function AdminPage() {
                 animate
               />
               <StatBox
-                label="Barkadas"
-                value={data.totalBarkadaGroups}
-                animate
-              />
-              <StatBox
                 label="Leaderboard Entries"
                 value={data.totalLeaderboardEntries}
                 animate
@@ -302,11 +295,6 @@ export default function AdminPage() {
                 label="Avg Emotional Damage"
                 value={parseFloat(data.avgEmotionalDamageScore.toFixed(2))}
                 suffix="/10"
-                animate
-              />
-              <StatBox
-                label="Spotify Connects"
-                value={data.totalSpotifyConnects}
                 animate
               />
               <StatBox

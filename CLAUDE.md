@@ -19,7 +19,7 @@
 - **Styling:** Tailwind CSS
 - **AI:** Anthropic Claude API — `claude-opus-5-5` (Opus 5.5) via `src/lib/claude.ts`, the single helper every route uses (structured outputs, explicit effort, server-side refusal fallbacks, streamed + `finalMessage()`). Thinking can't be disabled on Opus 5.5 — control depth with `effort` only (`medium` for analysis/match, `low` for song classification).
 - **Scoring:** Deterministic baseline in `src/lib/scoring.ts` (top-heavy pain index, mood vectors, attachment/MBTI/love-language effects → damage score + 5 independent meters). The model may move each number only within a band and must name why (`score_reason`); `normalizeResult.ts` enforces the bands and derives the threat level from the final score.
-- **Auth/Music:** Spotify Web API (OAuth 2.0 PKCE flow) for pulling user's top tracks
+- **Music input:** Manual only — search the built-in song library, one-tap quick picks, or type any title. (Spotify import was removed in Oct 2026: the app is single-player and share-based; keep it that way.)
 - **Animations:** Framer Motion
 - **Image Generation:** html2canvas or `@vercel/og` / satori for shareable story cards
 - **Audio:** Tone.js for ambient sound design and UI sound effects
@@ -75,21 +75,12 @@ Style this with the same glitch text effect as the main title. Make it feel like
 - App name **"Senti.AI"** in large display text with glitch text effect (RGB split using CSS pseudo-elements)
 - Tagline: `Emotional Damage Assessment System v6.9` in monospace
 - A badge/pill: `CLASSIFIED` or `THREAT LEVEL: UNKNOWN`
-- Two CTAs:
-  - Primary: **"Connect Spotify"** — initiates OAuth flow to pull top tracks
-  - Secondary: **"Manual Input"** — skip Spotify, add songs manually
+- One CTA: **"Start my scan"** (no Spotify import — removed)
 - Subtle disclaimer at bottom: `"Warning: This system is brutally honest. Proceed at your own emotional risk."`
 - Show remaining analyses count: `"2 free scans remaining"`
 
 ### Step 1: Song Input (Step 01/05)
-**If Spotify connected:**
-- Automatically fetch user's top tracks (short_term, limit 20-30)
-- Display them in a scrollable list with album art, title, artist
-- User selects 3-5 songs from the list that "represent their current emotional state"
-- Also allow manual additions from the built-in OPM database
-- Cross-reference fetched tracks against the built-in song database for mood/pain metadata; for unmatched songs, assign default values or use the Claude API to infer mood
-
-**If manual input:**
+**Song input (manual only):**
 - Search field with autocomplete against built-in OPM song database (see Song Database section)
 - Users can also type custom song titles + artist and press Enter to add
 - Each added song appears as a chip/tag with artist name and a remove (×) button
@@ -351,44 +342,9 @@ Take yours → senti.ai
 - Use Vercel KV or Supabase
 - After User B completes, store the match result so both can revisit via the same URL
 
-### 3. "Tag Your Barkada" Group Mode
+### 3. Barkada Group Mode — REMOVED (Oct 2026)
 
-After getting individual results, offer a **group link** that multiple friends can use.
-
-#### Flow
-1. User taps **"Create Barkada Group"**
-2. App generates a group link: `senti.ai/barkada/[group-id]`
-3. Anyone who opens the link and completes the flow is added to the group
-4. The group page shows:
-   - All members' threat levels and scores in a ranking/leaderboard
-   - "Most Sawi" award (highest emotional damage)
-   - "Most Delulu" award (AI picks based on profiles)
-   - "Most Likely to Text Their Ex Tonight" award
-   - "Healthiest (Boring)" award (lowest score, roasted for being too normal)
-   - Group stats: average emotional damage, most common attachment style, etc.
-5. The group page updates in real-time as more friends complete the flow
-
-#### Group Share Card (Story — 1080×1920)
-```
-SENTI.AI BARKADA REPORT
-
-🏆 Most Sawi: [Name] — 9.4/10
-💀 Most Delulu: [Name]
-📱 Most Likely to Drunk Text: [Name]
-🧘 Healthiest (Boring): [Name]
-
-Avg Emotional Damage: 7.8/10
-Dominant Attachment: Anxious (4/6)
-Barkada Threat Level: SEVERE
-
-Who's next? → senti.ai/barkada/abc123
-```
-
-#### Storage
-- Group data in Vercel KV or Supabase
-- Each group stores: group ID, array of member results (name/nickname + key stats + profile data)
-- 7-day TTL for groups
-- Max 10 members per group
+Removed on purpose to keep the app single-player and share-based: you get your own report, share it, and optionally dare one friend via "Challenge a Friend". Do not re-add group links, group pages or awards.
 
 ### 4. Leaderboard
 
@@ -413,32 +369,9 @@ Who's next? → senti.ai/barkada/abc123
 
 ---
 
-## Spotify Integration
+## Spotify Integration — REMOVED (Oct 2026)
 
-### OAuth Flow
-- Use Spotify's Authorization Code with PKCE flow (no client secret needed on frontend)
-- Scopes needed: `user-top-read`
-- Store access token in session/memory only (not persisted)
-- Create a callback route to handle the redirect
-
-### API Endpoints Used
-- `GET /v1/me/top/tracks?time_range=short_term&limit=30` — recent top tracks
-- `GET /v1/me/top/tracks?time_range=medium_term&limit=30` — fallback if short_term is sparse
-
-### Song Matching
-- After fetching Spotify tracks, cross-reference against the built-in OPM database by title + artist (fuzzy match)
-- Matched songs get their mood and pain index from the database
-- Unmatched songs: display normally but assign a default pain index of 5.5 and mood of "unknown" — the Claude API prompt should note these as "unrecognized" so the AI can still roast creatively
-
-### Environment Variables
-```env
-SPOTIFY_CLIENT_ID=your-spotify-client-id
-SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
-```
-
-### Fallback
-- If Spotify auth fails or user declines, seamlessly fall back to manual input mode
-- No broken states — the app must work fully without Spotify
+Spotify import was removed to keep the flow simple. Songs come from the built-in library (`src/data/songs.ts`), quick picks, or typed custom titles ("Title - Artist"); unknown songs are classified in the background by `/api/classify-songs`. Do not re-add OAuth or a callback route.
 
 ---
 
@@ -569,8 +502,6 @@ Create `/api/match` for the compatibility comparison:
 ### Environment Variables
 ```env
 ANTHROPIC_API_KEY=your-api-key-here
-SPOTIFY_CLIENT_ID=your-spotify-client-id
-SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
 ```
 
 ### Fallback Content
@@ -740,26 +671,18 @@ src/
 │   ├── match/
 │   │   └── [id]/
 │   │       └── page.tsx                # 1v1 match challenge (receives shared link)
-│   ├── barkada/
-│   │   └── [id]/
-│   │       └── page.tsx                # Group barkada page
 │   ├── history/
 │   │   └── page.tsx                    # Personal history tracker
-│   ├── callback/
-│   │   └── page.tsx                    # Spotify OAuth callback
 │   └── api/
 │       ├── analyze/
 │       │   └── route.ts                # Claude API proxy + rate limiting
 │       ├── match/
 │       │   └── route.ts                # Store/retrieve match profiles + generate comparison
-│       ├── barkada/
-│       │   └── route.ts                # Group management
 │       ├── leaderboard/
 │       │   └── route.ts                # GET/POST leaderboard entries
 │       └── share-card/
 │           └── route.ts                # Server-side image generation (optional, if using satori)
 ├── components/
-│   ├── NeuralNetworkBg.tsx
 │   ├── GlitchText.tsx
 │   ├── StepIndicator.tsx
 │   ├── RateLimitBlock.tsx              # The "'D ako bobo" screen
@@ -776,8 +699,6 @@ src/
 │   ├── ShareCard.tsx                   # Hidden div rendered as share image
 │   ├── MatchChallenge.tsx              # "Challenge a Friend" flow
 │   ├── MatchReport.tsx                 # Side-by-side comparison view
-│   ├── BarkadaGroup.tsx                # Group leaderboard + awards
-│   ├── BarkadaShareCard.tsx            # Group share image template
 │   ├── HistoryChart.tsx
 │   └── ui/
 │       ├── ThreatMeter.tsx
@@ -794,12 +715,10 @@ src/
 │   ├── fallbackResults.ts
 │   ├── fingerprint.ts
 │   ├── rateLimit.ts
-│   ├── spotify.ts
 │   ├── shareImage.ts                   # html2canvas / share logic
 │   └── webShare.ts                     # Web Share API wrapper with fallbacks
 ├── hooks/
 │   ├── useAnalysis.ts
-│   ├── useSpotify.ts
 │   └── useSound.ts
 └── styles/
     └── globals.css
@@ -823,13 +742,13 @@ npm run dev
 
 The app is "done" when:
 1. A user can go through the full flow without any broken states
-2. Spotify OAuth works and pulls real top tracks
+2. Song input is fast: search, quick picks, and custom titles all work (no Spotify — removed)
 3. Manual song input works with autocomplete from the OPM database
 4. The Claude API generates a unique, culturally specific, Taglish roast every time
 5. Rate limiting works (2 per browser per day, funny "'D ako bobo" block on 3rd)
 6. **Share cards generate correctly and can be posted directly to IG/FB stories via Web Share API on mobile**
 7. **"Challenge a Friend" match flow works end-to-end with AI-generated compatibility roast**
-8. **Barkada group mode works with awards and group share card**
+8. ~~Barkada group mode~~ — removed; the app is single-player + sharing
 9. Leaderboard stores and displays anonymous scores
 10. History page tracks emotional deterioration over time
 11. Fully responsive — optimized for mobile (that's where sharing happens)

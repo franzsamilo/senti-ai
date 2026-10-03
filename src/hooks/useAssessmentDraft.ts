@@ -35,10 +35,10 @@ export function isDraftComplete(draft: AssessmentDraft): boolean {
 }
 
 /**
- * Answers persisted to sessionStorage, so a refresh, an accidental swipe-back
- * or the round trip through Spotify's login doesn't throw away five steps of
- * input. Session-scoped on purpose: it should survive a reload, not follow
- * the user to a shared computer tomorrow.
+ * Answers persisted to sessionStorage, so a refresh or an accidental
+ * swipe-back doesn't throw away five steps of input. Session-scoped on
+ * purpose: it should survive a reload, not follow the user to a shared
+ * computer tomorrow.
  *
  * `hydrated` flips once storage has been read — callers that make routing
  * decisions from the draft should wait for it.

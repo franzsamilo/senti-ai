@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import BrandMark from "@/components/ui/BrandMark";
 import {
@@ -11,30 +11,25 @@ import {
   IconMusic,
   IconShare,
   IconSparkle,
-  IconSpotify,
   IconTrophy,
-  IconUsers,
 } from "@/components/ui/icons";
 import { headerVariants, itemVariants, listVariants } from "@/components/ui/motion";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
 import { ANALYSIS_LIMITS_ENABLED, DAILY_ANALYSIS_LIMIT } from "@/lib/limits";
-import { initiateSpotifyAuth, isSpotifyConfigured } from "@/lib/spotify";
 import { THREAT } from "@/lib/theme";
 
 interface LandingStepProps {
   onStart: () => void;
   /** Present when a finished report is saved in this browser. */
   onOpenLastReport?: () => void;
-  /** The Spotify round trip failed — say so instead of failing silently. */
-  spotifyError?: boolean;
   /** True when answers from an unfinished scan are waiting. */
   hasDraft?: boolean;
 }
 
 const STEPS = [
-  { Icon: IconMusic, title: "Add your songs", body: "The ones on repeat. Search, tap a quick pick, or import from Spotify." },
+  { Icon: IconMusic, title: "Add your songs", body: "The ones on repeat. Search the library or tap a quick pick." },
   { Icon: IconSparkle, title: "Answer five things", body: "Type, attachment, love language, sign — and, if you want, what happened." },
-  { Icon: IconShare, title: "Get read. Share it.", body: "A full report, story-ready for IG — then challenge your barkada." },
+  { Icon: IconShare, title: "Get read. Share it.", body: "A full report, story-ready for IG — then dare a friend to beat it." },
 ];
 
 /** Decorative sample cards. Labelled as samples; never a real user's result. */
@@ -58,13 +53,9 @@ const SAMPLES = [
 export default function LandingStep({
   onStart,
   onOpenLastReport,
-  spotifyError = false,
   hasDraft = false,
 }: LandingStepProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
-  const [dismissedSpotifyError, setDismissedSpotifyError] = useState(false);
-  const showSpotifyError = spotifyError && !dismissedSpotifyError;
-  const spotify = isSpotifyConfigured();
 
   useEffect(() => {
     if (!ANALYSIS_LIMITS_ENABLED) return;
@@ -107,24 +98,6 @@ export default function LandingStep({
         </span>
       </motion.nav>
 
-      <AnimatePresence>
-        {showSpotifyError && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="glass rounded-2xl px-4 py-3 flex items-center gap-3 text-[14px] text-text-secondary"
-          >
-            <IconSpotify size={18} className="text-[#1a9e4a] shrink-0" />
-            <span className="flex-1">Spotify didn&apos;t connect this time — no worries, you can add songs by hand.</span>
-            <button onClick={() => setDismissedSpotifyError(true)}
-              aria-label="Dismiss" className="text-text-muted hover:text-text-primary cursor-pointer px-2">
-              ✕
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* ── Hero ── */}
       <section className="flex-1 grid lg:grid-cols-[1.1fr_0.9fr] items-center gap-10 lg:gap-6 py-8 sm:py-12">
         <div className="flex flex-col items-start gap-6">
@@ -153,12 +126,6 @@ export default function LandingStep({
               {hasDraft ? "Continue my scan" : "Start my scan"}
               {!locked && <IconArrowRight size={19} />}
             </Button>
-            {spotify && !locked && (
-              <Button variant="secondary" onClick={() => initiateSpotifyAuth()} className="py-4">
-                <IconSpotify size={19} className="text-[#1a9e4a]" />
-                Import from Spotify
-              </Button>
-            )}
           </motion.div>
 
           <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-text-muted">
@@ -243,8 +210,8 @@ export default function LandingStep({
         className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 border-t border-border-subtle text-[13px] text-text-muted"
       >
         <p>Warning: brutally honest. Proceed at your own emotional risk.</p>
-        <Link href="/barkada" className="inline-flex items-center gap-1.5 hover:text-accent-ink transition-colors">
-          <IconUsers size={15} /> Barkada mode
+        <Link href="/leaderboard" className="inline-flex items-center gap-1.5 hover:text-accent-ink transition-colors">
+          <IconTrophy size={15} /> Most damaged leaderboard
         </Link>
       </motion.footer>
     </motion.div>

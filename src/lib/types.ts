@@ -64,7 +64,7 @@ export interface ProfileResult {
   compatibility_warning: string;
   /**
    * Per-meter scores. Optional because profiles stored before scoring was
-   * split out (match partners, barkada members, history) don't carry them.
+   * split out (match partners, history entries) don't carry them.
    */
   metrics?: Metrics;
   /** One sentence naming what pushed the damage score to where it is. */

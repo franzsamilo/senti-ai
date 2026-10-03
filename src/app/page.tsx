@@ -13,7 +13,6 @@ import AnalysisLoader from "@/components/AnalysisLoader";
 import ResultsDashboard from "@/components/ResultsDashboard";
 import RateLimitBlock from "@/components/RateLimitBlock";
 import { pageTransition, pageVariants } from "@/components/ui/motion";
-import { PENDING_BARKADA_KEY } from "@/components/ResultActions";
 
 import { useStepHistory } from "@/hooks/useStepHistory";
 import { useStepDirection } from "@/hooks/useStepDirection";
@@ -24,7 +23,6 @@ import {
   saveLastReport,
   type ReportSnapshot,
 } from "@/lib/reportStore";
-import { SPOTIFY_ERROR_KEY, SPOTIFY_FRESH_KEY, SPOTIFY_TRACKS_KEY } from "@/lib/spotify";
 import type { ProfileResult } from "@/lib/types";
 
 type Step = "landing" | QuestionStep | "loading" | "results" | "blocked";
@@ -49,14 +47,11 @@ export default function Home() {
 
   const [report, setReport] = useState<ReportSnapshot | null>(null);
   const [lastReport, setLastReport] = useState<ReportSnapshot | null>(null);
-  const [spotifyError, setSpotifyError] = useState(false);
-  const [pendingBarkada, setPendingBarkada] = useState<string | null>(null);
   const restoredRef = useRef(false);
 
   /**
-   * Once the saved draft is loaded, decide where the user should land:
-   * straight onto the song list after Spotify, back on the question they
-   * were on before a refresh, or the landing page.
+   * Once the saved draft is loaded, decide where the user should land: back
+   * on the question they were on before a refresh, or the landing page.
    */
   useEffect(() => {
     if (!hydrated || restoredRef.current) return;
@@ -67,34 +62,6 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLastReport(last);
 
-    try {
-      // Arrived from a barkada group's "take your scan" link: remember the
-      // group for the results page and go straight to the first question.
-      const params = new URLSearchParams(window.location.search);
-      const barkada = params.get("barkada");
-      if (barkada && /^[a-z0-9]{4,16}$/i.test(barkada)) {
-        sessionStorage.setItem(PENDING_BARKADA_KEY, barkada);
-        params.delete("barkada");
-        const query = params.toString();
-        window.history.replaceState(window.history.state, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
-        setPendingBarkada(barkada);
-        goTo("songs");
-        return;
-      }
-      setPendingBarkada(sessionStorage.getItem(PENDING_BARKADA_KEY));
-
-      if (sessionStorage.getItem(SPOTIFY_FRESH_KEY)) {
-        sessionStorage.removeItem(SPOTIFY_FRESH_KEY);
-        goTo("songs");
-        return;
-      }
-      if (sessionStorage.getItem(SPOTIFY_ERROR_KEY)) {
-        sessionStorage.removeItem(SPOTIFY_ERROR_KEY);
-        setSpotifyError(true);
-        return;
-      }
-    } catch {}
-
     // A refresh keeps the history entry but resets React state; put the user
     // back where that entry says they were.
     const tagged = window.history.state?.sentiStep as Step | undefined;
@@ -104,7 +71,7 @@ export default function Home() {
       setReport(last);
       setStep("results");
     }
-  }, [hydrated, goTo]);
+  }, [hydrated]);
 
   const hasDraft =
     draft.songs.length > 0 || Boolean(draft.mbti) || draft.attachmentStyle !== null;
@@ -130,9 +97,6 @@ export default function Home() {
   function startOver() {
     reset();
     setReport(null);
-    try {
-      sessionStorage.removeItem(SPOTIFY_TRACKS_KEY);
-    } catch {}
     goTo("songs");
   }
 
@@ -163,7 +127,6 @@ export default function Home() {
       <LandingStep
         onStart={() => goTo("songs")}
         hasDraft={hasDraft}
-        spotifyError={spotifyError}
         onOpenLastReport={
           lastReport
             ? () => {
@@ -213,7 +176,6 @@ export default function Home() {
         onRunAgain={startOver}
         onEditAnswers={() => goTo("personal-context")}
         onHome={() => goTo("landing")}
-        pendingBarkadaId={pendingBarkada}
       />
     );
   } else if (step === "blocked") {

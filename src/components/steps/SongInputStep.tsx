@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
 import SongChip from "@/components/ui/SongChip";
@@ -12,17 +11,10 @@ import {
   IconMusic,
   IconPlus,
   IconSearch,
-  IconSpotify,
 } from "@/components/ui/icons";
 import { popSpring, spring } from "@/components/ui/motion";
-import { normalizeText, QUICK_PICKS, searchSongs, songDatabase } from "@/data/songs";
+import { normalizeText, QUICK_PICKS, searchSongs } from "@/data/songs";
 import { Song } from "@/lib/types";
-import {
-  initiateSpotifyAuth,
-  isSpotifyConfigured,
-  SPOTIFY_TRACKS_KEY,
-  type SpotifyTrack,
-} from "@/lib/spotify";
 
 const MAX_SONGS = 25;
 const MIN_SONGS = 3;
@@ -39,20 +31,6 @@ interface SongInputStepProps {
 const sameSong = (a: Song, b: Song) =>
   normalizeText(a.title) === normalizeText(b.title) &&
   normalizeText(a.artist) === normalizeText(b.artist);
-
-function spotifyTrackToSong(track: SpotifyTrack): Song {
-  const title = track.name;
-  const artist = track.artists.map((a) => a.name).join(", ");
-  const firstArtist = normalizeText(track.artists[0]?.name ?? "");
-  const normTitle = normalizeText(title);
-
-  // Cross-reference the built-in database so known songs keep their mood and
-  // pain index; accents and punctuation don't block a match.
-  const match = songDatabase.find(
-    (s) => normalizeText(s.title) === normTitle && normalizeText(s.artist).includes(firstArtist)
-  );
-  return match ?? { title, artist, mood: "unknown", painIndex: 5.5 };
-}
 
 /**
  * Typed songs that aren't in the database. "Title - Artist" and "Title by
@@ -74,7 +52,6 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [pickGroup, setPickGroup] = useState(QUICK_PICKS[0]?.id ?? "");
-  const [spotifyTracks, setSpotifyTracks] = useState<SpotifyTrack[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,19 +60,6 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
   const [requestTitle, setRequestTitle] = useState("");
   const [requestArtist, setRequestArtist] = useState("");
   const [requestState, setRequestState] = useState<"idle" | "sending" | "sent">("idle");
-
-  // Tracks from the Spotify round trip stay in sessionStorage for the whole
-  // session, so stepping away from this screen and back keeps the list.
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(SPOTIFY_TRACKS_KEY);
-      // Browser-only read; syncing after mount is intended.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (raw) setSpotifyTracks(JSON.parse(raw) as SpotifyTrack[]);
-    } catch {
-      // malformed data — ignore
-    }
-  }, []);
 
   const results = useMemo(
     () => (query.trim() ? searchSongs(query).slice(0, MAX_RESULTS) : []),
@@ -202,7 +166,7 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
       onBack={onBack}
       backLabel="Home"
       title="Ano'ng nasa playlist mo?"
-      subtitle="Add the songs you actually have on repeat — OPM, P-pop, Taylor, K-pop, lahat pwede. At least 3, but 8 or more makes the read a lot sharper."
+      subtitle="Add the songs you actually have on repeat — OPM, P-pop, indie, Taylor, K-pop, lahat pwede. At least 3, but 8 or more makes the read a lot sharper."
       footer={
         <Button onClick={onNext} disabled={!canProceed} className="w-full">
           {canProceed ? (
@@ -412,67 +376,6 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
           </div>
         )}
       </section>
-
-      {/* ── Spotify ── */}
-      {spotifyTracks.length > 0 ? (
-        <section className="flex flex-col gap-3">
-          <p className="text-[15px] font-semibold text-text-primary inline-flex items-center gap-2">
-            <IconSpotify size={18} className="text-[#1db954]" /> Your top Spotify tracks
-          </p>
-          <div className="glass rounded-2xl max-h-[44vh] sm:max-h-72 overflow-y-auto p-1.5 flex flex-col">
-            {spotifyTracks.map((track, i) => {
-              const song = spotifyTrackToSong(track);
-              const added = isAdded(song);
-              const albumArt = track.album.images[track.album.images.length - 1]?.url;
-              return (
-                <button
-                  key={`${track.name}-${i}`}
-                  onClick={() => toggleSong(song)}
-                  disabled={!added && !canAdd}
-                  className={`flex items-center gap-3 px-2.5 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    added ? "bg-accent-soft" : "hover:bg-white"
-                  } disabled:opacity-40 disabled:cursor-not-allowed`}
-                >
-                  {albumArt ? (
-                    <Image src={albumArt} alt="" width={40} height={40} className="rounded-lg shrink-0 object-cover" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-lg bg-surface-sunk shrink-0" />
-                  )}
-                  <span className="flex flex-col min-w-0 flex-1">
-                    <span className="text-[14px] font-medium text-text-primary truncate">{track.name}</span>
-                    <span className="text-[12px] text-text-muted truncate">
-                      {track.artists.map((a) => a.name).join(", ")}
-                    </span>
-                  </span>
-                  <span
-                    className={`shrink-0 grid place-items-center w-8 h-8 rounded-full transition-colors ${
-                      added ? "text-white" : "text-text-muted border border-border-subtle"
-                    }`}
-                    style={added ? { background: "var(--dusk-button)" } : undefined}
-                  >
-                    {added ? <IconCheck size={15} strokeWidth={2.4} /> : <IconPlus size={15} />}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      ) : (
-        isSpotifyConfigured() && (
-          <button
-            onClick={() => initiateSpotifyAuth()}
-            className="glass rounded-2xl px-4 py-3.5 flex items-center gap-3 text-left hover:shadow-[var(--shadow-lift)] transition-shadow cursor-pointer"
-          >
-            <span className="grid place-items-center w-10 h-10 rounded-xl bg-[#1db954]/12 text-[#1a9e4a]">
-              <IconSpotify size={22} />
-            </span>
-            <span className="flex flex-col">
-              <span className="text-[15px] font-semibold text-text-primary">Import from Spotify</span>
-              <span className="text-[13px] text-text-muted">Pull your recent top tracks — your answers here are kept.</span>
-            </span>
-          </button>
-        )
-      )}
 
       {/* ── Quick picks ── */}
       <section className="flex flex-col gap-3">

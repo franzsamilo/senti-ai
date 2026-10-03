@@ -166,13 +166,6 @@ export const IconLock = (p: IconProps) => (
   </Svg>
 );
 
-export const IconSpotify = (p: IconProps) => (
-  <Svg {...p}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M7.5 9.2c3-.8 6.2-.5 8.9 1M8 12.4c2.5-.7 5.1-.4 7.3.9M8.6 15.5c2-.5 4.1-.3 5.9.7" />
-  </Svg>
-);
-
 export const IconFlag = (p: IconProps) => (
   <Svg {...p}>
     <path d="M5 21V4" />
@@ -222,14 +215,6 @@ export const IconSparkle = (p: IconProps) => (
   <Svg {...p}>
     <path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z" />
     <path d="M19 15.5c.25 1.6.9 2.25 2.5 2.5-1.6.25-2.25.9-2.5 2.5-.25-1.6-.9-2.25-2.5-2.5 1.6-.25 2.25-.9 2.5-2.5Z" />
-  </Svg>
-);
-
-export const IconUsers = (p: IconProps) => (
-  <Svg {...p}>
-    <circle cx="9" cy="8" r="3.5" />
-    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
-    <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6" />
   </Svg>
 );
 
