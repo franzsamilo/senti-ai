@@ -236,7 +236,6 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                         <span className="text-[16px] font-semibold text-ink truncate">{song.title}</span>
                         <span className="text-[13px] text-text-muted truncate">{song.artist}</span>
                       </span>
-                      <PainTag value={song.painIndex} />
                       {added ? (
                         <IconCheck size={18} className="text-accent-success shrink-0" />
                       ) : (
@@ -347,7 +346,7 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 24, transition: { duration: 0.15 } }}
                 transition={spring}
-                className="grid grid-cols-[30px_1fr_auto_auto] items-center gap-2 min-h-[54px] border-b border-[rgba(43,78,224,0.22)]"
+                className="grid grid-cols-[30px_1fr_auto] items-center gap-2 min-h-[54px] border-b border-[rgba(43,78,224,0.22)]"
               >
                 <span className="font-mono text-[11px] text-text-muted tabular-nums" style={{ fontStretch: "87.5%" }}>
                   {trackNo(i)}
@@ -356,11 +355,6 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                   <span className="font-hand text-[21px] leading-[1.05] text-blue-ink truncate">{song.title}</span>
                   <span className="text-[12.5px] text-text-muted truncate">{song.artist}</span>
                 </span>
-                {song.mood === "unknown" ? (
-                  <span className="font-hand text-[15px] text-text-muted">reading…</span>
-                ) : (
-                  <PainTag value={song.painIndex} />
-                )}
                 <button
                   onClick={() => removeSong(i)}
                   aria-label={`Remove ${song.title}`}
@@ -485,21 +479,4 @@ function songCode(song: Song) {
   let h = 7;
   for (const ch of `${song.title}|${song.artist}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return String(10000 + (h % 89999));
-}
-
-/**
- * Pain index as a plain tape-counter readout. Deliberately neutral — no
- * "hot track" highlight — so the questions don't telegraph what the
- * results are going to do with it.
- */
-function PainTag({ value }: { value: number }) {
-  return (
-    <span
-      title="Pain index"
-      className="shrink-0 inline-flex items-baseline gap-1 rounded-[5px] border-[1.5px] border-ink/40 px-1.5 py-[3px] font-mono text-[11.5px] tabular-nums leading-none text-ink"
-      style={{ fontStretch: "87.5%" }}
-    >
-      {value.toFixed(1)}
-    </span>
-  );
 }
