@@ -64,6 +64,15 @@ export function appendHistory(snapshot: ReportSnapshot): void {
   } catch {}
 }
 
+/**
+ * True once this browser has a finished report. The leaderboard and history
+ * stay hidden until then: they show damage scores and threat stamps, and the
+ * roast is meant to be a surprise (see "Don't spoil the roast" in CLAUDE.md).
+ */
+export function hasFinishedScan(): boolean {
+  return loadLastReport() !== null || loadHistory().length > 0;
+}
+
 export function loadHistory(): HistoryEntry[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);

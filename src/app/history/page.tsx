@@ -201,26 +201,37 @@ export default function HistoryPage() {
 
   return (
     <main className="min-h-screen max-w-[680px] mx-auto px-4 pb-16 flex flex-col gap-6">
-      <PageHeader
-        kicker="Medical records"
-        title={
-          <>
-            Your <span className="hl">deterioration</span>{" "}tracker
-          </>
-        }
-        subtitle="Every scan from this browser, newest last. Stored only on this device."
-      />
-
+      {/* The tracker's real title gives the roast away, so it only
+          appears once there's a scan to track. */}
       {entries === null ? null : entries.length === 0 ? (
-        <div className="paper p-8 text-center flex flex-col items-center gap-4">
-          <p className="font-display font-black uppercase text-[28px] leading-none text-ink">No scans yet.</p>
-          <p className="font-hand text-[19px] text-text-secondary">Wala pang ebidensya.</p>
-          <LinkButton href="/">
-            Take your first scan <IconArrowRight size={18} />
-          </LinkButton>
-        </div>
+        <>
+          <PageHeader
+            kicker="Records"
+            title={
+              <>
+                Wala pang <span className="hl">laman</span>
+              </>
+            }
+            subtitle="Your scans will show up here after your first one. Stored only on this device."
+          />
+          <div className="paper p-8 text-center flex flex-col items-center gap-4">
+            <p className="font-hand text-[20px] text-text-secondary">Kanta muna.</p>
+            <LinkButton href="/">
+              Take your first scan <IconArrowRight size={18} />
+            </LinkButton>
+          </div>
+        </>
       ) : (
         <>
+          <PageHeader
+            kicker="Medical records"
+            title={
+              <>
+                Your <span className="hl">deterioration</span>{" "}tracker
+              </>
+            }
+            subtitle="Every scan from this browser, newest last. Stored only on this device."
+          />
           <DamageChart entries={entries} />
           <ChangeBanner entries={entries} />
 

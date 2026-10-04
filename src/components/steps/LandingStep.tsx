@@ -16,6 +16,7 @@ import {
 import { headerVariants, itemVariants, listVariants } from "@/components/ui/motion";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
 import { ANALYSIS_LIMITS_ENABLED, DAILY_ANALYSIS_LIMIT } from "@/lib/limits";
+import { hasFinishedScan } from "@/lib/reportStore";
 
 interface LandingStepProps {
   onStart: () => void;
@@ -155,13 +156,17 @@ export default function LandingStep({
   hasDraft = false,
 }: LandingStepProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
+  // Leaderboard and history links only appear once this browser has a
+  // finished report — before that they'd give the roast away.
+  const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    if (!ANALYSIS_LIMITS_ENABLED) return;
-    // Browser-only read: the count comes from a fingerprint plus
-    // localStorage, so it can't be resolved during render without a
-    // hydration mismatch. Syncing after mount is the intended behaviour.
+    // Browser-only reads (localStorage + fingerprint) can't be resolved
+    // during render without a hydration mismatch. Syncing after mount is the
+    // intended behaviour.
     // eslint-disable-next-line react-hooks/set-state-in-effect
+    setScanned(hasFinishedScan());
+    if (!ANALYSIS_LIMITS_ENABLED) return;
     setRemaining(getRemainingAnalyses(generateFingerprint()));
   }, []);
 
@@ -176,26 +181,28 @@ export default function LandingStep({
     >
       {/* ── Masthead ── */}
       <motion.header variants={headerVariants} className="pt-3">
-        <nav className="flex items-center justify-between gap-3 pb-2 border-b-2 border-ink">
+        <nav className="flex items-center justify-between gap-3 pb-2 min-h-[54px] border-b-2 border-ink">
           <span className="font-display font-extrabold uppercase tracking-[0.06em] text-[13px] text-ink">
             3AM Edition
           </span>
-          <span className="flex items-center gap-1">
-            {[
-              { href: "/leaderboard", label: "Leaderboard", Icon: IconTrophy },
-              { href: "/history", label: "History", Icon: IconHistory },
-            ].map(({ href, label, Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                aria-label={label}
-                className="inline-flex items-center gap-1.5 min-h-[44px] px-2 font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
-              >
-                <Icon size={22} />
-                <span className="hidden sm:inline">{label}</span>
-              </Link>
-            ))}
-          </span>
+          {scanned && (
+            <span className="flex items-center gap-1">
+              {[
+                { href: "/leaderboard", label: "Leaderboard", Icon: IconTrophy },
+                { href: "/history", label: "History", Icon: IconHistory },
+              ].map(({ href, label, Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-label={label}
+                  className="inline-flex items-center gap-1.5 min-h-[44px] px-2 font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
+                >
+                  <Icon size={22} />
+                  <span className="hidden sm:inline">{label}</span>
+                </Link>
+              ))}
+            </span>
+          )}
         </nav>
 
         <div className="flex items-center justify-center gap-3 sm:gap-4 py-3 sm:py-4">
@@ -306,12 +313,14 @@ export default function LandingStep({
           <span className="font-display font-black uppercase tracking-[0.06em]">Paalala:</span> Sagutin nang
           totoo — mas tumpak ang basa kapag totoo.
         </p>
-        <Link
-          href="/leaderboard"
-          className="inline-flex items-center justify-center gap-2 min-h-[44px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
-        >
-          <IconTrophy size={22} /> Leaderboard
-        </Link>
+        {scanned && (
+          <Link
+            href="/leaderboard"
+            className="inline-flex items-center justify-center gap-2 min-h-[44px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
+          >
+            <IconTrophy size={22} /> Leaderboard
+          </Link>
+        )}
       </motion.footer>
     </motion.div>
   );

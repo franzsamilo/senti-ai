@@ -10,7 +10,7 @@
 
 **Tone of AI-generated content:** Brutally honest. Savage but funny. Heavy natural Taglish (Tagalog-English code-switching). Culturally hyper-specific to Filipino dating and hugot culture. Should feel like your most walang-awa na tropa who also has a psychology degree. NOT generic AI voice — see the Tone & Language Guide section for detailed prompt engineering instructions.
 
-**Don't spoil the roast (lowkey until the reveal):** Before the results, the app presents as a warm, curious music-personality read — "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" The roast is the surprise. So on the landing page, in the questions and in link-preview metadata, never say roast, brutal/savage, emotional damage, threat, toxic or red flags, and don't show sample verdicts or damage scores (landing samples are an order slip, a videoke screen reading "??" and a one-line tease). Light teasing in option asides is fine (it's the voice), a promise of being roasted is not. The loader opens gently and only turns in its back half ("Hmm. Interesting choices." → "WARNING: lethal levels" → "Printing your emotional damage report"); the results page is where the register fully flips. The friend-challenge intro may show the challenger's score (that's the dare) but calls the outcome a "compatibility read", not a roast.
+**Don't spoil the roast (lowkey until the reveal):** Before the results, the app presents as a warm, curious music-personality read — "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" The roast is the surprise. So on the landing page, in the questions and in link-preview metadata, never say roast, brutal/savage, emotional damage, threat, toxic or red flags, and don't show sample verdicts or damage scores (landing samples are an order slip, a videoke screen reading "??" and a one-line tease). Light teasing in option asides is fine (it's the voice), a promise of being roasted is not. The loader opens gently and only turns in its back half ("Hmm. Interesting choices." → "WARNING: lethal levels" → "Printing your emotional damage report"); the results page is where the register fully flips. The friend-challenge intro may show the challenger's score (that's the dare) but calls the outcome a "compatibility read", not a roast. The leaderboard and history are hidden until this browser has finished a scan: no links on the landing page, `/leaderboard` shows a "SEALED — Bawal pa sumilip" card instead of the standings, and an empty `/history` uses a neutral title.
 
 ---
 
@@ -72,7 +72,8 @@ Rendered as a sari-sari store "SARADO" sign hanging from a nail (`RateLimitBlock
 ## Core User Flow
 
 ### Step 0: Landing / Intro
-- A tabloid front page: "3AM Edition" rail, **SENTI.AI** nameplate (misregistered pink), "Pahayagan ng mga sawi" folio under a double rule
+- A tabloid front page: "3AM Edition" rail, **SENTI.AI** nameplate (misregistered pink), "Pahayagan ng mga puso" folio under a double rule
+- Leaderboard and History links appear only after this browser has a finished report (`hasFinishedScan()` in `reportStore.ts`)
 - "EXCLUSIVE" kicker + `Playlist personality report` (lowkey — see "Don't spoil the roast")
 - Headline: "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" with a highlighter swipe
 - Sample clippings labelled as samples — an order slip, a videoke screen reading "??", a one-line tease — never a verdict or score; "how it works" as a 3-panel komiks strip
@@ -349,7 +350,7 @@ Removed on purpose to keep the app single-player and share-based: you get your o
 #### Anonymous Emotional Damage Leaderboard
 - After receiving results, users can opt to submit their Emotional Damage Score to a public leaderboard
 - Data stored: score, MBTI, attachment style, zodiac, threat level, timestamp. No PII.
-- Display on a separate `/leaderboard` page
+- Display on a separate `/leaderboard` page — sealed until the visitor has finished their own scan (see "Don't spoil the roast")
 - Columns: Rank, Score, MBTI, Attachment, Zodiac, Threat Level, Date
 - Top 50 entries
 - Highlight top 3 with gold/silver/bronze accents
