@@ -6,6 +6,9 @@ import {
 import { describeError, generateJson, hasCredentials } from "@/lib/claude";
 import type { Mood } from "@/lib/types";
 
+/** Low-effort and small, but give it room on a cold start. */
+export const maxDuration = 60;
+
 const MOODS: Exclude<Mood, "unknown">[] = [
   "yearning",
   "heartbreak",

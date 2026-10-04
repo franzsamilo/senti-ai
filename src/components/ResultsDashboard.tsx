@@ -39,6 +39,8 @@ interface ResultsDashboardProps {
   zodiac: string;
   onRunAgain: () => void;
   onEditAnswers?: () => void;
+  /** Re-run the real analysis with the same answers (shown on degraded reports). */
+  onRetry?: () => void;
   onHome?: () => void;
 }
 
@@ -142,6 +144,7 @@ export default function ResultsDashboard({
   onRunAgain,
   onEditAnswers,
   onHome,
+  onRetry,
 }: ResultsDashboardProps) {
   const tone = threatTone(result.threat_level);
   const painIndex = result.pain_index ?? painStats(songs).weighted;
@@ -240,6 +243,31 @@ export default function ResultsDashboard({
         </span>
       </motion.div>
 
+      {/* The offline template is generic by nature. Say so up front — above
+          the front page, where it can't be missed — rather than passing it off
+          as a real read of this specific person. */}
+      {result.degraded && (
+        <motion.div
+          variants={itemVariants}
+          className="relative bg-yellow-soft border-2 border-ink px-4 py-3 text-[14px] leading-relaxed text-ink"
+        >
+          <span className="font-display font-black uppercase tracking-[0.06em]">Paunawa:</span> The analysis
+          engine couldn&apos;t be reached, so this is the generic profile — not a full read of your answers.
+          <span className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+            {result.degraded_reason && (
+              <span className="font-mono text-[11px] text-text-muted" style={{ fontStretch: "87.5%" }}>
+                code: {result.degraded_reason}
+              </span>
+            )}
+            {onRetry && (
+              <Button variant="secondary" onClick={onRetry} className="min-h-[42px] py-2 px-4 text-[15px]">
+                <IconRefresh size={17} /> Try the real read again
+              </Button>
+            )}
+          </span>
+        </motion.div>
+      )}
+
       {/* ── Hero: the front page ── */}
       <motion.header variants={itemVariants} className="paper overflow-hidden" style={{ borderRadius: 4 }}>
         <div className="px-4 sm:px-6 pt-3.5">
@@ -303,19 +331,6 @@ export default function ResultsDashboard({
           </div>
         </div>
       </motion.header>
-
-      {/* The offline template is generic by nature. Say so rather than
-          passing it off as a real read of this specific person. */}
-      {result.degraded && (
-        <motion.div
-          variants={itemVariants}
-          className="relative bg-yellow-soft border-2 border-ink px-4 py-3 text-[14px] leading-relaxed text-ink"
-        >
-          <span className="font-display font-black uppercase tracking-[0.06em]">Paunawa:</span> The analysis
-          engine couldn&apos;t be reached, so this is the generic profile — not a full read of your answers.
-          Try again in a moment.
-        </motion.div>
-      )}
 
       {/* ── The receipt ── */}
       <motion.div variants={itemVariants} className="lift">

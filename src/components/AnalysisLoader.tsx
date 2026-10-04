@@ -53,6 +53,24 @@ const STALL_MESSAGES = [
   "Almost done. Breathe. You'll survive this (allegedly).",
 ];
 
+/** Gateway answers (not the app's) — the request never reached a verdict. */
+const RETRYABLE_STATUSES = new Set([502, 503, 504]);
+
+/** Resolves once the page is in front again (immediately if it already is). */
+function whenVisible(): Promise<void> {
+  if (typeof document === "undefined" || document.visibilityState === "visible") {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const onChange = () => {
+      if (document.visibilityState !== "visible") return;
+      document.removeEventListener("visibilitychange", onChange);
+      resolve();
+    };
+    document.addEventListener("visibilitychange", onChange);
+  });
+}
+
 const NORMAL_SPEED = 1100;
 const RUSH_SPEED = 380;
 const MIN_MESSAGES_BEFORE_EXIT = 6; // the drama is non-negotiable
@@ -139,20 +157,45 @@ export default function AnalysisLoader({
         return;
       }
 
-      try {
-        const res = await fetch("/api/analyze", {
+      const body = JSON.stringify({
+        songs,
+        mbti,
+        attachmentStyle,
+        loveLanguage,
+        zodiac,
+        fingerprint: fp,
+        ...(personalContext ? { personalContext } : {}),
+      });
+      const post = () =>
+        fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            songs,
-            mbti,
-            attachmentStyle,
-            loveLanguage,
-            zodiac,
-            fingerprint: fp,
-            ...(personalContext ? { personalContext } : {}),
-          }),
+          body,
         });
+
+      try {
+        // A real read takes ~50s. On a phone that's long enough to lock the
+        // screen or hop to Spotify, and a backgrounded tab can drop the
+        // request. That — or the platform answering for the app with a
+        // 502/503/504 — is worth exactly one retry, once the page is back in
+        // front. App errors (a 500 with a reason) are not: the SDK has
+        // already retried those server-side.
+        let res: Response;
+        try {
+          res = await post();
+          if (RETRYABLE_STATUSES.has(res.status)) {
+            console.warn(`[analysis] gateway ${res.status}, retrying once`);
+            await whenVisible();
+            if (cancelled) return;
+            res = await post();
+          }
+        } catch (dropped) {
+          if (cancelled) return;
+          console.warn("[analysis] request dropped, retrying once:", dropped);
+          await whenVisible();
+          if (cancelled) return;
+          res = await post();
+        }
 
         if (cancelled) return;
         if (res.status === 429) {
@@ -177,6 +220,9 @@ export default function AnalysisLoader({
         resultRef.current = {
           ...generateFallback(songs, mbti, attachmentStyle, loveLanguage, zodiac),
           degraded: true,
+          // Shown in small print on the report, so a user can say what
+          // happened without anyone needing the server logs.
+          degraded_reason: err instanceof TypeError ? "network" : err instanceof Error ? err.message : "unknown",
         };
       }
 

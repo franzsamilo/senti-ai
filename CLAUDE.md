@@ -506,6 +506,12 @@ ANTHROPIC_API_KEY=your-api-key-here
 ### Fallback Content
 If the Claude API call fails (network error, timeout, etc.), generate a static but still funny fallback roast using template strings filled with the user's actual input data. The user should never see a broken state or error screen — they should always get a result, even if it's from the fallback system.
 
+Before falling back:
+- A real read takes ~50s (measured in production), so the model routes set `export const maxDuration = 300` (`/api/analyze`, `/api/match`) instead of trusting the project default.
+- The loader retries **once** when the request is dropped (phone locked / app switched mid-scan) or the platform answers 502/503/504 — after the page is visible again. App errors (a 500 with a `reason`) are not retried; the SDK already retried server-side.
+
+A fallback report is marked `degraded` with a short `degraded_reason` (`network`, `http_504`, `api_529`, `missing_credentials`…). The results page shows a "Paunawa" notice **above** the front page with that code and a "Try the real read again" button; degraded reports are not added to the history tracker. `/api/health` makes one small low-effort call to confirm the key, model and structured outputs in production.
+
 ---
 
 ## The Prompt — Tone & Language Guide

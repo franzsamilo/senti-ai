@@ -6,6 +6,14 @@ import { normalizeMatchResult } from "@/lib/normalizeResult";
 import { MODEL, describeError, generateJson } from "@/lib/claude";
 import type { UserProfile, MatchResult } from "@/lib/types";
 
+/**
+ * A real read takes ~50s at medium effort (measured in production), and the
+ * truncation retry can roughly double that. Ask Vercel for the full window
+ * instead of inheriting the project default, so a slow scan finishes rather
+ * than being cut off into the offline report.
+ */
+export const maxDuration = 300;
+
 interface MatchEntry {
   profileA: UserProfile;
   profileB?: UserProfile;
