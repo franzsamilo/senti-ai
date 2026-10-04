@@ -76,6 +76,8 @@ export interface ProfileResult {
    * Optional so results stored before this field existed still parse.
    */
   degraded?: boolean;
+  /** Short machine reason for a degraded report (e.g. "network", "http_504", "api_529"). */
+  degraded_reason?: string;
 }
 
 export interface MatchResult {

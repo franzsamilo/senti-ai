@@ -90,7 +90,9 @@ export default function Home() {
     setReport(snapshot);
     setLastReport(snapshot);
     saveLastReport(snapshot);
-    appendHistory(snapshot);
+    // The offline template isn't a read of this person — keep it out of the
+    // deterioration tracker so a retry doesn't log two "scans".
+    if (!result.degraded) appendHistory(snapshot);
     goTo("results");
   }
 
@@ -175,6 +177,7 @@ export default function Home() {
         zodiac={shown.zodiac}
         onRunAgain={startOver}
         onEditAnswers={() => goTo("personal-context")}
+        onRetry={() => goToQuestion("loading")}
         onHome={() => goTo("landing")}
       />
     );
