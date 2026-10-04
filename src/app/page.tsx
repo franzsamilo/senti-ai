@@ -183,8 +183,15 @@ export default function Home() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden">
-      <AnimatePresence mode="wait" custom={direction} initial={false}>
+    <main className="relative min-h-screen overflow-x-clip">
+      {/* Each step opens at the top: scroll resets once the old step has
+          left and before the new one appears, so nothing visibly jumps. */}
+      <AnimatePresence
+        mode="wait"
+        custom={direction}
+        initial={false}
+        onExitComplete={() => window.scrollTo({ top: 0 })}
+      >
         <motion.div
           key={step}
           custom={direction}

@@ -77,6 +77,7 @@ export default function StepShell({
       {footer && (
         <motion.div
           variants={headerVariants}
+          data-step-footer
           className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] z-20"
           style={{
             background:
