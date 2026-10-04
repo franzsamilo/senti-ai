@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
 import Button from "@/components/ui/Button";
 import { IconArrowRight, IconSparkle } from "@/components/ui/icons";
-import { gridVariants, itemVariants, spring } from "@/components/ui/motion";
+import { gridVariants, itemVariants } from "@/components/ui/motion";
 
 /** Grouped by temperament so the grid reads as a taxonomy, not 16 loose chips. */
 const GROUPS: { label: string; types: string[] }[] = [
@@ -49,10 +49,18 @@ interface MbtiStepProps {
   onSelect: (mbti: string) => void;
 }
 
+/**
+ * The type picker is a videoke remote: an LCD readout that echoes whichever
+ * key you're on, and sixteen keycaps that sit proud of the plate and travel
+ * down when pressed. Grouped by temperament, the way remotes group their
+ * buttons, so it reads as a layout rather than sixteen loose chips.
+ */
 export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) {
   const [builderOpen, setBuilderOpen] = useState(false);
   const [axes, setAxes] = useState<(string | null)[]>([null, null, null, null]);
+  const [hovered, setHovered] = useState<string | null>(null);
   const built = axes.every(Boolean) ? axes.join("") : null;
+  const shown = hovered ?? (selected || null);
 
   return (
     <StepShell
@@ -60,50 +68,63 @@ export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) 
       onBack={onBack}
       backLabel="Songs"
       title="What's your type?"
-      subtitle="Your MBTI. Tap the one you'd defend in an argument — or build it below if you've never taken the test."
+      subtitle="Your MBTI. Press the one you'd defend in an argument — or build it below if you've never taken the test."
     >
-      <motion.div variants={gridVariants} className="flex flex-col gap-5">
+      <motion.div
+        variants={gridVariants}
+        className="rounded-[18px] border-2 border-ink bg-paper-dark p-3 sm:p-4 flex flex-col gap-4"
+        style={{ boxShadow: "inset 0 2px 0 rgba(255,255,255,0.6), var(--shadow-paper)" }}
+      >
+        {/* LCD readout */}
+        <motion.div
+          variants={itemVariants}
+          aria-live="polite"
+          className="rounded-[8px] border-2 border-ink px-3.5 py-2.5 flex items-center gap-3 min-h-[64px]"
+          style={{
+            background: "linear-gradient(180deg, #c9d7a3, #b9c98f)",
+            boxShadow: "inset 0 3px 6px rgba(29,25,50,0.25)",
+            color: "#26301a",
+          }}
+        >
+          <span className="font-dot font-black text-[34px] leading-none tracking-[0.04em] w-[86px] shrink-0">
+            {shown ?? "????"}
+          </span>
+          <span className="font-mono text-[11.5px] leading-snug" style={{ fontStretch: "87.5%" }}>
+            {shown ? VIBES[shown] : "Pindutin ang type mo."}
+          </span>
+        </motion.div>
+
         {GROUPS.map((group) => (
           <motion.div key={group.label} variants={itemVariants} className="flex flex-col gap-2">
-            <p className="text-[13px] font-medium text-text-muted">{group.label}</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <p className="flex items-center gap-2 font-display font-extrabold uppercase tracking-[0.08em] text-[12px] text-ink/70">
+              <span className="h-[2px] w-3 bg-ink/40" />
+              {group.label}
+              <span className="h-[2px] flex-1 bg-ink/20" />
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {group.types.map((type) => {
                 const isSelected = selected === type;
                 return (
                   <motion.button
                     key={type}
                     onClick={() => onSelect(type)}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={spring}
-                    aria-pressed={isSelected}
-                    className="relative flex flex-col items-start gap-0.5 rounded-2xl px-3.5 py-3 text-left cursor-pointer overflow-hidden min-h-[68px] border"
-                    style={{
-                      borderColor: isSelected ? "transparent" : "rgba(255,255,255,0.9)",
-                      background: isSelected ? "transparent" : "rgba(255,255,255,0.72)",
-                      boxShadow: isSelected ? "var(--shadow-glow)" : "var(--shadow-card)",
+                    onHoverStart={() => setHovered(type)}
+                    onHoverEnd={() => setHovered((h) => (h === type ? null : h))}
+                    initial={false}
+                    animate={{
+                      y: isSelected ? 3 : 0,
+                      boxShadow: isSelected ? "0 1px 0 #1d1932" : "0 4px 0 #1d1932",
                     }}
+                    whileTap={{ y: 3, boxShadow: "0 1px 0 #1d1932" }}
+                    transition={{ type: "spring", stiffness: 900, damping: 40 }}
+                    aria-pressed={isSelected}
+                    className="relative flex flex-col items-start gap-1 rounded-[10px] border-2 border-ink px-3 pt-2.5 pb-3 text-left cursor-pointer min-h-[74px]"
+                    style={{ background: isSelected ? "var(--pink)" : "var(--paper-light)" }}
                   >
-                    {isSelected && (
-                      <motion.span
-                        layoutId="mbti-selection"
-                        transition={spring}
-                        className="absolute inset-0 -z-10"
-                        style={{ background: "var(--dusk-button)" }}
-                      />
-                    )}
-                    <span
-                      className="font-display font-bold text-[17px] tracking-wide"
-                      style={{ color: isSelected ? "#fff" : "#2a1834" }}
-                    >
+                    <span className="font-display font-black text-[26px] leading-none tracking-[0.02em] text-ink">
                       {type}
                     </span>
-                    <span
-                      className="text-[11.5px] leading-snug"
-                      style={{ color: isSelected ? "rgba(255,255,255,0.85)" : "#7b6987" }}
-                    >
-                      {VIBES[type]}
-                    </span>
+                    <span className="text-[12px] leading-snug text-ink/70">{VIBES[type]}</span>
                   </motion.button>
                 );
               })}
@@ -113,21 +134,23 @@ export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) 
       </motion.div>
 
       {/* ── Type builder ── */}
-      <motion.div variants={itemVariants} className="glass rounded-2xl overflow-hidden">
+      <motion.div variants={itemVariants} className="paper overflow-hidden">
         <button
           onClick={() => setBuilderOpen((v) => !v)}
           aria-expanded={builderOpen}
-          className="w-full flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer"
+          className="w-full flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer min-h-[64px]"
         >
-          <span className="grid place-items-center w-9 h-9 rounded-xl bg-[rgba(139,63,217,0.1)] text-accent-secondary">
-            <IconSparkle size={18} />
-          </span>
+          <IconSparkle size={30} className="text-ink shrink-0" />
           <span className="flex-1">
-            <span className="block text-[15px] font-semibold text-text-primary">Don&apos;t know your type?</span>
-            <span className="block text-[13px] text-text-muted">Four quick choices. Close enough for a roast.</span>
+            <span className="block font-display font-extrabold text-[20px] leading-none text-ink">
+              Don&apos;t know your type?
+            </span>
+            <span className="block text-[14px] text-text-secondary mt-1">
+              Four quick choices. Close enough for a roast.
+            </span>
           </span>
-          <motion.span animate={{ rotate: builderOpen ? 90 : 0 }} className="text-text-muted">
-            <IconArrowRight size={18} />
+          <motion.span animate={{ rotate: builderOpen ? 90 : 0 }} className="text-ink">
+            <IconArrowRight size={20} />
           </motion.span>
         </button>
 
@@ -142,22 +165,26 @@ export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) 
             >
               <div className="px-4 pb-4 flex flex-col gap-2.5">
                 {AXES.map((axis, i) => (
-                  <div key={axis.letters.join("")} className="grid grid-cols-2 gap-2">
+                  <div
+                    key={axis.letters.join("")}
+                    role="radiogroup"
+                    aria-label={axis.letters.join(" or ")}
+                    className="grid grid-cols-2 rounded-[10px] border-2 border-ink overflow-hidden"
+                  >
                     {axis.options.map((label, j) => {
                       const letter = axis.letters[j];
                       const on = axes[i] === letter;
                       return (
                         <button
                           key={letter}
+                          role="radio"
+                          aria-checked={on}
                           onClick={() => setAxes((prev) => prev.map((v, k) => (k === i ? letter : v)))}
-                          aria-pressed={on}
-                          className={`rounded-xl px-3 py-2.5 text-[13.5px] text-left border transition-colors cursor-pointer ${
-                            on
-                              ? "bg-accent-soft border-accent/40 text-accent-ink font-semibold"
-                              : "bg-white border-border-subtle text-text-secondary hover:border-accent/30"
-                          }`}
+                          className={`flex items-center gap-2 px-3 py-2.5 min-h-[48px] text-[14px] text-left transition-colors cursor-pointer ${
+                            j === 1 ? "border-l-2 border-ink" : ""
+                          } ${on ? "bg-ink text-yellow font-semibold" : "bg-paper-light text-ink hover:bg-yellow-soft"}`}
                         >
-                          <span className="font-mono text-[12px] mr-1.5 opacity-70">{letter}</span>
+                          <span className="font-display font-black text-[20px] leading-none">{letter}</span>
                           {label}
                         </button>
                       );

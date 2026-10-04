@@ -114,16 +114,21 @@ export default function MatchPage() {
   if (step === "fetch" || !hydrated) {
     content = (
       <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-4">
-        <BrandMark size={52} />
-        <p className="text-[14px] text-text-secondary">Loading the challenge…</p>
+        <BrandMark size={64} />
+        <p className="font-display font-extrabold uppercase tracking-[0.05em] text-[16px] text-text-secondary">
+          Loading the challenge…
+        </p>
       </div>
     );
   } else if (step === "expired") {
     content = (
-      <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-5 px-6 text-center">
-        <span className="text-[13px] font-semibold rounded-full px-3 py-1 bg-accent-soft text-accent-ink">Link expired</span>
-        <h1 className="text-[32px] font-extrabold text-text-primary">Too late, bestie.</h1>
-        <p className="text-[15px] text-text-secondary max-w-sm">
+      <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-6 px-6 text-center">
+        <div className="relative paper px-8 py-6 -rotate-2">
+          <p className="font-display font-black uppercase text-[40px] leading-none text-ink/30">Admit one</p>
+          <span className="stamp absolute inset-0 m-auto h-fit w-fit text-[44px] -rotate-12 text-red">Void</span>
+        </div>
+        <h1 className="font-display font-black uppercase text-[44px] leading-[0.9] text-ink">Too late, bestie.</h1>
+        <p className="text-[16px] text-text-secondary max-w-sm">
           This challenge expired or never existed. Maybe they gave up waiting for you. Charot. (Hindi charot.)
         </p>
         <LinkButton href="/">
@@ -133,42 +138,51 @@ export default function MatchPage() {
     );
   } else if (step === "intro" && challenger && tone) {
     content = (
-      <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-6 px-5 py-12 text-center max-w-md mx-auto">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/70 border border-white px-3.5 py-1.5 text-[13px] text-text-secondary">
-          <IconHeart size={14} className="text-accent" /> Challenge received
-        </span>
-        <h1 className="text-[36px] sm:text-[44px] font-extrabold leading-[1.05] text-text-primary">
-          Someone thinks they&apos;re <span className="text-dusk">more sawi</span>{" "}than you.
-        </h1>
-        <p className="text-[15px] text-text-secondary">
+      <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-6 px-4 py-10 text-center max-w-md mx-auto">
+        {/* Fight poster */}
+        <div className="w-full border-[3px] border-ink bg-paper-light shadow-[var(--shadow-hard)]">
+          <p className="bg-ink text-yellow font-display font-black uppercase tracking-[0.1em] text-[14px] py-1.5">
+            Senti.AI presents · Isang gabi lang
+          </p>
+          <div className="px-4 pt-4 pb-5 flex flex-col gap-3">
+            <h1 className="font-display font-black uppercase text-[46px] sm:text-[54px] leading-[0.86] text-ink">
+              Someone thinks they&apos;re <span className="hl">more sawi</span>{" "}than you
+            </h1>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 pt-2">
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-display font-black text-[54px] leading-none" style={{ color: tone.color }}>
+                  {challenger.result.emotional_damage_score.toFixed(1)}
+                </span>
+                <span className="stamp text-[15px] -rotate-6" style={{ color: tone.color }}>
+                  {tone.label}
+                </span>
+                <span className="font-mono text-[11px] text-text-muted mt-1" style={{ fontStretch: "87.5%" }}>
+                  {challenger.mbti} · {ATTACHMENT_LABELS[challenger.attachmentStyle] ?? challenger.attachmentStyle}
+                </span>
+              </div>
+              <span className="grid place-items-center w-14 h-14 rounded-full bg-red border-[3px] border-ink font-display font-black text-[24px] text-paper-light -rotate-6">
+                VS
+              </span>
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-display font-black text-[54px] leading-none text-ink/25">?.?</span>
+                <span className="font-display font-black uppercase text-[20px] leading-none text-ink">Ikaw</span>
+                <span className="font-mono text-[11px] text-text-muted mt-1" style={{ fontStretch: "87.5%" }}>
+                  TBD
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-[16px] text-text-secondary">
           They took Senti.AI&apos;s emotional damage scan. Take yours, and you&apos;ll both get a compatibility
           roast. Tingnan natin kung sino talaga.
         </p>
 
-        <div className="glass rounded-3xl p-5 w-full flex items-center gap-4 text-left">
-          <div className="flex flex-col gap-1 flex-1">
-            <span
-              className="self-start text-[12px] font-semibold rounded-full px-2.5 py-1"
-              style={{ color: tone.ink, background: tone.soft }}
-            >
-              Threat level: {tone.label}
-            </span>
-            <span className="text-[13px] text-text-muted mt-1">
-              {challenger.mbti} · {ATTACHMENT_LABELS[challenger.attachmentStyle] ?? challenger.attachmentStyle}
-            </span>
-          </div>
-          <div className="text-right">
-            <p className="font-display text-[40px] font-extrabold leading-none" style={{ color: tone.ink }}>
-              {challenger.result.emotional_damage_score.toFixed(1)}
-            </p>
-            <p className="text-[12px] text-text-muted">/10 damage</p>
-          </div>
-        </div>
-
         <Button onClick={() => goTo("songs")} className="w-full py-4">
-          Accept the challenge <IconArrowRight size={18} />
+          <IconHeart size={20} /> Accept the challenge
         </Button>
-        <p className="text-[12px] text-text-muted">About 2 minutes. Libre. Mas mura pa sa therapy.</p>
+        <p className="font-hand text-[17px] text-text-muted">About 2 minutes. Libre. Mas mura pa sa therapy.</p>
       </div>
     );
   } else if (isQuestionStep(step)) {
@@ -191,7 +205,7 @@ export default function MatchPage() {
       <div className="flex flex-col items-center justify-center min-h-[100dvh] gap-5 px-6 text-center">
         {matchError ? (
           <>
-            <p className="font-display text-[22px] font-bold text-text-primary max-w-sm">
+            <p className="font-display font-black uppercase text-[30px] leading-[0.95] text-ink max-w-sm">
               {matchError === "rate_limited"
                 ? "You've used today's free scans. Balik bukas for the match."
                 : "Something went wrong. The universe is against this match."}
@@ -202,9 +216,11 @@ export default function MatchPage() {
           </>
         ) : (
           <>
-            <BrandMark size={56} />
-            <p className="font-display text-[22px] font-bold text-text-primary">Comparing your emotional wreckage…</p>
-            <p className="text-[14px] text-text-secondary">Calculating who texts first after a fight.</p>
+            <BrandMark size={72} />
+            <p className="font-display font-black uppercase text-[30px] leading-[0.95] text-ink max-w-xs">
+              Comparing your emotional wreckage…
+            </p>
+            <p className="font-hand text-[18px] text-text-secondary">Calculating who texts first after a fight.</p>
           </>
         )}
       </div>

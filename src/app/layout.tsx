@@ -1,26 +1,68 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Outfit, JetBrains_Mono } from "next/font/google";
-import AuroraBackground from "@/components/AuroraBackground";
+import { Archivo, Big_Shoulders, Doto, Fraunces, Gochi_Hand, Martian_Mono } from "next/font/google";
 import "./globals.css";
 
 const SITE_URL = "https://senti-ai-sooty.vercel.app";
 
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
+/*
+ * Type, chosen to read like print rather than a template:
+ *   Big Shoulders — condensed signage grotesk for headlines (jeepney boards,
+ *                   tabloid fronts). Sharp at every size.
+ *   Archivo       — body copy; a sturdy newspaper grotesque.
+ *   Fraunces      — wonky italic serif for the roast lines, so the model's
+ *                   words sound quoted, like a gossip column.
+ *   Martian Mono  — receipts and numbers.
+ *   Gochi Hand    — margin notes and the handwritten J-card tracklist.
+ *   Doto          — dot-matrix digits for the videoke score screen.
+ * The last three are decorative and load lazily (preload: false).
+ */
+const shoulders = Big_Shoulders({
+  variable: "--font-shoulders",
   subsets: ["latin"],
   display: "swap",
+  // Optical sizes: small labels get the open "Text" cut, so a 13px G
+  // doesn't close up into a C.
+  axes: ["opsz"],
+  adjustFontFallback: false,
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
   display: "swap",
+  axes: ["wdth"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
+  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
+const martian = Martian_Mono({
+  variable: "--font-martian",
+  subsets: ["latin"],
+  display: "swap",
+  axes: ["wdth"],
+  preload: false,
+});
+
+const gochi = Gochi_Hand({
+  variable: "--font-gochi",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  preload: false,
+});
+
+const doto = Doto({
+  variable: "--font-doto",
+  subsets: ["latin"],
+  display: "swap",
+  axes: ["ROND"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -50,7 +92,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fcecf3",
+  themeColor: "#f4ede0",
 };
 
 export default function RootLayout({
@@ -61,10 +103,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${outfit.variable} ${jetbrainsMono.variable} h-full`}
+      className={`${shoulders.variable} ${archivo.variable} ${fraunces.variable} ${martian.variable} ${gochi.variable} ${doto.variable} h-full`}
     >
       <body className="min-h-screen text-text-primary font-body antialiased">
-        <AuroraBackground />
         <div className="relative z-10">{children}</div>
       </body>
     </html>

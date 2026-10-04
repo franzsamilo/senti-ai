@@ -3,77 +3,113 @@
 import { motion } from "framer-motion";
 import type { MatchResult, UserProfile } from "@/lib/types";
 import RevealText from "@/components/ui/RevealText";
-import ScoreRing from "@/components/ui/ScoreRing";
-import { itemVariants, listVariants } from "@/components/ui/motion";
+import {
+  IconAnxious,
+  IconAvoidant,
+  IconFlag,
+  IconMusic,
+  IconSparkle,
+  IconTime,
+} from "@/components/ui/icons";
+import { itemVariants, listVariants, popSpring } from "@/components/ui/motion";
 import { ATTACHMENT_LABELS, LOVE_LANGUAGE_SHORT, threatTone } from "@/lib/theme";
 
 const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
-function ProfileCard({ profile, label, isWinner }: { profile: UserProfile; label: string; isWinner: boolean }) {
-  const tone = threatTone(profile.result.threat_level);
-  const languages = Array.isArray(profile.loveLanguage) ? profile.loveLanguage : [profile.loveLanguage];
+function languages(profile: UserProfile) {
+  const list = Array.isArray(profile.loveLanguage) ? profile.loveLanguage : [profile.loveLanguage];
+  return list.map((l) => LOVE_LANGUAGE_SHORT[l] ?? l).join(", ");
+}
 
+/**
+ * The two profiles as a boxing "tale of the tape": each stat on its own row,
+ * corner A on the left, corner B on the right, the label down the middle.
+ */
+function TaleOfTheTape({ a, b }: { a: UserProfile; b: UserProfile }) {
+  const aWins = a.result.emotional_damage_score >= b.result.emotional_damage_score;
+  const toneA = threatTone(a.result.threat_level);
+  const toneB = threatTone(b.result.threat_level);
+  const rows: [string, string, string][] = [
+    ["Threat", toneA.label, toneB.label],
+    ["Type", a.mbti, b.mbti],
+    ["Attachment", ATTACHMENT_LABELS[a.attachmentStyle] ?? a.attachmentStyle, ATTACHMENT_LABELS[b.attachmentStyle] ?? b.attachmentStyle],
+    ["Love", languages(a), languages(b)],
+    ["Sign", cap(a.zodiac), cap(b.zodiac)],
+    ["Tracks", String(a.songs.length), String(b.songs.length)],
+  ];
   return (
-    <motion.div
-      variants={itemVariants}
-      className="glass rounded-3xl p-4 flex flex-col gap-3 flex-1 min-w-0"
-      style={isWinner ? { boxShadow: "var(--shadow-lift), inset 0 0 0 1.5px rgba(224,48,107,0.45)" } : undefined}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[13px] font-semibold text-text-muted">{label}</span>
-        {isWinner && (
-          <span className="text-[11px] font-bold rounded-full px-2 py-0.5 text-white" style={{ background: "var(--dusk-button)" }}>
-            More sawi 🏆
-          </span>
+    <motion.section variants={itemVariants} className="border-[3px] border-ink bg-paper-light">
+      <p className="bg-ink text-yellow text-center font-display font-black uppercase tracking-[0.12em] text-[15px] py-1.5">
+        Tale of the tape
+      </p>
+      <div className="grid grid-cols-[1fr_auto_1fr] items-end px-3 pt-3 pb-2 border-b-[3px] border-ink">
+        {[
+          { label: "Person A", score: a.result.emotional_damage_score, tone: toneA, win: aWins },
+          null,
+          { label: "Person B", score: b.result.emotional_damage_score, tone: toneB, win: !aWins },
+        ].map((corner, i) =>
+          corner ? (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <span className="font-display font-extrabold uppercase tracking-[0.06em] text-[13px] text-text-muted">
+                {corner.label}
+              </span>
+              <span className="font-display font-black text-[52px] leading-[0.85] tabular-nums" style={{ color: corner.tone.color }}>
+                {corner.score.toFixed(1)}
+              </span>
+              <span
+                className={`font-display font-black uppercase text-[12px] tracking-[0.04em] px-1.5 py-0.5 ${
+                  corner.win ? "bg-pink border-2 border-ink text-ink" : "text-transparent"
+                }`}
+              >
+                More sawi
+              </span>
+            </div>
+          ) : (
+            <span
+              key={i}
+              className="mb-6 grid place-items-center w-12 h-12 rounded-full bg-red border-[3px] border-ink font-display font-black text-[20px] text-paper-light -rotate-6"
+            >
+              VS
+            </span>
+          )
         )}
       </div>
-
-      <div className="flex items-end justify-between gap-2">
-        <span className="font-display text-[34px] font-extrabold leading-none" style={{ color: tone.ink }}>
-          {profile.result.emotional_damage_score.toFixed(1)}
-          <span className="text-[14px] text-text-muted font-semibold">/10</span>
-        </span>
-        <span className="text-[11px] font-semibold rounded-full px-2 py-0.5" style={{ color: tone.ink, background: tone.soft }}>
-          {tone.label}
-        </span>
-      </div>
-
-      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[13px]">
-        <dt className="text-text-muted">Type</dt>
-        <dd className="text-text-primary font-medium text-right">{profile.mbti}</dd>
-        <dt className="text-text-muted">Attachment</dt>
-        <dd className="text-text-primary text-right">{ATTACHMENT_LABELS[profile.attachmentStyle] ?? profile.attachmentStyle}</dd>
-        <dt className="text-text-muted">Love</dt>
-        <dd className="text-text-primary text-right">{languages.map((l) => LOVE_LANGUAGE_SHORT[l] ?? l).join(", ")}</dd>
-        <dt className="text-text-muted">Sign</dt>
-        <dd className="text-text-primary text-right">{cap(profile.zodiac)}</dd>
-      </dl>
-
-      <div className="flex flex-wrap gap-1">
-        {profile.songs.slice(0, 8).map((song, i) => (
-          <span key={i} className="text-[11.5px] px-2 py-0.5 rounded-lg bg-white border border-border-subtle text-text-secondary truncate max-w-full">
-            {song.title}
-          </span>
+      <dl>
+        {rows.map(([label, va, vb]) => (
+          <div key={label} className="grid grid-cols-[1fr_96px_1fr] items-center gap-2 px-3 py-2.5 border-b border-dashed border-ink/25 last:border-b-0">
+            <dd className="text-center text-[15px] font-semibold text-ink truncate">{va}</dd>
+            <dt className="text-center font-display font-extrabold uppercase tracking-[0.06em] text-[12px] text-text-muted">
+              {label}
+            </dt>
+            <dd className="text-center text-[15px] font-semibold text-ink truncate">{vb}</dd>
+          </div>
         ))}
-        {profile.songs.length > 8 && (
-          <span className="text-[11.5px] px-2 py-0.5 text-text-muted">+{profile.songs.length - 8}</span>
-        )}
-      </div>
-    </motion.div>
+      </dl>
+    </motion.section>
   );
 }
 
-function DetailCard({ emoji, label, value, accent }: { emoji: string; label: string; value: string; accent?: boolean }) {
+function DetailCard({
+  Icon,
+  label,
+  value,
+  accent,
+}: {
+  Icon: typeof IconFlag;
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
   return (
     <motion.div
       variants={itemVariants}
-      className={`rounded-3xl p-5 flex flex-col gap-2 ${accent ? "" : "glass"}`}
-      style={accent ? { background: "#ffe6ee", border: "1px solid rgba(224,48,107,0.25)" } : undefined}
+      className={accent ? "border-[3px] border-ink bg-pink-soft p-4 flex gap-3" : "paper p-4 flex gap-3"}
     >
-      <span className={`text-[13px] font-semibold ${accent ? "text-accent-ink" : "text-text-muted"}`}>
-        {emoji} {label}
-      </span>
-      <p className="text-[15px] leading-relaxed text-text-primary">{value}</p>
+      <Icon size={34} className="text-ink shrink-0" />
+      <div className="flex flex-col gap-1 min-w-0">
+        <span className="font-display font-black uppercase text-[19px] leading-none text-ink">{label}</span>
+        <p className="text-[15px] leading-relaxed text-ink">{value}</p>
+      </div>
     </motion.div>
   );
 }
@@ -85,9 +121,8 @@ interface MatchReportProps {
 }
 
 export default function MatchReport({ matchResult, profileA, profileB }: MatchReportProps) {
-  const aIsMoreSawi = profileA.result.emotional_damage_score >= profileB.result.emotional_damage_score;
   const combined = threatTone(matchResult.combined_threat_level);
-  const compat = matchResult.compatibility_score;
+  const compat = Math.round(matchResult.compatibility_score);
 
   return (
     <motion.div
@@ -96,52 +131,65 @@ export default function MatchReport({ matchResult, profileA, profileB }: MatchRe
       animate="show"
       className="flex flex-col gap-5 px-4 py-8 max-w-[680px] mx-auto w-full"
     >
-      {/* Hero */}
-      <motion.header
-        variants={itemVariants}
-        className="relative overflow-hidden rounded-[28px] px-5 py-7 sm:px-7 text-white text-center flex flex-col items-center gap-4 shadow-[var(--shadow-lift)]"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 100% 0%, rgba(224,48,107,0.55) 0%, transparent 55%), radial-gradient(90% 70% at 0% 100%, rgba(139,63,217,0.5) 0%, transparent 60%), linear-gradient(160deg, #3b1d4a 0%, #2a1834 60%, #1f1228 100%)",
-        }}
-      >
-        <span className="text-[13px] font-medium text-white/70">Senti.AI match report</span>
-        <RevealText text={matchResult.match_headline} as="h1" className="text-[24px] sm:text-[30px] font-extrabold leading-[1.15]" />
-        <ScoreRing value={compat} max={100} color={combined.color} label="Compatibility" delay={0.5} />
-        <p className="text-[14px] text-white/80">
-          Compatibility ·{" "}
-          {compat >= 70 ? "Suspiciously okay. Mag-ingat." : compat >= 40 ? "Mabubuhay kayo. Barely." : "God help you both."}
+      {/* Fight poster */}
+      <motion.header variants={itemVariants} className="paper overflow-hidden" style={{ borderRadius: 4 }}>
+        <p className="bg-ink text-yellow text-center font-display font-black uppercase tracking-[0.1em] text-[14px] py-1.5">
+          Senti.AI match report
         </p>
-        <span
-          className="text-[12px] font-extrabold uppercase tracking-wide rounded-lg px-2.5 py-1 border-2"
-          style={{ color: combined.color, borderColor: combined.color, background: `${combined.color}1f` }}
-        >
-          Combined threat: {combined.label}
-        </span>
+        <div className="px-4 sm:px-6 pt-4 pb-5 flex flex-col items-center gap-4 text-center">
+          <RevealText
+            text={matchResult.match_headline}
+            as="h1"
+            className="font-display font-black uppercase text-[36px] sm:text-[48px] leading-[0.9] text-ink"
+          />
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col items-center">
+              <span className="font-display font-black text-[88px] leading-[0.8] text-ink misprint tabular-nums">
+                {compat}
+                <span className="text-[40px]">%</span>
+              </span>
+              <span className="font-display font-extrabold uppercase tracking-[0.08em] text-[13px] text-text-muted mt-1">
+                Compatibility
+              </span>
+            </div>
+            <motion.span
+              initial={{ scale: 2.4, rotate: -24, opacity: 0 }}
+              animate={{ scale: 1, rotate: -8, opacity: 1 }}
+              transition={{ ...popSpring, delay: 0.9 }}
+              className="stamp text-[20px]"
+              style={{ color: combined.color }}
+            >
+              {combined.label}
+            </motion.span>
+          </div>
+          <p className="font-hand text-[19px] text-pink-ink">
+            {compat >= 70 ? "Suspiciously okay. Mag-ingat." : compat >= 40 ? "Mabubuhay kayo. Barely." : "God help you both."}
+          </p>
+        </div>
       </motion.header>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <ProfileCard profile={profileA} label="Person A" isWinner={aIsMoreSawi} />
-        <ProfileCard profile={profileB} label="Person B" isWinner={!aIsMoreSawi} />
-      </div>
+      <TaleOfTheTape a={profileA} b={profileB} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <DetailCard emoji="📱" label="Who texts first" value={matchResult.who_texts_first} />
-        <DetailCard emoji="👻" label="Who ghosts first" value={matchResult.who_ghosts_first} />
+        <DetailCard Icon={IconAnxious} label="Who texts first" value={matchResult.who_texts_first} />
+        <DetailCard Icon={IconAvoidant} label="Who ghosts first" value={matchResult.who_ghosts_first} />
       </div>
-      <DetailCard emoji="⏳" label="Talking stage duration" value={matchResult.talking_stage_duration} />
-      <DetailCard emoji="🚩" label="Biggest red flag combo" value={matchResult.biggest_red_flag_combo} accent />
-      <DetailCard emoji="🎵" label="Playlist analysis" value={matchResult.song_overlap_roast} />
-      <DetailCard emoji="🔮" label="Relationship prediction" value={matchResult.relationship_prediction} />
+      <DetailCard Icon={IconTime} label="Talking stage duration" value={matchResult.talking_stage_duration} />
+      <DetailCard Icon={IconFlag} label="Biggest red flag combo" value={matchResult.biggest_red_flag_combo} accent />
+      <DetailCard Icon={IconMusic} label="Playlist analysis" value={matchResult.song_overlap_roast} />
+      <DetailCard Icon={IconSparkle} label="Relationship prediction" value={matchResult.relationship_prediction} />
 
-      <motion.div
-        variants={itemVariants}
-        className="rounded-3xl p-5 flex flex-col gap-2 text-white"
-        style={{ background: "var(--dusk-button)", boxShadow: "var(--shadow-glow)" }}
-      >
-        <span className="text-[13px] font-semibold text-white/80">Final match verdict</span>
-        <p className="font-display text-[18px] font-semibold leading-snug">{matchResult.final_match_verdict}</p>
-      </motion.div>
+      <motion.blockquote variants={itemVariants} className="relative paper px-5 sm:px-6 pt-9 pb-5">
+        <span aria-hidden className="absolute -top-2 left-3 font-serif font-black text-[104px] leading-none text-pink">
+          &ldquo;
+        </span>
+        <p className="relative font-serif italic text-[22px] sm:text-[25px] leading-[1.25] text-ink">
+          {matchResult.final_match_verdict}
+        </p>
+        <footer className="mt-3 font-display font-extrabold uppercase tracking-[0.05em] text-[14px] text-text-muted">
+          — Final match verdict
+        </footer>
+      </motion.blockquote>
     </motion.div>
   );
 }

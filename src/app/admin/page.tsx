@@ -46,7 +46,7 @@ function DistributionBar({
   label,
   count,
   max,
-  color = "#e0306b",
+  color = "#ff4f9a",
 }: {
   label: string;
   count: number;
@@ -59,9 +59,9 @@ function DistributionBar({
       <span className="font-mono text-xs text-text-secondary w-28 shrink-0 truncate">
         {label}
       </span>
-      <div className="flex-1 bg-[rgba(74,30,82,0.06)] rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-ink/10 rounded-[3px] h-2.5 overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-700"
+          className="h-full rounded-[3px] transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
@@ -80,8 +80,8 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border border-border-subtle rounded-lg p-5 bg-bg-card">
-      <h2 className="font-mono text-xs uppercase tracking-widest text-text-secondary mb-4 border-b border-border-subtle pb-2">
+    <div className="paper p-5">
+      <h2 className="font-display font-black uppercase text-[20px] leading-none text-ink mb-4 border-b-2 border-ink pb-2">
         {title}
       </h2>
       {children}
@@ -183,7 +183,7 @@ export default function AdminPage() {
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-10 text-center">
-          <h1 className="text-5xl font-extrabold tracking-tight mb-2 text-dusk">Admin</h1>
+          <h1 className="font-display font-black uppercase text-[64px] leading-[0.85] mb-2 text-ink misprint">Admin</h1>
           <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
             Senti.AI — Analytics Dashboard
           </p>
@@ -202,7 +202,7 @@ export default function AdminPage() {
         {/* Login gate */}
         {!authed && (
           <div className="max-w-sm mx-auto mt-20">
-            <div className="border border-border-subtle rounded-lg p-8 bg-bg-card text-center">
+            <div className="paper p-8 text-center">
               <p className="font-mono text-xs uppercase tracking-widest text-text-secondary mb-6">
                 Clearance Required
               </p>
@@ -213,11 +213,11 @@ export default function AdminPage() {
                   onChange={(e) => setInputVal(e.target.value)}
                   placeholder="Admin password"
                   autoFocus
-                  className="bg-[rgba(74,30,82,0.06)] border border-border-subtle rounded-lg px-4 py-3 font-mono text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors"
+                  className="bg-paper-light border-2 border-ink rounded-[10px] px-4 py-3 font-mono text-sm text-ink placeholder:text-text-muted focus:outline-none focus:shadow-[0_0_0_4px_var(--yellow)] transition-shadow"
                 />
                 <button
                   type="submit"
-                  className="bg-accent text-white font-mono text-sm uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-accent-secondary transition-colors"
+                  className="bg-pink text-ink border-2 border-ink shadow-[var(--shadow-key)] active:translate-y-[3px] active:shadow-[var(--shadow-key-down)] font-display font-extrabold text-[18px] uppercase tracking-[0.04em] px-6 py-3 rounded-[12px] transition-[transform,box-shadow]"
                 >
                   Access Dashboard
                 </button>

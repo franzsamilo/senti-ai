@@ -1,15 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
-import OptionCard from "@/components/ui/OptionCard";
+import OptionCard, { AnswerSheet } from "@/components/ui/OptionCard";
 import {
   IconAnxious,
   IconAvoidant,
   IconDisorganized,
   IconSecure,
 } from "@/components/ui/icons";
-import { listVariants } from "@/components/ui/motion";
 import { AttachmentStyle } from "@/lib/types";
 
 interface AttachmentOption {
@@ -66,20 +64,20 @@ export default function AttachmentStep({ onBack, selected, onSelect }: Attachmen
       title="How do you attach?"
       subtitle="Pick how you actually behave, not how you'd describe yourself to a friend. The algorithm knows."
     >
-      <motion.div variants={listVariants} className="flex flex-col gap-2.5">
-        {OPTIONS.map(({ value, Icon, label, description, aside }) => (
+      <AnswerSheet part="Part III · Attachment" instructions="Shade one. No. 2 pencil only." label="Attachment style">
+        {OPTIONS.map(({ value, Icon, label, description, aside }, i) => (
           <OptionCard
             key={value}
+            letter={"ABCD"[i]}
             selected={selected === value}
             onSelect={() => onSelect(value)}
-            icon={<Icon size={22} />}
+            icon={<Icon size={34} />}
             label={label}
             description={description}
             aside={aside}
-            layoutGroupId="attachment-selection"
           />
         ))}
-      </motion.div>
+      </AnswerSheet>
     </StepShell>
   );
 }

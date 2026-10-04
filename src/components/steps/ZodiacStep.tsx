@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
 import { IconCalendar, ZODIAC_ICONS } from "@/components/ui/icons";
-import { gridVariants, itemVariants, spring } from "@/components/ui/motion";
+import { gridVariants, itemVariants } from "@/components/ui/motion";
 
 const ZODIACS: { value: string; label: string; window: string }[] = [
   { value: "aries", label: "Aries", window: "Mar 21 – Apr 19" },
@@ -50,6 +50,34 @@ interface ZodiacStepProps {
   onSelect: (zodiac: string) => void;
 }
 
+/** A ballpoint loop drawn around the chosen sign, like circling it in the paper. */
+function PenCircle() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="absolute -inset-1.5 w-[calc(100%+12px)] h-[calc(100%+12px)] pointer-events-none z-10"
+    >
+      <motion.path
+        d="M54 7C82 6 96 24 95 50 94 79 74 95 48 94 20 93 5 76 6 49 7 24 25 8 60 10"
+        fill="none"
+        stroke="#2b4ee0"
+        strokeWidth={2.6}
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.38, ease: "easeOut" }}
+      />
+    </svg>
+  );
+}
+
+/**
+ * The horoscope column from the back page of a tabloid: twelve signs ruled
+ * into a grid under a masthead, and yours gets circled in blue ballpen.
+ */
 export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepProps) {
   return (
     <StepShell
@@ -62,13 +90,13 @@ export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepPro
       {/* Birthday shortcut — the native date picker is the fastest input on phones */}
       <motion.label
         variants={itemVariants}
-        className="glass rounded-2xl px-4 py-3 flex items-center gap-3 cursor-pointer"
+        className="paper px-4 py-3 flex items-center gap-3 cursor-pointer"
       >
-        <span className="grid place-items-center w-10 h-10 rounded-xl bg-[rgba(139,63,217,0.1)] text-accent-secondary shrink-0">
-          <IconCalendar size={20} />
-        </span>
+        <IconCalendar size={34} className="text-ink shrink-0" />
         <span className="flex flex-col flex-1 min-w-0">
-          <span className="text-[15px] font-semibold text-text-primary">Not sure? Enter your birthday</span>
+          <span className="font-display font-extrabold text-[19px] leading-none text-ink">
+            Not sure? Enter your birthday
+          </span>
           <input
             type="date"
             aria-label="Birthday"
@@ -76,57 +104,47 @@ export default function ZodiacStep({ onBack, selected, onSelect }: ZodiacStepPro
               const [, month, day] = e.target.value.split("-").map(Number);
               if (month && day) onSelect(signFromDate(month, day));
             }}
-            className="mt-1 w-full bg-transparent text-base text-text-secondary outline-none"
+            className="mt-1.5 w-full bg-transparent text-base text-text-secondary outline-none border-b-2 border-dotted border-ink/30 focus:border-blue pb-0.5"
           />
         </span>
       </motion.label>
 
-      <motion.div variants={gridVariants} className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
-        {ZODIACS.map(({ value, label, window }) => {
-          const Icon = ZODIAC_ICONS[value];
-          const isSelected = selected === value;
-          return (
-            <motion.button
-              key={value}
-              variants={itemVariants}
-              onClick={() => onSelect(value)}
-              whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.95 }}
-              transition={spring}
-              aria-pressed={isSelected}
-              className="relative flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3.5 px-1 cursor-pointer min-h-[104px] overflow-hidden border"
-              style={{
-                borderColor: isSelected ? "transparent" : "rgba(255,255,255,0.9)",
-                background: isSelected ? "transparent" : "rgba(255,255,255,0.72)",
-                boxShadow: isSelected ? "var(--shadow-glow)" : "var(--shadow-card)",
-                color: isSelected ? "#ffffff" : "#8b3fd9",
-              }}
-            >
-              {isSelected && (
-                <motion.span
-                  layoutId="zodiac-selection"
-                  transition={spring}
-                  className="absolute inset-0 -z-10"
-                  style={{ background: "var(--dusk-button)" }}
-                />
-              )}
-              <Icon size={30} />
-              <span
-                className="font-display text-[14px] font-semibold leading-none"
-                style={{ color: isSelected ? "#fff" : "#2a1834" }}
+      <motion.section variants={itemVariants} className="paper p-3 sm:p-4" aria-label="Zodiac signs">
+        <header className="flex items-end justify-between gap-3 pb-2 mb-3 border-b-[5px] border-double border-ink">
+          <h3 className="font-display font-black uppercase text-[26px] sm:text-[30px] leading-none tracking-[0.01em] text-ink">
+            Ang Iyong Kapalaran
+          </h3>
+          <span className="font-serif italic text-[13px] text-text-secondary pb-0.5 hidden sm:block">
+            ni Madam Senti
+          </span>
+        </header>
+
+        <motion.div
+          variants={gridVariants}
+          className="grid grid-cols-3 sm:grid-cols-4 gap-px bg-[rgba(29,25,50,0.22)] border border-[rgba(29,25,50,0.22)]"
+        >
+          {ZODIACS.map(({ value, label, window }) => {
+            const Icon = ZODIAC_ICONS[value];
+            const isSelected = selected === value;
+            return (
+              <motion.button
+                key={value}
+                variants={itemVariants}
+                onClick={() => onSelect(value)}
+                whileTap={{ scale: 0.96 }}
+                aria-pressed={isSelected}
+                className="relative flex flex-col items-center justify-center gap-1.5 py-3.5 px-1 cursor-pointer min-h-[108px] transition-colors duration-150"
+                style={{ background: isSelected ? "var(--color-yellow-soft)" : "var(--paper-light)" }}
               >
-                {label}
-              </span>
-              <span
-                className="text-[10.5px] leading-none"
-                style={{ color: isSelected ? "rgba(255,255,255,0.8)" : "#7b6987" }}
-              >
-                {window}
-              </span>
-            </motion.button>
-          );
-        })}
-      </motion.div>
+                {isSelected && <PenCircle />}
+                <Icon size={36} className="text-ink" tone={isSelected ? "#ff4f9a" : "#ffd23a"} />
+                <span className="font-display font-extrabold text-[18px] leading-none text-ink">{label}</span>
+                <span className="text-[11px] leading-none text-text-muted">{window}</span>
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </motion.section>
     </StepShell>
   );
 }

@@ -22,11 +22,11 @@ export function threatTone(level: string | undefined) {
   return THREAT[(level ?? "").toUpperCase() as ThreatLevel] ?? THREAT.SEVERE;
 }
 
-/** Gold / silver / bronze, tuned to sit on white. */
+/** Gold / silver / bronze rosettes — light enough to print ink numbers on. */
 export const RANK_COLORS: Record<number, string> = {
-  1: "#d4a017",
-  2: "#8e98a8",
-  3: "#b8733a",
+  1: "#ffd23a",
+  2: "#d3d6df",
+  3: "#e9a46c",
 };
 
 export const ATTACHMENT_LABELS: Record<string, string> = {

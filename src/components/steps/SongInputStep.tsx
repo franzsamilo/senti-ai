@@ -3,12 +3,12 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
-import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
 import {
   IconArrowRight,
   IconCheck,
-  IconMusic,
+  IconClose,
+  IconEdit,
   IconPlus,
   IconSearch,
 } from "@/components/ui/icons";
@@ -160,6 +160,9 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
   const activePicks = QUICK_PICKS.find((g) => g.id === pickGroup) ?? QUICK_PICKS[0];
   const remainingToMin = MIN_SONGS - songs.length;
 
+  /** Blank lines on the J-card: the minimum first, then up to the sweet spot. */
+  const blankLines = Math.max(0, (songs.length < MIN_SONGS ? MIN_SONGS : SWEET_SPOT) - songs.length);
+
   return (
     <StepShell
       step={1}
@@ -182,11 +185,8 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
     >
       {/* ── Search ── */}
       <div ref={containerRef} className="relative z-30">
-        <span
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
-          style={{ color: query ? "#e0306b" : "#9a89a6" }}
-        >
-          <IconSearch size={19} />
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink">
+          <IconSearch size={24} tone={query ? "#ffd23a" : "none"} />
         </span>
         <input
           ref={inputRef}
@@ -205,17 +205,17 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
           disabled={!canAdd}
           aria-label="Search songs"
           placeholder={canAdd ? "Search a song or artist…" : "That's the max — 25 songs"}
-          className="glass w-full rounded-2xl pl-12 pr-4 py-4 text-base text-text-primary placeholder:text-text-muted outline-none transition-shadow focus:shadow-[0_0_0_3px_rgba(224,48,107,0.18)] disabled:opacity-60"
+          className="w-full rounded-[12px] border-2 border-ink bg-paper-light pl-12 pr-4 py-4 text-[17px] text-ink placeholder:text-text-muted outline-none transition-shadow focus:shadow-[0_0_0_4px_var(--yellow)] disabled:opacity-60"
         />
 
         <AnimatePresence>
           {open && optionCount > 0 && (
             <motion.ul
-              initial={{ opacity: 0, y: -6, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.98 }}
-              transition={{ duration: 0.16 }}
-              className="absolute mt-2 w-full bg-white border border-border-subtle rounded-2xl overflow-y-auto max-h-[320px] shadow-[var(--shadow-lift)] py-1.5"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.14 }}
+              className="absolute mt-2 w-full bg-paper-light border-2 border-ink rounded-[12px] overflow-y-auto max-h-[330px] shadow-[var(--shadow-hard)] py-1"
               role="listbox"
             >
               {results.map((song, i) => {
@@ -228,23 +228,19 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                       // the dropdown opens must not steal the keyboard selection
                       onMouseMove={() => setActiveIndex(i)}
                       disabled={added}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                        added ? "opacity-50 cursor-default" : i === activeIndex ? "bg-accent-soft" : ""
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 min-h-[56px] text-left transition-colors ${
+                        added ? "opacity-50 cursor-default" : i === activeIndex ? "bg-yellow-soft" : ""
                       } cursor-pointer`}
                     >
-                      <span className="shrink-0 grid place-items-center w-9 h-9 rounded-xl bg-[rgba(139,63,217,0.08)] text-accent-secondary">
-                        <IconMusic size={16} />
-                      </span>
                       <span className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[15px] font-medium text-text-primary truncate">{song.title}</span>
+                        <span className="text-[16px] font-semibold text-ink truncate">{song.title}</span>
                         <span className="text-[13px] text-text-muted truncate">{song.artist}</span>
                       </span>
+                      <PainTag value={song.painIndex} />
                       {added ? (
-                        <span className="text-xs text-accent-success inline-flex items-center gap-1 shrink-0">
-                          <IconCheck size={14} /> Added
-                        </span>
+                        <IconCheck size={18} className="text-accent-success shrink-0" />
                       ) : (
-                        <IconPlus size={18} className="text-text-muted shrink-0" />
+                        <IconPlus size={18} className="text-ink shrink-0" />
                       )}
                     </button>
                   </li>
@@ -256,17 +252,15 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                     onClick={() => addSong(parseCustomSong(query))}
                     onMouseMove={() => setActiveIndex(results.length)}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-colors ${
-                      results.length > 0 ? "border-t border-border-subtle" : ""
-                    } ${activeIndex === results.length ? "bg-accent-soft" : ""}`}
+                      results.length > 0 ? "border-t-2 border-dashed border-ink/20" : ""
+                    } ${activeIndex === results.length ? "bg-yellow-soft" : ""}`}
                   >
-                    <span className="shrink-0 grid place-items-center w-9 h-9 rounded-xl bg-accent-soft text-accent-ink">
-                      <IconPlus size={16} />
-                    </span>
+                    <IconEdit size={22} className="text-ink shrink-0" />
                     <span className="flex flex-col min-w-0">
-                      <span className="text-[15px] text-text-primary truncate">
+                      <span className="text-[16px] text-ink truncate">
                         Add &ldquo;{query.trim()}&rdquo;
                       </span>
-                      <span className="text-[12px] text-text-muted">
+                      <span className="text-[12.5px] text-text-muted">
                         Not in the list? Add it anyway — tip: &ldquo;Title - Artist&rdquo;
                       </span>
                     </span>
@@ -280,25 +274,25 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
 
       {/* ── Request a song (only when nothing matched) ── */}
       {query.trim().length >= 2 && results.length === 0 && canAdd && (
-        <div className="-mt-2 text-[13px] text-text-secondary">
+        <div className="-mt-2 text-[14px] text-text-secondary">
           {!showRequestForm ? (
-            <button onClick={openRequestForm} className="text-accent-ink font-medium hover:underline cursor-pointer">
+            <button onClick={openRequestForm} className="text-pink-ink font-semibold hover:underline cursor-pointer">
               Wala sa list? Request it to be added →
             </button>
           ) : (
-            <div className="glass rounded-2xl p-4 flex flex-col gap-2.5">
+            <div className="paper p-4 flex flex-col gap-2.5">
               {requestState === "sent" ? (
                 <p className="text-accent-success font-medium">Request sent — salamat! It still works for your scan today.</p>
               ) : (
                 <>
-                  <p className="font-medium text-text-primary">Request a song</p>
+                  <p className="font-display font-extrabold text-[19px] text-ink leading-none">Request a song</p>
                   <input
                     type="text"
                     value={requestTitle}
                     onChange={(e) => setRequestTitle(e.target.value)}
                     placeholder="Song title"
                     maxLength={100}
-                    className="w-full bg-white border border-border-subtle rounded-xl px-3.5 py-2.5 text-base outline-none focus:border-accent/50"
+                    className="w-full bg-paper-light border-2 border-ink/30 rounded-[10px] px-3.5 py-2.5 text-base outline-none focus:border-ink"
                   />
                   <input
                     type="text"
@@ -306,12 +300,13 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
                     onChange={(e) => setRequestArtist(e.target.value)}
                     placeholder="Artist"
                     maxLength={100}
-                    className="w-full bg-white border border-border-subtle rounded-xl px-3.5 py-2.5 text-base outline-none focus:border-accent/50"
+                    className="w-full bg-paper-light border-2 border-ink/30 rounded-[10px] px-3.5 py-2.5 text-base outline-none focus:border-ink"
                   />
                   <Button
+                    variant="secondary"
                     onClick={submitRequest}
                     disabled={requestState === "sending" || !requestTitle.trim() || !requestArtist.trim()}
-                    className="self-start min-h-[40px] py-2 text-sm"
+                    className="self-start min-h-[42px] py-2 text-[15px]"
                   >
                     {requestState === "sending" ? "Sending…" : "Send request"}
                   </Button>
@@ -322,133 +317,188 @@ export default function SongInputStep({ onBack, songs, onSongsChange, onNext }: 
         </div>
       )}
 
-      {/* ── Your list ── */}
-      <section className="flex flex-col gap-3">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[15px] font-semibold text-text-primary">
-            Your songs{" "}
-            <span className="font-normal text-text-muted tabular-nums">
+      {/* ── Your list: a cassette J-card ── */}
+      <section className="paper overflow-hidden" aria-label="Your songs" style={{ borderRadius: 4 }}>
+        {/* spine */}
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-pink border-b-2 border-ink">
+          <span className="font-hand text-[20px] leading-none text-ink truncate">Side A — para sa&apos;yo &apos;to</span>
+          <span className="flex items-center gap-3 shrink-0">
+            <span className="font-mono text-[11px] text-ink tabular-nums" style={{ fontStretch: "87.5%" }}>
               {songs.length}/{MAX_SONGS}
             </span>
-          </p>
-          {songs.length > 0 && (
-            <button
-              onClick={() => onSongsChange([])}
-              className="text-[13px] text-text-muted hover:text-accent-ink transition-colors cursor-pointer"
+            {songs.length > 0 && (
+              <button
+                onClick={() => onSongsChange([])}
+                className="font-display font-extrabold uppercase tracking-[0.04em] text-[13px] text-ink underline decoration-2 underline-offset-2 hover:text-paper-light cursor-pointer min-h-[32px]"
+              >
+                Clear
+              </button>
+            )}
+          </span>
+        </div>
+
+        <ol className="px-3 sm:px-4 pb-2">
+          <AnimatePresence initial={false}>
+            {songs.map((song, i) => (
+              <motion.li
+                key={`${song.title}-${song.artist}`}
+                layout
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 24, transition: { duration: 0.15 } }}
+                transition={spring}
+                className="grid grid-cols-[30px_1fr_auto_auto] items-center gap-2 min-h-[54px] border-b border-[rgba(43,78,224,0.22)]"
+              >
+                <span className="font-mono text-[11px] text-text-muted tabular-nums" style={{ fontStretch: "87.5%" }}>
+                  {trackNo(i)}
+                </span>
+                <span className="flex flex-col min-w-0 py-1.5">
+                  <span className="font-hand text-[21px] leading-[1.05] text-blue-ink truncate">{song.title}</span>
+                  <span className="text-[12.5px] text-text-muted truncate">{song.artist}</span>
+                </span>
+                {song.mood === "unknown" ? (
+                  <span className="font-hand text-[15px] text-text-muted">reading…</span>
+                ) : (
+                  <PainTag value={song.painIndex} />
+                )}
+                <button
+                  onClick={() => removeSong(i)}
+                  aria-label={`Remove ${song.title}`}
+                  className="grid place-items-center w-10 h-10 -mr-1 rounded-[8px] text-ink/60 hover:text-ink hover:bg-pink-soft transition-colors cursor-pointer"
+                >
+                  <IconClose size={16} />
+                </button>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+          {Array.from({ length: blankLines }, (_, k) => (
+            <li
+              key={`blank-${k}`}
+              aria-hidden
+              className="grid grid-cols-[30px_1fr] items-center gap-2 min-h-[54px] border-b border-[rgba(43,78,224,0.22)]"
             >
-              Clear all
-            </button>
-          )}
-        </div>
-
-        <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: "rgba(74,30,82,0.07)" }}>
-          <motion.div
-            className="h-full rounded-full"
-            initial={false}
-            animate={{ width: `${Math.min(100, (songs.length / SWEET_SPOT) * 100)}%` }}
-            transition={spring}
-            style={{ background: songs.length >= SWEET_SPOT ? "var(--dusk)" : "rgba(224,48,107,0.55)" }}
-          />
-        </div>
-        <p className="text-[13px] text-text-muted -mt-1">
+              <span className="font-mono text-[11px] text-text-muted/60 tabular-nums" style={{ fontStretch: "87.5%" }}>
+                {trackNo(songs.length + k)}
+              </span>
+              {songs.length === 0 && k === 0 && (
+                <span className="font-hand text-[19px] text-text-muted/80">search above, or tap a few picks below…</span>
+              )}
+            </li>
+          ))}
+        </ol>
+        <p className="px-4 pb-3 pt-1 font-hand text-[18px] text-pink-ink -rotate-[0.8deg]">
           {songs.length < MIN_SONGS
-            ? `Add at least ${MIN_SONGS} to continue.`
+            ? `${MIN_SONGS - songs.length} more to continue`
             : songs.length < SWEET_SPOT
-            ? `${SWEET_SPOT - songs.length} more for the sharpest read — or continue now.`
-            : "Perfect sample size. Ready ka na."}
+            ? `${SWEET_SPOT - songs.length} more for the sharpest read — or go na`
+            : "perfect sample size. ready ka na."}
         </p>
-
-        {songs.length > 0 ? (
-          <motion.div layout className="flex flex-wrap gap-2">
-            <AnimatePresence initial={false}>
-              {songs.map((song, i) => (
-                <SongChip
-                  key={`${song.title}-${song.artist}`}
-                  song={song}
-                  onRemove={() => removeSong(i)}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <div className="rounded-2xl border border-dashed border-border-strong px-4 py-5 text-center text-[14px] text-text-muted">
-            Wala pa. Search above, or tap a few from the picks below.
-          </div>
-        )}
       </section>
 
-      {/* ── Quick picks ── */}
-      <section className="flex flex-col gap-3">
-        <p className="text-[15px] font-semibold text-text-primary">Quick picks</p>
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-0.5">
+      {/* ── Quick picks: a page from the videoke songbook ── */}
+      <section className="flex flex-col" aria-label="Quick picks">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 relative z-10">
           {QUICK_PICKS.map((group) => {
             const active = group.id === activePicks?.id;
             return (
               <button
                 key={group.id}
                 onClick={() => setPickGroup(group.id)}
-                className={`relative shrink-0 rounded-full px-4 py-2 text-[14px] font-medium transition-colors cursor-pointer ${
-                  active ? "text-white" : "text-text-secondary bg-white/70 hover:bg-white border border-white"
+                aria-pressed={active}
+                className={`relative shrink-0 rounded-t-[10px] border-2 border-b-0 border-ink px-3.5 pt-2 pb-2.5 font-display font-extrabold uppercase tracking-[0.03em] text-[14px] leading-none transition-colors cursor-pointer ${
+                  active ? "bg-ink text-yellow translate-y-[2px]" : "bg-paper-dark text-ink hover:bg-yellow-soft translate-y-[6px]"
                 }`}
               >
-                {active && (
-                  <motion.span
-                    layoutId="quick-pick-tab"
-                    transition={spring}
-                    className="absolute inset-0 rounded-full -z-10"
-                    style={{ background: "var(--dusk-button)" }}
-                  />
-                )}
                 {group.label}
               </button>
             );
           })}
         </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activePicks?.id}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-2"
-          >
-            {activePicks?.songs.map((song) => {
-              const added = isAdded(song);
-              return (
-                <motion.button
-                  key={`${song.title}-${song.artist}`}
-                  onClick={() => toggleSong(song)}
-                  disabled={!added && !canAdd}
-                  whileTap={{ scale: 0.97 }}
-                  transition={spring}
-                  aria-pressed={added}
-                  className={`flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-left border transition-colors cursor-pointer disabled:opacity-40 ${
-                    added ? "bg-accent-soft border-accent/30" : "bg-white/70 border-white hover:bg-white"
-                  }`}
-                >
-                  <span className="flex flex-col min-w-0 flex-1">
-                    <span className="text-[14px] font-medium text-text-primary truncate">{song.title}</span>
-                    <span className="text-[12px] text-text-muted truncate">{song.artist}</span>
-                  </span>
-                  <motion.span
-                    key={added ? "on" : "off"}
-                    initial={{ scale: 0.5 }}
-                    animate={{ scale: 1 }}
-                    transition={popSpring}
-                    className={`shrink-0 grid place-items-center w-7 h-7 rounded-full ${
-                      added ? "text-white" : "text-text-muted border border-border-subtle"
-                    }`}
-                    style={added ? { background: "var(--dusk-button)" } : undefined}
-                  >
-                    {added ? <IconCheck size={14} strokeWidth={2.4} /> : <IconPlus size={14} />}
-                  </motion.span>
-                </motion.button>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
+        <div className="paper border-2 border-ink relative" style={{ borderRadius: "0 10px 10px 10px" }}>
+          <div className="grid grid-cols-[56px_1fr_auto] gap-2 px-3.5 py-2 border-b-2 border-ink font-display font-extrabold uppercase text-[12px] tracking-[0.08em] text-ink/70">
+            <span>Code</span>
+            <span>Title / Artist</span>
+            <span />
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.ul
+              key={activePicks?.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14 }}
+              className="grid grid-cols-1 sm:grid-cols-2 sm:divide-x-2 divide-dashed divide-ink/15"
+            >
+              {activePicks?.songs.map((song) => {
+                const added = isAdded(song);
+                return (
+                  <li key={`${song.title}-${song.artist}`} className="border-b border-dashed border-ink/15">
+                    <motion.button
+                      onClick={() => toggleSong(song)}
+                      disabled={!added && !canAdd}
+                      whileTap={{ scale: 0.98 }}
+                      aria-pressed={added}
+                      className={`w-full grid grid-cols-[56px_1fr_auto] items-center gap-2 px-3.5 py-2.5 min-h-[56px] text-left transition-colors cursor-pointer disabled:opacity-40 ${
+                        added ? "bg-yellow-soft" : "hover:bg-paper-dark/50"
+                      }`}
+                    >
+                      <span className="font-mono text-[12px] text-pink-ink tabular-nums" style={{ fontStretch: "87.5%" }}>
+                        {songCode(song)}
+                      </span>
+                      <span className="flex flex-col min-w-0">
+                        <span className="text-[15px] font-semibold text-ink truncate">{song.title}</span>
+                        <span className="text-[12.5px] text-text-muted truncate">{song.artist}</span>
+                      </span>
+                      <motion.span
+                        key={added ? "on" : "off"}
+                        initial={{ scale: 0.5 }}
+                        animate={{ scale: 1 }}
+                        transition={popSpring}
+                        className={`shrink-0 grid place-items-center w-8 h-8 rounded-full border-2 border-ink ${
+                          added ? "bg-ink text-yellow" : "text-ink"
+                        }`}
+                      >
+                        {added ? <IconCheck size={15} strokeWidth={3} /> : <IconPlus size={15} strokeWidth={2.6} />}
+                      </motion.span>
+                    </motion.button>
+                  </li>
+                );
+              })}
+            </motion.ul>
+          </AnimatePresence>
+        </div>
       </section>
     </StepShell>
+  );
+}
+
+/** A1–A12 on side A, B1–B13 on side B. */
+function trackNo(index: number) {
+  return index < 12 ? `A${index + 1}` : `B${index - 11}`;
+}
+
+/**
+ * Videoke songbook number. Stable per song (a hash of title + artist) so the
+ * same song always has the same code, like a real songbook.
+ */
+function songCode(song: Song) {
+  let h = 7;
+  for (const ch of `${song.title}|${song.artist}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return String(10000 + (h % 89999));
+}
+
+/** Pain index as a tape-counter readout; hotter tracks print in pink. */
+function PainTag({ value }: { value: number }) {
+  const hot = value >= 8;
+  return (
+    <span
+      title="Pain index"
+      className={`shrink-0 inline-flex items-baseline gap-1 rounded-[5px] border-[1.5px] px-1.5 py-[3px] font-mono text-[11.5px] tabular-nums leading-none ${
+        hot ? "border-ink bg-pink text-ink" : "border-ink/40 text-ink"
+      }`}
+      style={{ fontStretch: "87.5%" }}
+    >
+      {value.toFixed(1)}
+    </span>
   );
 }

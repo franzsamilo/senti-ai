@@ -2,20 +2,44 @@
 
 import Link from "next/link";
 import { motion, type HTMLMotionProps } from "framer-motion";
-import type { ReactNode } from "react";
-import { spring } from "@/components/ui/motion";
+import type { CSSProperties, ReactNode } from "react";
+
+type Variant = "primary" | "secondary" | "ghost";
 
 interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref" | "children"> {
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: Variant;
   children?: ReactNode;
 }
 
-const VARIANTS = {
-  primary: "text-white",
-  secondary:
-    "bg-white/80 text-text-primary border border-border-subtle hover:border-accent/40 hover:bg-white",
-  ghost: "text-text-secondary hover:text-text-primary hover:bg-white/50",
+/**
+ * Buttons are keys on a videoke remote or a cassette deck: an ink-rimmed
+ * cap that sits 4px proud of its plate and physically travels down when
+ * pressed. Primary keys are riso pink; secondary keys are bare card stock;
+ * ghost is just an underlined word.
+ */
+const BASE =
+  "relative inline-flex items-center justify-center gap-2 min-h-[50px] px-5 sm:px-6 py-3 rounded-[12px] font-display font-extrabold uppercase tracking-[0.04em] text-[18px] leading-none cursor-pointer select-none disabled:cursor-not-allowed transition-[transform,box-shadow,background-color] duration-100 ease-out";
+
+const KEY: Record<Exclude<Variant, "ghost">, CSSProperties> = {
+  // Icons on a pink key print their spot pass in yellow, or it would vanish.
+  primary: {
+    background: "var(--pink)",
+    color: "var(--ink)",
+    border: "2px solid var(--ink)",
+    ["--icon-spot" as string]: "var(--yellow)",
+  },
+  secondary: { background: "var(--paper-light)", color: "var(--ink)", border: "2px solid var(--ink)" },
 };
+
+const DISABLED: CSSProperties = {
+  background: "#e6ddcb",
+  color: "#8c8597",
+  border: "2px dashed rgba(29,25,50,0.3)",
+  boxShadow: "none",
+};
+
+const GHOST =
+  "min-h-[44px] px-2 font-body normal-case tracking-normal text-[15px] font-semibold text-text-secondary hover:text-text-primary underline decoration-2 underline-offset-4 decoration-transparent hover:decoration-pink";
 
 export default function Button({
   variant = "primary",
@@ -25,43 +49,41 @@ export default function Button({
   style,
   ...props
 }: ButtonProps) {
-  const base =
-    "group relative px-5 sm:px-6 py-3 rounded-2xl font-semibold text-[15px] tracking-tight transition-colors duration-200 min-h-[48px] cursor-pointer inline-flex items-center justify-center overflow-hidden disabled:cursor-not-allowed";
-
-  const primaryStyle = disabled
-    ? { background: "#efe6ee", color: "#a898b2", boxShadow: "none" }
-    : { background: "var(--dusk-button)", boxShadow: "var(--shadow-glow)" };
+  if (variant === "ghost") {
+    return (
+      <motion.button
+        disabled={disabled}
+        whileTap={disabled ? undefined : { scale: 0.97 }}
+        className={`${BASE} ${GHOST} ${disabled ? "opacity-50" : ""} ${className}`}
+        style={{ boxShadow: "none", ...style }}
+        {...props}
+      >
+        {children}
+      </motion.button>
+    );
+  }
 
   return (
     <motion.button
       disabled={disabled}
-      whileHover={disabled ? undefined : { y: -2 }}
-      whileTap={disabled ? undefined : { scale: 0.97, y: 0 }}
-      transition={spring}
-      className={`${base} ${variant === "primary" ? (disabled ? "" : VARIANTS.primary) : VARIANTS[variant]} ${
-        disabled && variant !== "primary" ? "opacity-50" : ""
-      } ${className}`}
-      style={variant === "primary" ? { ...primaryStyle, ...style } : style}
+      initial={false}
+      whileHover={disabled ? undefined : { y: -1, boxShadow: "0 5px 0 #1d1932" }}
+      whileTap={disabled ? undefined : { y: 3, boxShadow: "var(--shadow-key-down)" }}
+      transition={{ type: "spring", stiffness: 900, damping: 40 }}
+      className={`${BASE} ${className}`}
+      style={{
+        ...(disabled ? DISABLED : { ...KEY[variant], boxShadow: "var(--shadow-key)" }),
+        ...style,
+      }}
       {...props}
     >
-      {/* Light sweep on hover — only on the enabled primary */}
-      {variant === "primary" && !disabled && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
-          style={{
-            background:
-              "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%)",
-          }}
-        />
-      )}
-      <span className="relative inline-flex items-center justify-center gap-2">{children}</span>
+      {children}
     </motion.button>
   );
 }
 
 /**
- * A navigation link styled as a button. Use this instead of wrapping <Button>
+ * A navigation link styled as a key. Use this instead of wrapping <Button>
  * in <Link> — a button inside an anchor is invalid HTML and confuses screen
  * readers about what the control does.
  */
@@ -72,17 +94,22 @@ export function LinkButton({
   children,
 }: {
   href: string;
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: Variant;
   className?: string;
   children: ReactNode;
 }) {
-  const base =
-    "relative inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 rounded-2xl font-semibold text-[15px] tracking-tight min-h-[48px] transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.98]";
+  if (variant === "ghost") {
+    return (
+      <Link href={href} className={`${BASE} ${GHOST} ${className}`}>
+        {children}
+      </Link>
+    );
+  }
   return (
     <Link
       href={href}
-      className={`${base} ${variant === "primary" ? "text-white" : VARIANTS[variant]} ${className}`}
-      style={variant === "primary" ? { background: "var(--dusk-button)", boxShadow: "var(--shadow-glow)" } : undefined}
+      className={`${BASE} hover:-translate-y-px active:translate-y-[3px] active:!shadow-[0_1px_0_#1d1932] ${className}`}
+      style={{ ...KEY[variant], boxShadow: "var(--shadow-key)" }}
     >
       {children}
     </Link>
