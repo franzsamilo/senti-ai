@@ -192,7 +192,7 @@ export default function PersonalContextStep({
           </div>
           <div className="border-t-2 border-dashed border-ink/30" />
           <p className="flex items-baseline gap-2 pt-3 font-mono text-[13px] font-bold text-ink" style={{ fontStretch: "87.5%" }}>
-            TOTAL<span className="leader" />1 emotional damage report
+            TOTAL<span className="leader" />1 read, made to order
           </p>
         </div>
       </motion.section>

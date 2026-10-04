@@ -68,12 +68,12 @@ const doto = Doto({
 export const metadata: Metadata = {
   title: "Senti.AI — Ano'ng sinasabi ng playlist mo?",
   description:
-    "Your songs, your MBTI, your attachment style, your sign — read together into one brutally honest, very Filipino emotional damage report. Taglish roast included.",
+    "Your songs, your MBTI, your attachment style, your sign — read together into one very Filipino report on how you love.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     title: "Senti.AI — Ano'ng sinasabi ng playlist mo?",
     description:
-      "Psychoanalyzing Filipinos through their OPM listening habits. How emotionally damaged are you? Take the scan. 😭",
+      "Add the songs you have on repeat, answer five quick things, and find out what your playlist says about you.",
     url: SITE_URL,
     siteName: "Senti.AI",
     type: "website",
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Senti.AI — Ano'ng sinasabi ng playlist mo?",
     description:
-      "Psychoanalyzing Filipinos through their OPM listening habits. How emotionally damaged are you? 😭",
+      "Add the songs you have on repeat and find out what your playlist says about you.",
   },
 };
 

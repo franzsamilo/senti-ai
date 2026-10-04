@@ -16,7 +16,6 @@ import {
 import { headerVariants, itemVariants, listVariants } from "@/components/ui/motion";
 import { generateFingerprint, getRemainingAnalyses } from "@/lib/fingerprint";
 import { ANALYSIS_LIMITS_ENABLED, DAILY_ANALYSIS_LIMIT } from "@/lib/limits";
-import { THREAT } from "@/lib/theme";
 
 interface LandingStepProps {
   onStart: () => void;
@@ -42,9 +41,9 @@ const PANELS: { Icon: typeof IconMusic; caption: string; body: string; says: str
   },
   {
     Icon: IconShare,
-    caption: "Pangatlo: ma-roast, i-share",
-    body: "A full report, story-ready for IG — then dare a friend to beat it.",
-    says: "Huy. Totoo 'to.",
+    caption: "Pangatlo: kilalanin ang sarili",
+    body: "A full read on how you love — story-ready for IG, then pass it to a friend.",
+    says: "Teka… paano nila nalaman?",
   },
 ];
 
@@ -66,12 +65,16 @@ function SpeechBubble({ children }: { children: ReactNode }) {
   );
 }
 
-/** Clipping samples — labelled as samples; never a real user's result. */
+/**
+ * Clipping samples — labelled as samples; never a real user's result. They
+ * tease the format (a slip, a score screen, a one-liner) without showing a
+ * verdict: the roast is the reveal, so nothing before the results gives it
+ * away.
+ */
 function SampleClippings() {
-  const tone = THREAT.CRITICAL;
   return (
     <div className="relative h-[400px] sm:h-[420px] w-full max-w-[420px] mx-auto" aria-hidden="true">
-      {/* Receipt */}
+      {/* Order slip */}
       <motion.div
         className="absolute left-[2%] top-2 w-[66%] lift"
         style={{ rotate: -5 }}
@@ -83,14 +86,14 @@ function SampleClippings() {
             Senti.AI
           </p>
           <p className="text-center font-mono text-[9.5px] text-text-muted mt-1" style={{ fontStretch: "87.5%" }}>
-            OFFICIAL RESIBO · SAMPLE
+            ORDER SLIP · SAMPLE
           </p>
           <div className="my-2.5 border-t-2 border-dashed border-ink/30" />
           {[
-            ["Paubaya x14", "9.8"],
-            ["Multo x9", "8.0"],
-            ["Drunk text", "87%"],
-            ["Delulu", "76%"],
+            ["Paubaya", "x14"],
+            ["Multo", "x9"],
+            ["Tahanan", "x6"],
+            ["Pantropiko", "x2"],
           ].map(([k, v]) => (
             <p key={k} className="flex items-baseline gap-1.5 font-mono text-[11px] leading-[1.9]" style={{ fontStretch: "87.5%" }}>
               {k}
@@ -99,18 +102,16 @@ function SampleClippings() {
             </p>
           ))}
           <div className="my-2 border-t-2 border-dashed border-ink/30" />
-          <p className="flex items-baseline gap-1.5 font-mono text-[12.5px] font-bold" style={{ fontStretch: "87.5%" }}>
-            TOTAL DAMAGE <span className="leader" /> 8.7
+          <p className="flex items-baseline gap-1.5 font-mono text-[11.5px] font-bold" style={{ fontStretch: "87.5%" }}>
+            TOTAL <span className="leader" /> 1 read
           </p>
           <div className="mt-3 flex justify-start">
-            <span className="stamp text-[18px] -rotate-[7deg]" style={{ color: tone.color }}>
-              {tone.label}
-            </span>
+            <span className="stamp text-[18px] -rotate-[7deg] text-blue">Salamat</span>
           </div>
         </div>
       </motion.div>
 
-      {/* Videoke score */}
+      {/* Videoke, before anyone sings */}
       <motion.div
         className="absolute right-0 top-[190px] w-[60%]"
         style={{ rotate: 4 }}
@@ -123,9 +124,11 @@ function SampleClippings() {
             <p className="font-mono text-[9px] tracking-[0.12em] opacity-80" style={{ fontStretch: "87.5%" }}>
               YOUR SCORE
             </p>
-            <p className="font-dot font-black text-[64px] leading-[0.9] crt-glow">87</p>
+            <p className="font-dot font-black text-[64px] leading-[0.9] crt-glow">
+              ??<span className="blink">_</span>
+            </p>
             <p className="font-display font-extrabold uppercase text-[14px] text-yellow leading-tight">
-              Pang-champion na sawi!
+              Kanta muna.
             </p>
           </div>
         </div>
@@ -139,7 +142,7 @@ function SampleClippings() {
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       >
         <p className="font-serif italic text-[15px] leading-snug text-ink">
-          &ldquo;May spreadsheet ka ng reply time niya. Standard deviation: 47 minutes.&rdquo;
+          &ldquo;Pisces ka, &rsquo;no? Halata sa playlist.&rdquo;
         </p>
       </motion.div>
     </div>
@@ -204,7 +207,7 @@ export default function LandingStep({
 
         <div className="flex items-center justify-between gap-3 py-1.5 border-y-[5px] border-double border-ink font-display font-extrabold uppercase tracking-[0.05em] text-[13px] sm:text-[14px] text-ink">
           <span>Vol. VI · Blg. 9</span>
-          <span className="text-center">Pahayagan ng mga sawi</span>
+          <span className="text-center">Pahayagan ng mga puso</span>
           <span>Libre</span>
         </div>
       </motion.header>
@@ -217,7 +220,7 @@ export default function LandingStep({
               Exclusive
             </span>
             <span className="font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-text-secondary">
-              Emotional Damage Assessment v6.9
+              Playlist personality report
             </span>
           </motion.p>
 
@@ -230,7 +233,7 @@ export default function LandingStep({
 
           <motion.p variants={itemVariants} className="font-serif italic text-[19px] sm:text-[21px] text-ink/85 leading-snug max-w-[40ch]">
             Add the songs you have on repeat, answer five quick things about how you love, and get a
-            brutally honest, very Filipino read of your love life. Taglish roast included.
+            very Filipino read on your love life — ready for your IG story.
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto pt-1">
@@ -294,20 +297,20 @@ export default function LandingStep({
         ))}
       </motion.section>
 
-      {/* ── Footer: the government warning ── */}
+      {/* ── Footer: a friendly reminder (the warnings come later) ── */}
       <motion.footer
         variants={itemVariants}
         className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-8"
       >
         <p className="border-2 border-ink px-3 py-2 text-[13px] text-ink leading-snug bg-paper-light">
-          <span className="font-display font-black uppercase tracking-[0.06em]">Babala:</span> This
-          system is brutally honest. Proceed at your own emotional risk.
+          <span className="font-display font-black uppercase tracking-[0.06em]">Paalala:</span> Sagutin nang
+          totoo — mas tumpak ang basa kapag totoo.
         </p>
         <Link
           href="/leaderboard"
           className="inline-flex items-center justify-center gap-2 min-h-[44px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
         >
-          <IconTrophy size={22} /> Most damaged leaderboard
+          <IconTrophy size={22} /> Leaderboard
         </Link>
       </motion.footer>
     </motion.div>
