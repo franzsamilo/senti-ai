@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion } from "framer-motion";
+import { useLayoutEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
 import Button from "@/components/ui/Button";
 import { IconLock, IconArrowRight, IconEdit } from "@/components/ui/icons";
@@ -11,6 +11,9 @@ import { ATTACHMENT_LABELS, LOVE_LANGUAGE_SHORT } from "@/lib/theme";
 import type { AssessmentDraft } from "@/hooks/useAssessmentDraft";
 
 const MAX_CHARS = MAX_CONTEXT_CHARS;
+
+/** Seven ruled lines (32px each) plus the textarea's top/bottom padding. */
+const MIN_TEXTAREA_HEIGHT = 7 * 32 + 6 + 12;
 
 /** Tap to drop a starter line into the box — beats staring at a cursor. */
 const PROMPTS = [
@@ -43,6 +46,26 @@ export default function PersonalContextStep({
   const length = context.length;
   const isOverLimit = length > MAX_CHARS;
   const trimmed = context.trim().length;
+
+  /**
+   * The notebook page grows with what's written instead of scrolling inside
+   * itself, so no line is ever half-hidden under the header. While typing at
+   * the end, the page is also nudged up so the current line stays above the
+   * pinned "Run my assessment" footer rather than disappearing behind it.
+   */
+  useLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.max(MIN_TEXTAREA_HEIGHT, el.scrollHeight)}px`;
+
+    if (document.activeElement !== el || el.selectionEnd !== el.value.length) return;
+    const footer = document.querySelector<HTMLElement>("[data-step-footer]");
+    const viewport = window.visualViewport?.height ?? window.innerHeight;
+    const clearance = (footer?.offsetHeight ?? 140) + 12;
+    const overlap = el.getBoundingClientRect().bottom - (viewport - clearance);
+    if (overlap > 0) window.scrollBy({ top: overlap });
+  }, [context]);
 
   function insertPrompt(prompt: string) {
     const prefix = context.trim() ? `${context.trimEnd()}\n\n` : "";
@@ -127,22 +150,39 @@ export default function PersonalContextStep({
             rows={7}
             aria-label="What happened"
             placeholder="Start anywhere. Halimbawa: nag-break kami after 3 years, tapos nakita ko siya sa Spotify na may shared playlist with someone else. MU kami for 2 years, walang label…"
-            className="ruled block w-full resize-none pl-[50px] pr-4 pt-[6px] pb-8 text-base text-ink placeholder:text-text-muted/80 outline-none"
+            className="ruled block w-full resize-none overflow-hidden pl-[50px] pr-4 pt-[6px] pb-[12px] text-base text-ink placeholder:text-text-muted/80 outline-none"
             style={{
               lineHeight: "32px",
               boxShadow: isOverLimit ? "inset 0 0 0 2px rgba(225,29,72,0.6)" : undefined,
             }}
           />
-          {marginNote && (
-            <motion.span
-              key={marginNote}
-              initial={{ opacity: 0, y: 4, rotate: -3 }}
-              animate={{ opacity: 1, y: 0, rotate: -3 }}
-              className="absolute right-4 bottom-2 font-hand text-[17px] text-pink-ink pointer-events-none"
-            >
-              {marginNote}
-            </motion.span>
-          )}
+          {/* The margin note gets its own line under the writing — a fixed-height
+              spacer, so it never sits on top of the text and nothing jumps
+              when it appears or changes. */}
+          <div
+            aria-live="polite"
+            className="flex items-center justify-end min-h-[36px] pl-[50px] pr-4 pb-1.5"
+            style={{
+              backgroundColor: "#fffdf6",
+              backgroundImage:
+                "linear-gradient(to right, transparent 38px, rgba(226,64,43,0.45) 38px 39.5px, transparent 39.5px)",
+            }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {marginNote && (
+                <motion.span
+                  key={marginNote}
+                  initial={{ opacity: 0, y: 4, rotate: -2 }}
+                  animate={{ opacity: 1, y: 0, rotate: -2 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18 }}
+                  className="font-hand text-[17px] leading-tight text-pink-ink text-right"
+                >
+                  {marginNote}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">

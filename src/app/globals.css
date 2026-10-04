@@ -86,7 +86,6 @@
   --shadow-hard: 4px 4px 0 #1d1932;
 
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.2 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  --grain-soft: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.2 0 0 0 0.12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   /* Speckled alpha for rubber stamps — ink that didn't quite take. */
   --stamp-texture: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4.2 0 0 0 -0.75'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
 }
@@ -107,12 +106,15 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Newsprint tooth over everything. Fixed so it doesn't scroll-shimmer. */
+/* Newsprint tooth over everything — above the content, not under it, so
+   opaque layers (the pinned step footer, the share bar) carry the same grain
+   instead of showing up as lighter strips. Fixed so it doesn't
+   scroll-shimmer; pointer-events off so it never eats a tap. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 60;
   pointer-events: none;
   background-image: var(--grain);
   opacity: 0.2;
@@ -154,8 +156,6 @@ h3 {
 .paper {
   position: relative;
   background-color: var(--paper-light);
-  background-image: var(--grain-soft);
-  background-size: 220px;
   border-radius: 6px;
   box-shadow: var(--shadow-paper);
 }
@@ -174,8 +174,6 @@ h3 {
 .receipt {
   position: relative;
   background-color: #fffdf8;
-  background-image: var(--grain-soft);
-  background-size: 220px;
   --tooth: 12px;
   -webkit-mask:
     conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51% repeat-x,

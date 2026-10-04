@@ -74,7 +74,7 @@ function SpeechBubble({ children }: { children: ReactNode }) {
  */
 function SampleClippings() {
   return (
-    <div className="relative h-[400px] sm:h-[420px] w-full max-w-[420px] mx-auto" aria-hidden="true">
+    <div className="relative h-[430px] sm:h-[445px] w-full max-w-[420px] mx-auto" aria-hidden="true">
       {/* Order slip */}
       <motion.div
         className="absolute left-[2%] top-2 w-[66%] lift"
@@ -114,7 +114,7 @@ function SampleClippings() {
 
       {/* Videoke, waiting for a song — no score, nothing to spoil */}
       <motion.div
-        className="absolute right-0 top-[190px] w-[60%]"
+        className="absolute right-0 top-[222px] w-[60%]"
         style={{ rotate: 4 }}
         animate={{ y: [0, 7, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
