@@ -10,7 +10,7 @@
 
 **Tone of AI-generated content:** Brutally honest. Savage but funny. Heavy natural Taglish (Tagalog-English code-switching). Culturally hyper-specific to Filipino dating and hugot culture. Should feel like your most walang-awa na tropa who also has a psychology degree. NOT generic AI voice — see the Tone & Language Guide section for detailed prompt engineering instructions.
 
-**Don't spoil the roast (lowkey until the reveal):** Before the results, the app presents as a warm, curious music-personality read — "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" The roast is the surprise. So on the landing page, in the questions and in link-preview metadata, never say roast, brutal/savage, emotional damage, threat, toxic or red flags, and don't show sample verdicts or damage scores (landing samples are an order slip, a videoke screen reading "??" and a one-line tease). Light teasing in option asides is fine (it's the voice), a promise of being roasted is not. The loader opens gently and only turns in its back half ("Hmm. Interesting choices." → "WARNING: lethal levels" → "Printing your emotional damage report"); the results page is where the register fully flips. The friend-challenge intro may show the challenger's score (that's the dare) but calls the outcome a "compatibility read", not a roast. The leaderboard and history are hidden until this browser has finished a scan: no links on the landing page, `/leaderboard` shows a "SEALED — Bawal pa sumilip" card instead of the standings, and an empty `/history` uses a neutral title.
+**Don't spoil the roast (lowkey until the reveal):** Before the results, the app presents as a warm, curious music-personality read — "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" The roast is the surprise. So on the landing page, in the questions and in link-preview metadata, never say roast, brutal/savage, emotional damage, threat, toxic or red flags, and don't show sample verdicts, damage scores or any number that reads as points (landing samples are an order slip, a videoke screen waiting for a song number and a one-line tease; songs show no pain index while you pick them). Light teasing in option asides is fine (it's the voice), a promise of being roasted is not. The loader opens gently and only turns in its back half ("Hmm. Interesting choices." → "WARNING: lethal levels" → "Printing your emotional damage report"); the results page is where the register fully flips. The friend-challenge intro may show the challenger's score (that's the dare) but calls the outcome a "compatibility read", not a roast. The leaderboard and history are hidden until this browser has finished a scan: no links on the landing page, `/leaderboard` shows a "SEALED — Bawal pa sumilip" card instead of the standings, and an empty `/history` uses a neutral title.
 
 ---
 
@@ -76,7 +76,7 @@ Rendered as a sari-sari store "SARADO" sign hanging from a nail (`RateLimitBlock
 - Leaderboard and History links appear only after this browser has a finished report (`hasFinishedScan()` in `reportStore.ts`)
 - "EXCLUSIVE" kicker + `Playlist personality report` (lowkey — see "Don't spoil the roast")
 - Headline: "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" with a highlighter swipe
-- Sample clippings labelled as samples — an order slip, a videoke screen reading "??", a one-line tease — never a verdict or score; "how it works" as a 3-panel komiks strip
+- Sample clippings labelled as samples — an order slip, a videoke screen waiting for a song number, a one-line tease — never a verdict, score or points; "how it works" as a 3-panel komiks strip
 - One CTA: **"Start my scan"** (no Spotify import — removed)
 - Subtle reminder at bottom: `"Paalala: Sagutin nang totoo — mas tumpak ang basa kapag totoo."` (the warnings come later)
 - Show remaining analyses count: `"2 free scans remaining"`
@@ -86,14 +86,14 @@ Rendered as a sari-sari store "SARADO" sign hanging from a nail (`RateLimitBlock
 - Search field with autocomplete against built-in OPM song database (see Song Database section)
 - Users can also type custom song titles + artist and press Enter to add
 - Each added song appears as a chip/tag with artist name and a remove (×) button
-- Show pain index rating next to database songs
+- Pain index is computed per song (`src/data/songs.ts`, `/api/classify-songs`) but **never shown while picking** — numbers next to songs read as points and spoil the reveal. It first appears on the results (liner-notes song tags).
 - Display: `"{n}/5 songs added"`
 
 **UI Details:**
 - Progress is the jeepney route signboard (`StepIndicator`): Kanta › Type › Attachment › Love › Sign › Kwento
 - Title: `"Your Hugot Playlist"`
 - Subtitle: `"Select 3-5 songs that define your emotional state rn"`
-- Suggestion dropdown: ink-ruled card under the input, highlighted row in yellow, title + artist + pain index tag right-aligned
+- Suggestion dropdown: ink-ruled card under the input, highlighted row in yellow, title + artist, add/added mark right-aligned (no pain index)
 - The picked songs are a cassette J-card tracklist (A1, A2…, handwritten titles, blank lines to fill); quick picks are a videoke songbook page with song codes
 
 ### Step 2: MBTI Selection (Step 02/05)

@@ -112,7 +112,7 @@ function SampleClippings() {
         </div>
       </motion.div>
 
-      {/* Videoke, before anyone sings */}
+      {/* Videoke, waiting for a song — no score, nothing to spoil */}
       <motion.div
         className="absolute right-0 top-[190px] w-[60%]"
         style={{ rotate: 4 }}
@@ -123,13 +123,13 @@ function SampleClippings() {
         <div className="rounded-[14px] border-2 border-ink bg-ink p-2 shadow-[var(--shadow-hard)]">
           <div className="crt rounded-[8px] px-3 py-3 text-center">
             <p className="font-mono text-[9px] tracking-[0.12em] opacity-80" style={{ fontStretch: "87.5%" }}>
-              YOUR SCORE
+              ENTER SONG NO.
             </p>
-            <p className="font-dot font-black text-[64px] leading-[0.9] crt-glow">
-              ??<span className="blink">_</span>
+            <p className="font-dot font-black text-[46px] leading-[1] crt-glow tracking-[0.12em] whitespace-nowrap">
+              ___<span className="blink">_</span>
             </p>
             <p className="font-display font-extrabold uppercase text-[14px] text-yellow leading-tight">
-              Kanta muna.
+              Pili na ng kanta.
             </p>
           </div>
         </div>
