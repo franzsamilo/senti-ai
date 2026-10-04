@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import BrandMark from "@/components/ui/BrandMark";
 import PageHeader from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/Button";
-import { IconArrowRight, IconTrophy } from "@/components/ui/icons";
+import { IconArrowRight, IconLock, IconTrophy } from "@/components/ui/icons";
 import { useCountUp } from "@/components/ui/StatBox";
 import type { ThreatLevel } from "@/lib/types";
 import type { LeaderboardEntry } from "@/app/api/leaderboard/route";
 import { ATTACHMENT_LABELS, RANK_COLORS, THREAT, threatTone } from "@/lib/theme";
+import { hasFinishedScan } from "@/lib/reportStore";
 
 const MBTI_TYPES = [
   "INFP", "INFJ", "INTP", "INTJ", "ISFP", "ISFJ", "ISTP", "ISTJ",
@@ -135,7 +136,41 @@ function EntryRow({ entry, rank, index }: { entry: LeaderboardEntry; rank: numbe
   );
 }
 
+/**
+ * Shown instead of the standings until this browser has a finished report:
+ * the board is all damage scores and threat stamps, and the roast is meant
+ * to land as a surprise. Also catches people arriving by a pasted link.
+ */
+function SealedBoard() {
+  return (
+    <main className="min-h-screen max-w-2xl mx-auto px-4 pb-16 flex flex-col gap-6">
+      <PageHeader
+        kicker="Standings"
+        title={
+          <>
+            Bawal pa <span className="hl">sumilip</span>
+          </>
+        }
+        subtitle="The standings open once you've finished your own scan."
+      />
+      <div className="relative paper px-6 pt-8 pb-7 flex flex-col items-center gap-4 text-center overflow-hidden">
+        <IconLock size={64} className="text-ink" />
+        <span className="stamp text-[34px] -rotate-6 text-red">Sealed</span>
+        <p className="font-display font-black uppercase text-[26px] leading-[0.95] text-ink max-w-[18ch]">
+          Para lang sa may resibo na.
+        </p>
+        <p className="font-hand text-[19px] text-text-secondary">Kanta muna, tapos silip.</p>
+        <LinkButton href="/" className="mt-1">
+          Start my scan <IconArrowRight size={18} />
+        </LinkButton>
+      </div>
+    </main>
+  );
+}
+
 export default function LeaderboardPage() {
+  /** null until storage has been read; "sealed" before a first scan. */
+  const [access, setAccess] = useState<"open" | "sealed" | null>(null);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,6 +203,10 @@ export default function LeaderboardPage() {
   };
 
   useEffect(() => {
+    // localStorage is browser-only; deciding after mount is intended.
+    const open = hasFinishedScan();
+    setAccess(open ? "open" : "sealed");
+    if (!open) return;
     (async () => {
       try {
         const res = await fetch("/api/leaderboard", { cache: "no-store" });
@@ -184,6 +223,9 @@ export default function LeaderboardPage() {
 
   const top3 = filtered.slice(0, 3);
   const rest = filtered.slice(3);
+
+  if (access === null) return <main className="min-h-screen" />;
+  if (access === "sealed") return <SealedBoard />;
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto px-4 pb-16 flex flex-col gap-6">
