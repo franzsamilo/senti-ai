@@ -22,21 +22,23 @@ interface AnalysisLoaderProps {
   onBlocked: () => void;
 }
 
-// Deliberate escalation: the first lines read as instrumentation, and the
-// register only turns on the user once every input is already committed.
+// Deliberate escalation, and late: the first lines read like a gentle
+// music-personality read, so nothing before the results gives the roast
+// away. The register only turns in the back half — by then every answer is
+// committed and the turn *is* the drama.
 const MESSAGES = [
-  "Initializing Emotional Damage Protocol v6.9…",
-  "Scanning your playlist for emotional damage…",
-  "Cross-referencing attachment issues with zodiac toxicity index…",
+  "Pinapakinggan ang playlist mo…",
+  "Reading your type, attachment and love language together…",
+  "Asking the stars what they think…",
+  "Checking which songs you'd replay at 3AM…",
+  "Hmm. Interesting choices.",
   "Checking kung ilang beses mo na ni-replay yung last song…",
-  "Computing probability of a 3AM ‘kumusta ka na?’ text…",
   "Analyzing hugot concentration per song… WARNING: lethal levels",
+  "Computing probability of a 3AM ‘kumusta ka na?’ text…",
   "Calibrating delulu-to-reality ratio…",
   "Fetching data from your barkada GC… (charot)",
-  "Mapping your red flags to a geographic heat map…",
-  "Generating emotional damage report…",
-  "Consulting the stars… they said ‘yikes’",
-  "Final scan complete. You're not okay, bestie.",
+  "Consulting the stars again… they said ‘yikes’",
+  "Printing your emotional damage report. You're not okay, bestie.",
 ];
 
 // Cycled while the model is still thinking — the screen must never look

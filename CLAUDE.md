@@ -10,6 +10,8 @@
 
 **Tone of AI-generated content:** Brutally honest. Savage but funny. Heavy natural Taglish (Tagalog-English code-switching). Culturally hyper-specific to Filipino dating and hugot culture. Should feel like your most walang-awa na tropa who also has a psychology degree. NOT generic AI voice — see the Tone & Language Guide section for detailed prompt engineering instructions.
 
+**Don't spoil the roast (lowkey until the reveal):** Before the results, the app presents as a warm, curious music-personality read — "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" The roast is the surprise. So on the landing page, in the questions and in link-preview metadata, never say roast, brutal/savage, emotional damage, threat, toxic or red flags, and don't show sample verdicts or damage scores (landing samples are an order slip, a videoke screen reading "??" and a one-line tease). Light teasing in option asides is fine (it's the voice), a promise of being roasted is not. The loader opens gently and only turns in its back half ("Hmm. Interesting choices." → "WARNING: lethal levels" → "Printing your emotional damage report"); the results page is where the register fully flips. The friend-challenge intro may show the challenger's score (that's the dare) but calls the outcome a "compatibility read", not a roast.
+
 ---
 
 ## Tech Stack
@@ -71,11 +73,11 @@ Rendered as a sari-sari store "SARADO" sign hanging from a nail (`RateLimitBlock
 
 ### Step 0: Landing / Intro
 - A tabloid front page: "3AM Edition" rail, **SENTI.AI** nameplate (misregistered pink), "Pahayagan ng mga sawi" folio under a double rule
-- "EXCLUSIVE" kicker + `Emotional Damage Assessment v6.9`
+- "EXCLUSIVE" kicker + `Playlist personality report` (lowkey — see "Don't spoil the roast")
 - Headline: "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" with a highlighter swipe
-- Sample clippings (receipt, videoke score, quote) labelled as samples; "how it works" as a 3-panel komiks strip
+- Sample clippings labelled as samples — an order slip, a videoke screen reading "??", a one-line tease — never a verdict or score; "how it works" as a 3-panel komiks strip
 - One CTA: **"Start my scan"** (no Spotify import — removed)
-- Subtle disclaimer at bottom: `"Warning: This system is brutally honest. Proceed at your own emotional risk."`
+- Subtle reminder at bottom: `"Paalala: Sagutin nang totoo — mas tumpak ang basa kapag totoo."` (the warnings come later)
 - Show remaining analyses count: `"2 free scans remaining"`
 
 ### Step 1: Song Input (Step 01/05)
@@ -128,20 +130,20 @@ This is where the over-engineering shines. The loading screen IS the experience.
 - Active step: red pulsing/blinking arrow ▶
 - Pending steps: not yet visible (appear one at a time)
 
-**Loading messages:**
+**Loading messages** (gentle first, the turn only in the back half — see "Don't spoil the roast"):
 ```
-✓ Initializing Emotional Damage Protocol v6.9...
-✓ Scanning your Spotify wrapped for emotional damage...
-✓ Cross-referencing attachment issues with zodiac toxicity index...
+✓ Pinapakinggan ang playlist mo...
+✓ Reading your type, attachment and love language together...
+✓ Asking the stars what they think...
+✓ Checking which songs you'd replay at 3AM...
+✓ Hmm. Interesting choices.
 ✓ Checking kung ilang beses mo na ni-replay yung last song...
-✓ Computing probability of 'kumusta ka na?' text at 3AM...
-✓ Analyzing hugot concentration per song... WARNING: lethal levels detected
+✓ Analyzing hugot concentration per song... WARNING: lethal levels
+✓ Computing probability of a 3AM 'kumusta ka na?' text...
 ✓ Calibrating delulu-to-reality ratio...
-✓ Fetching data from your barkada GC... (charot)
-✓ Mapping your red flags to a geographic heat map...
-▶ Generating emotional damage report...
-▶ Consulting the stars... they said 'yikes'
-▶ Final scan complete. You're not okay, bestie.
+▶ Fetching data from your barkada GC... (charot)
+▶ Consulting the stars again... they said 'yikes'
+▶ Printing your emotional damage report. You're not okay, bestie.
 ```
 
 **Timing:** The API call runs concurrently with the loading animation. If the API finishes before all messages display, wait for the messages to complete — the drama is non-negotiable. If the API takes longer, loop the final few messages.

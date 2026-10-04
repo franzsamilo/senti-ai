@@ -487,15 +487,16 @@ function songCode(song: Song) {
   return String(10000 + (h % 89999));
 }
 
-/** Pain index as a tape-counter readout; hotter tracks print in pink. */
+/**
+ * Pain index as a plain tape-counter readout. Deliberately neutral — no
+ * "hot track" highlight — so the questions don't telegraph what the
+ * results are going to do with it.
+ */
 function PainTag({ value }: { value: number }) {
-  const hot = value >= 8;
   return (
     <span
       title="Pain index"
-      className={`shrink-0 inline-flex items-baseline gap-1 rounded-[5px] border-[1.5px] px-1.5 py-[3px] font-mono text-[11.5px] tabular-nums leading-none ${
-        hot ? "border-ink bg-pink text-ink" : "border-ink/40 text-ink"
-      }`}
+      className="shrink-0 inline-flex items-baseline gap-1 rounded-[5px] border-[1.5px] border-ink/40 px-1.5 py-[3px] font-mono text-[11.5px] tabular-nums leading-none text-ink"
       style={{ fontStretch: "87.5%" }}
     >
       {value.toFixed(1)}

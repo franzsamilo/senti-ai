@@ -175,8 +175,8 @@ export default function MatchPage() {
         </div>
 
         <p className="text-[16px] text-text-secondary">
-          They took Senti.AI&apos;s emotional damage scan. Take yours, and you&apos;ll both get a compatibility
-          roast. Tingnan natin kung sino talaga.
+          They took the Senti.AI scan. Take yours, and you&apos;ll both get a compatibility read.
+          Tingnan natin kung sino talaga.
         </p>
 
         <Button onClick={() => goTo("songs")} className="w-full py-4">

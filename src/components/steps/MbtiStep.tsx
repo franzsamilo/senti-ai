@@ -146,7 +146,7 @@ export default function MbtiStep({ onBack, selected, onSelect }: MbtiStepProps) 
               Don&apos;t know your type?
             </span>
             <span className="block text-[14px] text-text-secondary mt-1">
-              Four quick choices. Close enough for a roast.
+              Four quick choices. Close enough na &apos;yan.
             </span>
           </span>
           <motion.span animate={{ rotate: builderOpen ? 90 : 0 }} className="text-ink">
