@@ -1,33 +1,51 @@
 /**
- * Hand-drawn icon set. Every glyph is line art on a 24×24 grid, stroked with
- * `currentColor` so it inherits selection state from its parent — no emoji, no
- * icon-font dependency, nothing that ships with a template.
+ * The icon set, drawn for this app on a 24×24 grid.
  *
- * Zodiac signs are drawn as star charts rather than the usual astrological
- * glyphs: dots for stars, thin lines for the constellation. It reads as
- * instrumentation rather than horoscope, which is the register the rest of the
- * dashboard is in.
+ * Every glyph is two print passes: a flat spot-colour shape, then bold ink
+ * line art laid over it 1.4px out of register — the riso look the rest of
+ * the UI is printed in. Line art uses `currentColor`, so selection state
+ * still flows from the parent; the spot colour comes from the `tone` prop or
+ * the `--icon-spot` custom property (pink by default). `tone="none"` prints
+ * the ink pass only.
+ *
+ * The subjects are specific on purpose: anxious is a phone vibrating with
+ * "typing…", avoidant is a door already open, disorganized is a yo-yo,
+ * gifts is a pasalubong box, edit is a No. 2 pencil, share is an
+ * eroplanong papel.
  */
 
-import type { SVGProps } from "react";
+import type { ReactNode, SVGProps } from "react";
 
-export type IconProps = SVGProps<SVGSVGElement> & { size?: number };
+export type IconProps = SVGProps<SVGSVGElement> & {
+  size?: number;
+  /** Spot-ink colour under the line art; "none" to omit it. */
+  tone?: string;
+};
 
-function Svg({ size = 24, children, ...props }: IconProps) {
+function Icon({
+  size = 24,
+  tone,
+  spot,
+  strokeWidth = 2,
+  children,
+  ...props
+}: IconProps & { spot?: ReactNode }) {
+  const fill = tone ?? "var(--icon-spot, #ff4f9a)";
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      {children}
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      {spot && fill !== "none" && (
+        <g transform="translate(1.4 1.4)" fill={fill} stroke="none">
+          {spot}
+        </g>
+      )}
+      <g
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {children}
+      </g>
     </svg>
   );
 }
@@ -36,372 +54,353 @@ function Svg({ size = 24, children, ...props }: IconProps) {
    Attachment styles
    ──────────────────────────────────────────────── */
 
-/** Anxious — a heartbeat trace that spikes past its own baseline. */
+/** Anxious — a phone buzzing with "typing…" that never becomes a message. */
 export const IconAnxious = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M2 12h3.5l2-6 3 13 2.5-9 2 5 2-3H22" />
-  </Svg>
+  <Icon {...p} spot={<rect x={5.5} y={2} width={11} height={19.5} rx={2.5} />}>
+    <rect x={5.5} y={2} width={11} height={19.5} rx={2.5} />
+    <path d="M9.5 18.2h3" />
+    <circle cx={8.6} cy={10.5} r={0.6} fill="currentColor" />
+    <circle cx={11} cy={10.5} r={0.6} fill="currentColor" />
+    <circle cx={13.4} cy={10.5} r={0.6} fill="currentColor" />
+    <path d="M19.5 8v4.5M21.8 6.8v6.9M2.6 9v3" />
+  </Icon>
 );
 
-/** Avoidant — a figure already through the doorway, arrow pointing out. */
+/** Avoidant — the door's already open and someone's already gone. */
 export const IconAvoidant = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M13 3H5a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8" />
-    <path d="M16 12h6" />
-    <path d="m19 9 3 3-3 3" />
-  </Svg>
+  <Icon {...p} spot={<path d="M4.5 3.5 11 6v16l-6.5-1.5z" />}>
+    <path d="M4.5 3.5h9.5V21" />
+    <path d="M4.5 3.5 11 6v16l-6.5-1.5z" />
+    <circle cx={9.3} cy={13.5} r={0.5} fill="currentColor" />
+    <path d="M16 12.5h5.5M19 10l2.5 2.5L19 15M2.5 21h4" />
+  </Icon>
 );
 
-/** Disorganized — arrows pulling toward and away at the same time. */
+/** Disorganized — a yo-yo: away, back, away, back. */
 export const IconDisorganized = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M3 8h7" />
-    <path d="m7.5 5 3 3-3 3" />
-    <path d="M21 16h-7" />
-    <path d="m16.5 13-3 3 3 3" />
-    <path d="M12 3.5v3M12 17.5v3" />
-  </Svg>
+  <Icon {...p} spot={<circle cx={12} cy={15.5} r={5.5} />}>
+    <circle cx={12} cy={15.5} r={5.5} />
+    <circle cx={12} cy={15.5} r={1.5} />
+    <path d="M12 10V2.5M10.3 2.5h3.4" />
+    <path d="M4.2 9.5c.5-1.4 1.4-2.6 2.6-3.5M19.8 9.5c-.5-1.4-1.4-2.6-2.6-3.5" />
+  </Icon>
 );
 
-/** Secure — a plumb line at rest, weight centred. */
+/** Secure — locked, with a heart for a keyhole. Allegedly. */
 export const IconSecure = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 3v11" />
-    <circle cx="12" cy="17" r="3.2" />
-    <path d="M5 8h14" />
-    <path d="M7.5 8a4.5 4.5 0 0 1-3 4M16.5 8a4.5 4.5 0 0 0 3 4" />
-  </Svg>
+  <Icon {...p} spot={<rect x={4.5} y={10.5} width={15} height={10.5} rx={2} />}>
+    <rect x={4.5} y={10.5} width={15} height={10.5} rx={2} />
+    <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+    <path d="M12 18.4s-2.5-1.5-2.5-3.2a1.25 1.25 0 0 1 2.5-.4 1.25 1.25 0 0 1 2.5.4c0 1.7-2.5 3.2-2.5 3.2z" />
+  </Icon>
 );
 
 /* ────────────────────────────────────────────────
    Love languages
    ──────────────────────────────────────────────── */
 
-/** Words — a speech bubble mid-sentence. */
+const BUBBLE =
+  "M4 4.5h16A1.5 1.5 0 0 1 21.5 6v9a1.5 1.5 0 0 1-1.5 1.5h-10L5.5 20v-3.5H4A1.5 1.5 0 0 1 2.5 15V6A1.5 1.5 0 0 1 4 4.5z";
+
+/** Words — a speech bubble, mid-paragraph. */
 export const IconWords = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M20 4H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3v4l4.5-4H20a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1Z" />
-    <path d="M7 8.5h10M7 12h6" />
-  </Svg>
+  <Icon {...p} spot={<path d={BUBBLE} />}>
+    <path d={BUBBLE} />
+    <path d="M6.5 9h11M6.5 12.5h7" />
+  </Icon>
 );
 
-/** Acts of service — a wrench, doing the thing nobody asked for. */
+const WRENCH =
+  "M14.5 4.5a4.5 4.5 0 0 0-5.8 5.6L3.5 15.3a2.1 2.1 0 0 0 3 3l5.2-5.2a4.5 4.5 0 0 0 5.6-5.8l-2.7 2.7-2.6-.4-.4-2.6z";
+
+/** Acts of service — a wrench. You fixed their sink; they fixed nothing. */
 export const IconActs = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M15.5 3a5.5 5.5 0 0 0-5 7.8L3.6 17.7a2 2 0 0 0 2.8 2.8l6.9-6.9A5.5 5.5 0 0 0 20.5 6l-3 3-2.5-2.5 3-3A5.5 5.5 0 0 0 15.5 3Z" />
-  </Svg>
+  <Icon {...p} spot={<path d={WRENCH} />}>
+    <path d={WRENCH} />
+    <path d="M18.5 15.5v3M17 17h3" />
+  </Icon>
 );
 
-/** Gifts — a wrapped box, ribbon crossing the lid. */
+/** Gifts — a pasalubong box, ribbon and all. */
 export const IconGifts = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M3 9.5h18v3H3z" />
-    <path d="M4.5 12.5v7a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-7" />
-    <path d="M12 9.5v11" />
-    <path d="M12 9.5C10.5 6 9 4.5 7.5 5s-1 4 4.5 4.5ZM12 9.5c1.5-3.5 3-5 4.5-4.5s1 4-4.5 4.5Z" />
-  </Svg>
+  <Icon {...p} spot={<rect x={4} y={10.5} width={16} height={10} rx={1} />}>
+    <rect x={4} y={10.5} width={16} height={10} rx={1} />
+    <rect x={3} y={7} width={18} height={3.5} rx={1} />
+    <path d="M12 7v13.5" />
+    <path d="M12 7c-1.4-3.4-5.4-3.6-5.1-1.2.2 1.4 2.9 1.2 5.1 1.2zm0 0c1.4-3.4 5.4-3.6 5.1-1.2-.2 1.4-2.9 1.2-5.1 1.2z" />
+  </Icon>
 );
 
-/** Quality time — an hourglass, sand already committed. */
+/** Quality time — an alarm clock that went off at 3AM for no reason. */
 export const IconTime = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M6.5 3h11M6.5 21h11" />
-    <path d="M7.5 3v3.2c0 1 .4 1.9 1.1 2.6L12 12l-3.4 3.2c-.7.7-1.1 1.6-1.1 2.6V21" />
-    <path d="M16.5 3v3.2c0 1-.4 1.9-1.1 2.6L12 12l3.4 3.2c.7.7 1.1 1.6 1.1 2.6V21" />
-    <path d="M9.5 18.5h5" />
-  </Svg>
+  <Icon {...p} spot={<circle cx={12} cy={13} r={7} />}>
+    <circle cx={12} cy={13} r={7.2} />
+    <path d="M12 9.3V13l2.6 1.8" />
+    <path d="M3.8 6.8 6.6 4M20.2 6.8 17.4 4M7.2 19.4l-1.6 2.1M16.8 19.4l1.6 2.1" />
+  </Icon>
 );
 
-/** Physical touch — two hands almost meeting. */
+/** Physical touch — an open hand, waiting. */
 export const IconTouch = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M9.5 13V5.5a1.5 1.5 0 0 1 3 0V11" />
-    <path d="M12.5 10.5V9a1.5 1.5 0 0 1 3 0v2.5" />
-    <path d="M15.5 11.5v-.5a1.5 1.5 0 0 1 3 0V16a5 5 0 0 1-5 5h-1.6a5 5 0 0 1-3.9-1.9l-2.7-3.4a1.5 1.5 0 0 1 2.2-2l1.9 1.8" />
-  </Svg>
+  <Icon {...p} spot={<path d="M7.5 12.5h12v2.5c0 4-3 6.5-7 6.5-3 0-4.8-1.8-6-4z" />}>
+    <path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4a1.5 1.5 0 0 1 3 0v6.5M14 10.5V5.5a1.5 1.5 0 0 1 3 0V12" />
+    <path d="M17 9.5a1.5 1.5 0 0 1 3 0V14c0 4-3 7-7 7h-1c-3 0-4.5-1.5-6-4l-2.3-4a1.5 1.5 0 0 1 2.6-1.5L8 13" />
+  </Icon>
 );
 
 /* ────────────────────────────────────────────────
-   UI
+   Interface
    ──────────────────────────────────────────────── */
 
 export const IconSearch = (p: IconProps) => (
-  <Svg {...p}>
-    <circle cx="10.5" cy="10.5" r="6.5" />
-    <path d="m15.5 15.5 4.5 4.5" />
-  </Svg>
+  <Icon {...p} spot={<circle cx={10.5} cy={10.5} r={6} />}>
+    <circle cx={10.5} cy={10.5} r={6.5} />
+    <path d="m15.5 15.5 5 5" />
+  </Icon>
 );
 
 export const IconClose = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="m6 6 12 12M18 6 6 18" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Icon>
 );
 
 export const IconCheck = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="m4 12.5 5 5L20 6.5" />
-  </Svg>
+  <Icon {...p}>
+    <path d="m4.5 12.5 4.5 4.5L19.5 6.5" />
+  </Icon>
 );
 
 export const IconArrowLeft = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M20 12H5" />
-    <path d="m11 6-6 6 6 6" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M19.5 12h-15M10.5 6l-6 6 6 6" />
+  </Icon>
 );
 
 export const IconArrowRight = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M4 12h15" />
-    <path d="m13 6 6 6-6 6" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M4.5 12h15M13.5 6l6 6-6 6" />
+  </Icon>
 );
 
 export const IconLock = (p: IconProps) => (
-  <Svg {...p}>
-    <rect x="4.5" y="10" width="15" height="10.5" rx="1.5" />
-    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-    <path d="M12 14v2.5" />
-  </Svg>
+  <Icon {...p} spot={<rect x={5} y={10.5} width={14} height={10} rx={2} />}>
+    <rect x={5} y={10.5} width={14} height={10} rx={2} />
+    <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5V17" />
+  </Icon>
 );
 
+/** A banderitas pennant. */
 export const IconFlag = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M5 21V4" />
-    <path d="M5 4.5h11l-2.2 3.6L16 12H5" />
-  </Svg>
+  <Icon {...p} tone={p.tone ?? "#e2402b"} spot={<path d="M6 4l13 4-13 4z" />}>
+    <path d="M6 21V3" />
+    <path d="M6 4l13 4-13 4" />
+  </Icon>
 );
 
+/** Eroplanong papel. */
 export const IconShare = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 15V3" />
-    <path d="m8 7 4-4 4 4" />
-    <path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" />
-  </Svg>
+  <Icon {...p} spot={<path d="M21 3 3 10.5l7.5 3L14 21z" />}>
+    <path d="M21 3 3 10.5l7.5 3L14 21 21 3z" />
+    <path d="M10.5 13.5 21 3" />
+  </Icon>
 );
 
-/** Signal bars — used for the intensity meter label. */
+/** A transistor-radio antenna, broadcasting. */
 export const IconSignal = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M4 19v-4M9.3 19v-8M14.7 19v-11M20 19V5" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M12 21v-9.5" />
+    <circle cx={12} cy={9} r={1.6} fill="currentColor" />
+    <path d="M8 5.2a5.8 5.8 0 0 0 0 7.6M16 5.2a5.8 5.8 0 0 1 0 7.6M5 2.6a9.8 9.8 0 0 0 0 12.8M19 2.6a9.8 9.8 0 0 1 0 12.8" />
+  </Icon>
 );
 
-/** Crosshair — section marker for assessment readouts. */
 export const IconTarget = (p: IconProps) => (
-  <Svg {...p}>
-    <circle cx="12" cy="12" r="8" />
-    <circle cx="12" cy="12" r="3" />
-    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-  </Svg>
+  <Icon {...p} spot={<circle cx={12} cy={12} r={4} />}>
+    <circle cx={12} cy={12} r={8.5} />
+    <circle cx={12} cy={12} r={4} />
+    <path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" />
+  </Icon>
 );
 
+/** Music is a cassette here. Of course it is. */
 export const IconMusic = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M9 18V5.5l11-2.5V16" />
-    <circle cx="6.5" cy="18" r="2.5" />
-    <circle cx="17.5" cy="16" r="2.5" />
-  </Svg>
+  <Icon {...p} spot={<rect x={2.5} y={5.5} width={19} height={13} rx={2} />}>
+    <rect x={2.5} y={5.5} width={19} height={13} rx={2} />
+    <circle cx={8.5} cy={11.5} r={2} />
+    <circle cx={15.5} cy={11.5} r={2} />
+    <path d="M10.5 11.5h3M6.5 18.5l1.5-3h8l1.5 3" />
+  </Icon>
 );
 
 export const IconPlus = (p: IconProps) => (
-  <Svg {...p}>
+  <Icon {...p}>
     <path d="M12 5v14M5 12h14" />
-  </Svg>
+  </Icon>
 );
+
+const SPARK = "M11 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7z";
 
 export const IconSparkle = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z" />
-    <path d="M19 15.5c.25 1.6.9 2.25 2.5 2.5-1.6.25-2.25.9-2.5 2.5-.25-1.6-.9-2.25-2.5-2.5 1.6-.25 2.25-.9 2.5-2.5Z" />
-  </Svg>
+  <Icon {...p} tone={p.tone ?? "#ffd23a"} spot={<path d={SPARK} />}>
+    <path d={SPARK} />
+    <path d="M19 15.5v4M17 17.5h4" />
+  </Icon>
 );
 
+/** The videoke trophy — singing's only reward. */
 export const IconTrophy = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
-    <path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5" />
-    <path d="M12 14v3.5M8.5 21h7M9.5 17.5h5" />
-  </Svg>
+  <Icon {...p} tone={p.tone ?? "#ffd23a"} spot={<path d="M7 3.5h10v5.5a5 5 0 0 1-10 0z" />}>
+    <path d="M7 3.5h10v5.5a5 5 0 0 1-10 0V3.5z" />
+    <path d="M7 5.5H4.5V7a3 3 0 0 0 2.8 3M17 5.5h2.5V7a3 3 0 0 1-2.8 3" />
+    <path d="M12 14v3.5M8 20.5h8M9.6 20.5l.5-3h3.8l.5 3" />
+  </Icon>
 );
 
 export const IconHistory = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M3.5 12a8.5 8.5 0 1 0 2.5-6" />
-    <path d="M3 4v4h4" />
-    <path d="M12 7.5V12l3 2" />
-  </Svg>
+  <Icon {...p} spot={<circle cx={12.5} cy={12} r={7} />}>
+    <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" />
+    <path d="M3.5 4v4h4M12 7.5V12l3 2" />
+  </Icon>
 );
 
+/** A tear-off kalendaryo from the sari-sari store. */
 export const IconCalendar = (p: IconProps) => (
-  <Svg {...p}>
-    <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
-    <path d="M3.5 10h17M8 3v4M16 3v4" />
-  </Svg>
+  <Icon {...p} spot={<rect x={4} y={5} width={16} height={5} />}>
+    <rect x={4} y={5} width={16} height={15.5} rx={1.5} />
+    <path d="M4 10h16M8 3v4M16 3v4M8 14h3M13 14h3M8 17h3" />
+  </Icon>
 );
 
 export const IconDownload = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 3v12" />
-    <path d="m7 10 5 5 5-5" />
-    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-  </Svg>
+  <Icon {...p} spot={<rect x={4} y={15.5} width={16} height={5} rx={1.5} />}>
+    <path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5" />
+    <path d="M4 15.5V19a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-3.5" />
+  </Icon>
 );
 
 export const IconLink = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1" />
-    <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1 1" />
+    <path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1-1" />
+  </Icon>
 );
 
 export const IconRefresh = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M20 11.5A8 8 0 0 0 5.6 6.6L4 8.5" />
-    <path d="M4 4v4.5h4.5" />
-    <path d="M4 12.5a8 8 0 0 0 14.4 4.9l1.6-1.9" />
-    <path d="M20 20v-4.5h-4.5" />
-  </Svg>
+  <Icon {...p}>
+    <path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9" />
+    <path d="M18.5 3v4.5H14M5.5 21v-4.5H10" />
+  </Icon>
 );
+
+const HEART =
+  "M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z";
 
 export const IconHeart = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z" />
-  </Svg>
+  <Icon {...p} spot={<path d={HEART} />}>
+    <path d={HEART} />
+  </Icon>
 );
 
+/** Sawi. */
+export const IconBrokenHeart = (p: IconProps) => (
+  <Icon {...p} spot={<path d={HEART} />}>
+    <path d={HEART} />
+    <path d="m12 7-1.6 4 3 2-1.6 3.6" />
+  </Icon>
+);
+
+/** A No. 2 pencil — the one you shade answer sheets with. */
 export const IconEdit = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z" />
-    <path d="m13.5 6.5 4 4" />
-  </Svg>
+  <Icon {...p} tone={p.tone ?? "#ffd23a"} spot={<path d="m15.5 4.5 4 4L9 19l-5 1 1-5z" />}>
+    <path d="m15.5 4.5 4 4L9 19l-5 1 1-5L15.5 4.5z" />
+    <path d="m13.5 6.5 4 4M5 15l4 4" />
+  </Icon>
 );
 
 /* ────────────────────────────────────────────────
-   Zodiac — constellation charts
+   Zodiac — glyphs set on a spot disc, like the
+   horoscope column in a tabloid
    ──────────────────────────────────────────────── */
 
-type Star = [number, number];
-
-/** Renders a constellation: polyline first, stars on top. */
-function Constellation({
-  stars,
-  links,
-  ...props
-}: IconProps & { stars: Star[]; links: number[][] }) {
+function Glyph({ d, ...p }: IconProps & { d: string }) {
   return (
-    <Svg {...props}>
-      <g opacity={0.55}>
-        {links.map((path, i) => (
-          <polyline
-            key={i}
-            points={path.map((s) => stars[s].join(",")).join(" ")}
-            fill="none"
-          />
-        ))}
-      </g>
-      {stars.map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r={1.15} fill="currentColor" stroke="none" />
-      ))}
-    </Svg>
+    <Icon {...p} spot={<circle cx={12} cy={12} r={8.5} />}>
+      <path d={d} />
+    </Icon>
   );
 }
 
 export const IconAries = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[5, 7], [9, 5], [14, 7], [18, 6], [16, 12], [12, 16]]}
-    links={[[0, 1, 2, 3], [2, 4, 5]]}
+    d="M12 20V10.5M12 10.5C12 6.5 10.3 4.5 7.8 4.5S4.5 6.4 4.5 8.4c0 1.8 1.2 3 2.6 3.1M12 10.5c0-4 1.7-6 4.2-6s3.3 1.9 3.3 3.9c0 1.8-1.2 3-2.6 3.1"
   />
 );
 
 export const IconTaurus = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[4, 6], [8, 9], [12, 11], [16, 9], [20, 6], [12, 16], [9, 18]]}
-    links={[[0, 1, 2, 3, 4], [2, 5, 6]]}
+    d="M16.8 15a4.8 4.8 0 1 1-9.6 0 4.8 4.8 0 0 1 9.6 0zM4.5 4.5c.8 3.6 3.6 5.7 7.5 5.7s6.7-2.1 7.5-5.7"
   />
 );
 
 export const IconGemini = (p: IconProps) => (
-  <Constellation
-    {...p}
-    stars={[[7, 4], [7, 11], [7, 18], [16, 4], [16, 11], [16, 18]]}
-    links={[[0, 1, 2], [3, 4, 5], [1, 4]]}
-  />
+  <Glyph {...p} d="M5 4.5c4.5 1.6 9.5 1.6 14 0M5 19.5c4.5-1.6 9.5-1.6 14 0M9 5.6v12.8M15 5.6v12.8" />
 );
 
 export const IconCancer = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[5, 8], [10, 10], [14, 7], [17, 12], [12, 15], [7, 18]]}
-    links={[[0, 1, 2], [1, 3], [1, 4, 5]]}
+    d="M10 9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM19 14.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM7.5 7c3-2.7 9-3 12.5.2M16.5 17c-3 2.7-9 3-12.5-.2"
   />
 );
 
 export const IconLeo = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[6, 6], [10, 4], [14, 6], [15, 11], [11, 13], [7, 12], [19, 16]]}
-    links={[[0, 1, 2, 3, 4, 5, 0], [3, 6]]}
+    d="M10.3 15.5a2.8 2.8 0 1 1-5.6 0 2.8 2.8 0 0 1 5.6 0zM10.3 15.5c0-3-1.8-5-1.8-7.6a3.9 3.9 0 0 1 7.8 0c0 3.3-3 6.1-3 9.6a2.3 2.3 0 0 0 4.6.1"
   />
 );
 
 export const IconVirgo = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[4, 5], [8, 8], [12, 6], [15, 10], [12, 14], [17, 17], [8, 17]]}
-    links={[[0, 1, 2, 3, 5], [1, 6], [3, 4]]}
+    d="M3.5 6.5c1.4 0 2.3.9 2.3 2.5V19M5.8 9.5a2.4 2.4 0 0 1 4.8 0V19M10.6 9.5a2.4 2.4 0 0 1 4.8 0v6c0 2.4 1.4 4 3.6 4M15.4 15c1.4-2.6 4.6-3.2 4.6-.8 0 2-2.4 3.9-5.6 5.8"
   />
 );
 
 export const IconLibra = (p: IconProps) => (
-  <Constellation
-    {...p}
-    stars={[[12, 5], [6, 10], [18, 10], [5, 16], [19, 16]]}
-    links={[[1, 0, 2], [1, 3], [2, 4]]}
-  />
+  <Glyph {...p} d="M4 19.5h16M4 15.5h4.6a4.3 4.3 0 1 1 6.8 0H20" />
 );
 
 export const IconScorpio = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[4, 5], [7, 8], [10, 11], [13, 14], [16, 16], [19, 14], [18, 10]]}
-    links={[[0, 1, 2, 3, 4, 5, 6]]}
+    d="M3.5 6.5c1.4 0 2.3.9 2.3 2.5V19M5.8 9.5a2.4 2.4 0 0 1 4.8 0V19M10.6 9.5a2.4 2.4 0 0 1 4.8 0v7c0 1.8 1 2.8 2.8 2.8h2M18.8 17.3l2.2 2-2.2 2"
   />
 );
 
 export const IconSagittarius = (p: IconProps) => (
-  <Constellation
-    {...p}
-    stars={[[5, 18], [9, 13], [14, 9], [19, 5], [15, 5], [19, 9]]}
-    links={[[0, 1, 2, 3], [3, 4], [3, 5]]}
-  />
+  <Glyph {...p} d="M5 19 19 5M12.5 5H19v6.5M7 11.5l5.5 5.5" />
 );
 
 export const IconCapricorn = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[5, 7], [9, 5], [14, 8], [18, 6], [16, 13], [10, 16], [6, 13]]}
-    links={[[0, 1, 2, 3, 4, 5, 6, 0]]}
+    d="M3.5 6c1.6 0 2.6 1.2 3 3l2.5 9 3-11.5c.3-1.2 1.2-1.8 2.2-1.8s1.8.8 1.8 2v8.3c0 2.2 1 3.5 2.6 3.5a2.6 2.6 0 1 0-2.6-3.2"
   />
 );
 
 export const IconAquarius = (p: IconProps) => (
-  <Constellation
+  <Glyph
     {...p}
-    stars={[[4, 9], [7, 6], [10, 9], [13, 6], [16, 9], [19, 6], [11, 16]]}
-    links={[[0, 1, 2, 3, 4, 5], [2, 6]]}
+    d="m3.5 10 2.8-2.8L9.2 10 12 7.2l2.9 2.8 2.8-2.8 2.8 2.8M3.5 16.5l2.8-2.8 2.9 2.8 2.8-2.8 2.9 2.8 2.8-2.8 2.8 2.8"
   />
 );
 
 export const IconPisces = (p: IconProps) => (
-  <Constellation
-    {...p}
-    stars={[[5, 5], [8, 9], [12, 12], [16, 15], [19, 19], [17, 9], [7, 17]]}
-    links={[[0, 1, 2, 3, 4], [2, 5], [2, 6]]}
-  />
+  <Glyph {...p} d="M6 4c3.2 4.2 3.2 11.8 0 16M18 4c-3.2 4.2-3.2 11.8 0 16M4.5 12h15" />
 );
 
 export const ZODIAC_ICONS: Record<string, (p: IconProps) => React.ReactElement> = {

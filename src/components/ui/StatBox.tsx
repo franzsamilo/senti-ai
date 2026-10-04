@@ -10,7 +10,7 @@ interface StatBoxProps {
   animate?: boolean;
   /** Decimal places for animated numbers. */
   decimals?: number;
-  /** Text colour for the number. Defaults to the accent ink. */
+  /** Text colour for the number. Defaults to ink. */
   color?: string;
 }
 
@@ -39,13 +39,14 @@ export function useCountUp(target: number, decimals: number, start: boolean, dur
   return value;
 }
 
+/** A single figure on card stock: big signage numerals, small label under. */
 export default function StatBox({
   label,
   value,
   suffix = "",
   animate = false,
   decimals = 0,
-  color = "var(--color-accent-ink)",
+  color = "var(--ink)",
 }: StatBoxProps) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
@@ -54,12 +55,12 @@ export default function StatBox({
   const display = isNumeric && animate ? counted.toFixed(decimals) : value;
 
   return (
-    <div ref={ref} className="glass rounded-2xl p-3 sm:p-4 text-center flex-1 min-w-0">
-      <p className="font-display text-[22px] sm:text-[28px] font-bold leading-none tabular-nums" style={{ color }}>
+    <div ref={ref} className="paper p-3 sm:p-4 text-center flex-1 min-w-0">
+      <p className="font-display text-[30px] sm:text-[36px] font-black leading-none tabular-nums" style={{ color }}>
         {display}
-        <span className="text-[13px] sm:text-[15px] font-semibold text-text-muted">{suffix}</span>
+        <span className="text-[14px] sm:text-[16px] font-extrabold text-text-muted">{suffix}</span>
       </p>
-      <p className="text-[11px] sm:text-xs text-text-secondary mt-1.5 leading-tight">{label}</p>
+      <p className="text-[12px] sm:text-[13px] text-text-secondary mt-1.5 leading-tight">{label}</p>
     </div>
   );
 }

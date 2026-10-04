@@ -189,86 +189,47 @@ export default function AnalysisLoader({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[100dvh] px-5 py-10 w-full max-w-xl mx-auto gap-8">
-      {/* Record */}
+    <div className="flex flex-col items-center justify-center min-h-[100dvh] px-5 py-10 w-full max-w-xl mx-auto gap-7">
       <motion.div
-        initial={{ scale: 0.85, opacity: 0 }}
-        animate={finished ? { scale: 1.06, opacity: 1 } : { scale: 1, opacity: 1 }}
+        initial={{ y: 24, opacity: 0, rotate: -4 }}
+        animate={finished ? { y: 0, opacity: 1, rotate: 0, scale: 1.04 } : { y: 0, opacity: 1, rotate: -1.5, scale: 1 }}
         transition={{ type: "spring", stiffness: 160, damping: 18 }}
-        className="relative"
+        className="w-full max-w-[340px]"
       >
-        <div
-          className="absolute -inset-6 rounded-full blur-2xl opacity-60"
-          style={{ background: "var(--dusk)" }}
-          aria-hidden
-        />
-        <div
-          className="spin-slow relative w-44 h-44 sm:w-52 sm:h-52 rounded-full grid place-items-center shadow-[var(--shadow-lift)]"
-          style={{
-            background:
-              "repeating-radial-gradient(circle at center, #2a1834 0px, #2a1834 2px, #3a2346 3px, #2a1834 4px)",
-          }}
-          aria-hidden
-        >
-          {/* sheen */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background:
-                "conic-gradient(from 30deg, transparent 0deg, rgba(255,255,255,0.14) 40deg, transparent 80deg, transparent 200deg, rgba(255,255,255,0.08) 230deg, transparent 260deg)",
-            }}
-          />
-          <div
-            className="relative w-[42%] h-[42%] rounded-full grid place-items-center text-center px-2"
-            style={{ background: "var(--dusk-button)" }}
-          >
-            <span className="text-[9px] sm:text-[10px] font-semibold leading-tight text-white/95 line-clamp-2">
-              {heaviest?.title ?? "Senti.AI"}
-            </span>
-            <span className="absolute w-2 h-2 rounded-full bg-[#fcecf3]" />
-          </div>
-        </div>
+        <Cassette progress={progress} title={heaviest?.title} artist={heaviest?.artist} spinning={!finished} />
       </motion.div>
 
-      {heaviest && (
-        <p className="-mt-3 text-[13px] text-text-muted text-center max-w-[32ch] truncate">
-          Now playing: <span className="font-medium text-text-secondary">{heaviest.title}</span>
-          {heaviest.artist !== "Unknown Artist" && <> — {heaviest.artist}</>}
-        </p>
-      )}
-
-      {/* Current line */}
-      <div className="flex flex-col items-center gap-4 w-full text-center">
-        <p className="text-[13px] font-medium text-accent-ink">
-          {finished ? "Report ready" : "Reading you…"}
-        </p>
-        <div className="min-h-[64px] flex items-start justify-center w-full">
+      {/* Tape counter + current line */}
+      <div className="flex flex-col items-center gap-3 w-full text-center">
+        <div className="flex items-center gap-3">
+          <span
+            className="rounded-[6px] border-2 border-ink bg-ink px-2 py-1 font-dot font-black text-[22px] leading-none text-yellow tabular-nums tracking-[0.08em]"
+            aria-label={`${Math.round(progress)} percent`}
+          >
+            {String(Math.round(progress)).padStart(3, "0")}
+          </span>
+          <span className="font-display font-extrabold uppercase tracking-[0.06em] text-[15px] text-pink-ink">
+            {finished ? "Report ready" : "Reading you…"}
+          </span>
+        </div>
+        <div className="min-h-[72px] flex items-start justify-center w-full">
           <AnimatePresence mode="wait">
             <motion.p
               key={finished ? "done" : current}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.28 }}
-              className="font-display text-[20px] sm:text-[23px] font-semibold text-text-primary leading-snug max-w-[30ch]"
+              transition={{ duration: 0.26 }}
+              className="font-display text-[26px] sm:text-[30px] font-extrabold text-ink leading-[1.02] max-w-[24ch]"
             >
               {finished ? "Brace yourself." : current}
             </motion.p>
           </AnimatePresence>
         </div>
-
-        <div className="w-full max-w-sm h-2 rounded-full overflow-hidden bg-[rgba(74,30,82,0.08)]">
-          <motion.div
-            className="h-full rounded-full"
-            animate={{ width: `${progress}%` }}
-            transition={{ type: "spring", stiffness: 60, damping: 20 }}
-            style={{ background: "var(--dusk)" }}
-          />
-        </div>
       </div>
 
       {/* Trail of completed checks */}
-      <ul className="w-full max-w-sm flex flex-col gap-1.5 min-h-[120px]" aria-live="polite">
+      <ul className="w-full max-w-sm flex flex-col gap-2 min-h-[128px]" aria-live="polite">
         <AnimatePresence initial={false}>
           {completed.slice(-4).map((msg, i, arr) => (
             <motion.li
@@ -278,16 +239,97 @@ export default function AnalysisLoader({
               animate={{ opacity: 0.4 + (i / Math.max(1, arr.length - 1)) * 0.6, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
-              className="flex items-start gap-2 text-[13px] text-text-secondary"
+              className="flex items-start gap-2 text-[14px] text-text-secondary"
             >
-              <span className="mt-0.5 grid place-items-center w-4 h-4 rounded-full bg-accent-success/15 text-accent-success shrink-0">
-                <IconCheck size={11} strokeWidth={2.6} />
-              </span>
+              <IconCheck size={16} strokeWidth={3} className="mt-0.5 text-accent-success shrink-0" />
               <span className="min-w-0">{msg}</span>
             </motion.li>
           ))}
         </AnimatePresence>
       </ul>
+    </div>
+  );
+}
+
+/**
+ * The loader is a C-60 playing your heaviest track: a pink shell, a label
+ * with the title written in pen, and real tape moving from the left reel to
+ * the right as the read progresses — the progress bar, in other words.
+ */
+function Cassette({
+  progress,
+  title,
+  artist,
+  spinning,
+}: {
+  progress: number;
+  title?: string;
+  artist?: string;
+  spinning: boolean;
+}) {
+  const p = Math.max(0, Math.min(1, progress / 100));
+  const MIN = 15;
+  const MAX = 31;
+  const left = MIN + (MAX - MIN) * (1 - p);
+  const right = MIN + (MAX - MIN) * p;
+  const hub = (cx: number) => (
+    <g className={spinning ? "reel-spin" : undefined}>
+      <circle cx={cx} cy={104} r={11} fill="#fffaf2" stroke="#1d1932" strokeWidth={2} />
+      {[0, 60, 120, 180, 240, 300].map((a) => (
+        <rect
+          key={a}
+          x={cx - 1.6}
+          y={93.5}
+          width={3.2}
+          height={5}
+          rx={1}
+          fill="#1d1932"
+          transform={`rotate(${a} ${cx} 104)`}
+        />
+      ))}
+    </g>
+  );
+  return (
+    <div className="relative">
+      <svg viewBox="0 0 320 200" className="w-full h-auto" aria-hidden="true">
+        {/* shell: pink pass, then ink pass */}
+        <rect x={10} y={10} width={306} height={186} rx={14} fill="#ff4f9a" />
+        <rect x={4} y={4} width={306} height={186} rx={14} fill="none" stroke="#1d1932" strokeWidth={3} />
+        {[22, 292].map((x) => [22, 172].map((y) => (
+          <g key={`${x}-${y}`}>
+            <circle cx={x} cy={y} r={5} fill="#fffaf2" stroke="#1d1932" strokeWidth={2} />
+            <path d={`M${x - 3} ${y}h6`} stroke="#1d1932" strokeWidth={1.5} />
+          </g>
+        )))}
+        {/* label */}
+        <rect x={30} y={20} width={254} height={124} rx={8} fill="#fffaf2" stroke="#1d1932" strokeWidth={2.5} />
+        <rect x={30} y={20} width={254} height={22} rx={8} fill="#ffd23a" stroke="#1d1932" strokeWidth={2.5} />
+        <rect x={31.5} y={34} width={251} height={7} fill="#ffd23a" />
+        {[58, 132].map((y) => (
+          <path key={y} d={`M44 ${y}h226`} stroke="rgba(43,78,224,0.25)" strokeWidth={1.5} />
+        ))}
+        {/* window */}
+        <rect x={72} y={78} width={170} height={52} rx={26} fill="#1d1932" />
+        <motion.circle cx={110} cy={104} fill="#5a3a2a" initial={false} animate={{ r: left }} transition={{ type: "spring", stiffness: 60, damping: 20 }} />
+        <motion.circle cx={204} cy={104} fill="#5a3a2a" initial={false} animate={{ r: right }} transition={{ type: "spring", stiffness: 60, damping: 20 }} />
+        {hub(110)}
+        {hub(204)}
+        <rect x={142} y={92} width={30} height={24} rx={3} fill="rgba(255,250,242,0.12)" />
+        {/* bottom guide */}
+        <path d="M78 196l10-36h138l10 36" fill="#ff4f9a" stroke="#1d1932" strokeWidth={3} strokeLinejoin="round" />
+        {[108, 136, 178, 206].map((x) => (
+          <circle key={x} cx={x} cy={180} r={4.5} fill="#1d1932" />
+        ))}
+      </svg>
+      {/* label text, in HTML so it can use the hand font */}
+      <div className="absolute left-[12%] right-[12%] top-[10.6%] flex items-center justify-between font-display font-black uppercase text-[11px] sm:text-[12px] tracking-[0.08em] text-ink">
+        <span>Side A</span>
+        <span>C-60</span>
+      </div>
+      <p className="absolute left-[13%] right-[13%] top-[21%] font-hand text-[19px] sm:text-[21px] leading-none text-blue-ink truncate text-center">
+        {title ?? "Senti.AI mix"}
+        {artist && artist !== "Unknown Artist" && <span className="text-[15px] text-text-muted"> — {artist}</span>}
+      </p>
     </div>
   );
 }

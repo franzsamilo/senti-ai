@@ -7,18 +7,16 @@ import { IconTrophy } from "@/components/ui/icons";
 import type { ProfileResult } from "@/lib/types";
 
 function Panel({ children }: { children: React.ReactNode }) {
-  return <div className="glass rounded-3xl p-5 flex flex-col gap-3">{children}</div>;
+  return <div className="paper p-4 sm:p-5 flex flex-col gap-3.5">{children}</div>;
 }
 
 function PanelHeader({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="grid place-items-center w-10 h-10 rounded-xl bg-[rgba(139,63,217,0.1)] text-accent-secondary shrink-0">
-        {icon}
-      </span>
-      <div className="flex flex-col gap-0.5">
-        <p className="font-display text-[16px] font-semibold text-text-primary">{title}</p>
-        <p className="text-[13px] text-text-secondary leading-relaxed">{body}</p>
+      <span className="text-ink shrink-0">{icon}</span>
+      <div className="flex flex-col gap-1">
+        <p className="font-display font-black uppercase text-[22px] leading-none text-ink">{title}</p>
+        <p className="text-[14px] text-text-secondary leading-snug">{body}</p>
       </div>
     </div>
   );
@@ -65,17 +63,21 @@ export function LeaderboardSubmit({
   return (
     <Panel>
       <PanelHeader
-        icon={<IconTrophy size={20} />}
+        icon={<IconTrophy size={40} />}
         title="Leaderboard"
         body="Post your score anonymously — just the number, type, attachment and sign. No names."
       />
       {state === "done" && rank ? (
         <div className="flex flex-col gap-1.5">
-          <p className="font-display text-[18px] font-bold text-text-primary">
-            You&apos;re #{rank.rank} <span className="text-text-muted font-medium text-[14px]">of {rank.total}</span>
+          <p className="font-display font-black text-[30px] leading-none text-ink">
+            You&apos;re #{rank.rank}{" "}
+            <span className="text-text-muted font-extrabold text-[17px]">of {rank.total}</span>
           </p>
-          <Link href="/leaderboard" className="text-[13px] font-medium text-accent-ink hover:underline">
-            See the leaderboard →
+          <Link
+            href="/leaderboard"
+            className="self-start min-h-[40px] inline-flex items-center font-display font-extrabold uppercase tracking-[0.04em] text-[15px] text-pink-ink underline decoration-2 underline-offset-4"
+          >
+            See the leaderboard
           </Link>
         </div>
       ) : (

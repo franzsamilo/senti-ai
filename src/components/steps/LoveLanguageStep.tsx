@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import StepShell from "@/components/ui/StepShell";
-import OptionCard from "@/components/ui/OptionCard";
+import OptionCard, { AnswerSheet } from "@/components/ui/OptionCard";
 import Button from "@/components/ui/Button";
 import {
   IconWords,
@@ -12,7 +11,6 @@ import {
   IconTouch,
   IconArrowRight,
 } from "@/components/ui/icons";
-import { listVariants } from "@/components/ui/motion";
 import { LoveLanguage } from "@/lib/types";
 
 interface LoveLanguageOption {
@@ -101,20 +99,26 @@ export default function LoveLanguageStep({
         </Button>
       }
     >
-      <motion.div variants={listVariants} className="flex flex-col gap-2.5">
-        {OPTIONS.map(({ value, Icon, label, description, aside }) => (
+      <AnswerSheet
+        part="Part IV · Love language"
+        instructions="Shade all that apply."
+        label="Love languages"
+        multi
+      >
+        {OPTIONS.map(({ value, Icon, label, description, aside }, i) => (
           <OptionCard
             key={value}
+            letter={"ABCDE"[i]}
             multi
             selected={selected.includes(value)}
             onSelect={() => toggle(value)}
-            icon={<Icon size={22} />}
+            icon={<Icon size={34} />}
             label={label}
             description={description}
             aside={aside}
           />
         ))}
-      </motion.div>
+      </AnswerSheet>
     </StepShell>
   );
 }

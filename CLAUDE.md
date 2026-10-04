@@ -6,7 +6,7 @@
 
 ## Aesthetic & Vibe
 
-**Visual (Oct 2026 redesign — "Takipsilim"/dusk):** Light, warm and welcoming — a Manila Bay sunset rather than a situation room. Peach → rose → lavender sky with slowly drifting aurora light, white glass cards, deep plum ink, and a rose → violet "dusk" gradient reserved for primary actions and the brand. The deadpan "assessment" humour now lives in the copy, threat badges and the results reveal (a dark plum hero card with a stamped threat level), not in a dark UI. The old dark/military look (neural-net canvas, glitch text everywhere) is retired — glitch text survives only on the rate-limit joke screen. See Design System below.
+**Visual (Oct 2026 v2 — "Resibo"):** Pinoy print ephemera. "Resibo" = receipts, as in "show me the receipts": the app hands you proof of your own emotional damage. Every surface is a piece of real-world Filipino printed matter instead of a generic web card — newsprint paper with grain, riso inks (fluorescent pink, blue, yellow) slightly out of register, a tabloid front page, a jeepney route signboard, a cassette J-card, a videoke songbook and score screen, an exam answer sheet, a thermal receipt, rubber stamps, banderitas. Light and warm (cream paper, deep indigo ink), never dark; the deadpan "assessment" humour lives in the copy and in which object each piece of the report is printed on. The earlier looks are retired: the dark/military neural-net + glitch look, and the Oct 2026 "dusk" glass/gradient look (it read as generic AI). See Design System below.
 
 **Tone of AI-generated content:** Brutally honest. Savage but funny. Heavy natural Taglish (Tagalog-English code-switching). Culturally hyper-specific to Filipino dating and hugot culture. Should feel like your most walang-awa na tropa who also has a psychology degree. NOT generic AI voice — see the Tone & Language Guide section for detailed prompt engineering instructions.
 
@@ -57,7 +57,7 @@ When a user hits their 3rd attempt, instead of the analysis loading screen, disp
 [Come back tomorrow or use a different browser idc]
 ```
 
-Style this with the same glitch text effect as the main title. Make it feel like a classified document redaction. The tone should be funny, not hostile — the user should screenshot it and share it because it's hilarious.
+Rendered as a sari-sari store "SARADO" sign hanging from a nail (`RateLimitBlock.tsx`): "Bawal ang pang-tatlo. Bukas pwede." over the quote. The tone should be funny, not hostile — the user should screenshot it and share it because it's hilarious.
 
 ### Edge Cases
 - If localStorage is cleared, the server-side IP check still enforces the limit.
@@ -70,11 +70,10 @@ Style this with the same glitch text effect as the main title. Make it feel like
 ## Core User Flow
 
 ### Step 0: Landing / Intro
-- Dark, dramatic landing screen
-- Animated neural network background (canvas-based: floating nodes connected by faint red lines, slow drift, low opacity ~0.3)
-- App name **"Senti.AI"** in large display text with glitch text effect (RGB split using CSS pseudo-elements)
-- Tagline: `Emotional Damage Assessment System v6.9` in monospace
-- A badge/pill: `CLASSIFIED` or `THREAT LEVEL: UNKNOWN`
+- A tabloid front page: "3AM Edition" rail, **SENTI.AI** nameplate (misregistered pink), "Pahayagan ng mga sawi" folio under a double rule
+- "EXCLUSIVE" kicker + `Emotional Damage Assessment v6.9`
+- Headline: "Ano'ng sinasabi ng playlist mo tungkol sa'yo?" with a highlighter swipe
+- Sample clippings (receipt, videoke score, quote) labelled as samples; "how it works" as a 3-panel komiks strip
 - One CTA: **"Start my scan"** (no Spotify import — removed)
 - Subtle disclaimer at bottom: `"Warning: This system is brutally honest. Proceed at your own emotional risk."`
 - Show remaining analyses count: `"2 free scans remaining"`
@@ -88,10 +87,11 @@ Style this with the same glitch text effect as the main title. Make it feel like
 - Display: `"{n}/5 songs added"`
 
 **UI Details:**
-- Step label in monospace: `STEP 01 / 05`
+- Progress is the jeepney route signboard (`StepIndicator`): Kanta › Type › Attachment › Love › Sign › Kwento
 - Title: `"Your Hugot Playlist"`
 - Subtitle: `"Select 3-5 songs that define your emotional state rn"`
-- Suggestion dropdown: dark card below input, hover highlight, shows song title in accent color + artist in muted + pain index right-aligned
+- Suggestion dropdown: ink-ruled card under the input, highlighted row in yellow, title + artist + pain index tag right-aligned
+- The picked songs are a cassette J-card tracklist (A1, A2…, handwritten titles, blank lines to fill); quick picks are a videoke songbook page with song codes
 
 ### Step 2: MBTI Selection (Step 02/05)
 - 4×4 grid of all 16 MBTI types as buttons
@@ -122,7 +122,7 @@ Style this with the same glitch text effect as the main title. Make it feel like
 ### Step 6: Analysis Loading Screen
 This is where the over-engineering shines. The loading screen IS the experience.
 
-- Centered spinner (ring with red gradient border, spinning)
+- A cassette playing the heaviest track: reels spin and tape moves from the left reel to the right as progress; a dot-matrix tape counter shows the percent
 - Sequential loading messages appear one by one (~1.5-2s apart)
 - Completed steps: green checkmark ✓
 - Active step: red pulsing/blinking arrow ▶
@@ -150,13 +150,9 @@ This is where the over-engineering shines. The loading screen IS the experience.
 The main payoff. Should feel like a military intelligence briefing about someone's love life.
 
 #### Header Section
-- AI-generated headline (devastating one-liner) displayed in large glitch text
-- Threat level badge with color coding:
-  - CRITICAL → `#ff0040` (red)
-  - SEVERE → `#ff3252` (orange-red)
-  - ELEVATED → `#ff8c00` (orange)
-  - MODERATE → `#ffd000` (yellow)
-  - LOW → `#00cc88` (green — almost never given lmao)
+- A tabloid front page: "BREAKING" kicker, the AI headline set word by word in signage caps, and the threat level as a rubber stamp
+- The score as a videoke score screen (score ×10 in dot-matrix digits + the machine's praise line, e.g. "Pang-champion na sawi!")
+- Threat colours (`src/lib/theme.ts`): CRITICAL #e11d48, SEVERE #f2542d, ELEVATED #f59e0b, MODERATE #eab308, LOW #10b981 (almost never given lmao)
 
 #### Quick Stats Row
 3-4 stat boxes side by side:
@@ -246,9 +242,9 @@ Small text: "Take yours → senti.ai"
 - Must be legible at small sizes (IG feed thumbnail)
 
 #### Card Design
-- Same dark theme (#0a0a0f background) with the red accent palette
+- Same Resibo look as the app: cream paper, tabloid masthead, stamp, videoke screen, receipt strip
 - The card should look premium and designed — not like a screenshot
-- Subtle neural network pattern or noise texture in the background
+- No SVG-filter background images on the card (html-to-image drops them and the PNG goes transparent) — solid paper plus CSS gradients only
 - Clear visual hierarchy so it's readable even at phone-screen size
 - The Senti.AI branding and URL should be visible but not overpowering — the roast content is the star
 
@@ -616,38 +612,46 @@ CRITICAL TONE RULES:
 
 ---
 
-## Design System
+## Design System — "Resibo" (Oct 2026 v2)
+
+Rules of thumb: **paper, not glass** (no backdrop blur, no aurora, no gradient buttons); **flat spot colour** (riso inks; overlapping inks misregister a little); **small radii** (4–12px — paper is cut, not inflated); **hard physical shadows** on things you press, soft paper shadows on things that lie on the table; **no emoji as UI** — icons are drawn (`icons.tsx`).
 
 ### Colors
-Tokens live in `src/app/globals.css` (`@theme`); threat tones in `src/lib/theme.ts`.
+Tokens live in `src/app/globals.css` (`@theme inline`); threat tones in `src/lib/theme.ts`.
 ```css
---bg-primary: #fcf3f5;            /* sky: linear-gradient #fff0ea → #fcecf3 → #f1ebfb */
---bg-card: rgba(255,255,255,0.72); /* .glass: + white border, soft plum shadow, blur */
---border-subtle: rgba(74,30,82,0.10);
---accent: #e0306b;                 /* rose */
---accent-ink: #c21f59;             /* accent as text — readable on white */
---accent-secondary: #8b3fd9;       /* violet */
---accent-warm: #ff7a59;            /* sunset */
---text-primary: #2a1834;           /* deep plum ink, never pure black */
---text-secondary: #5e4a6b;
---text-muted: #7b6987;
---dusk: linear-gradient(120deg, #ff7a59, #e0306b 48%, #8b3fd9);
+--color-paper: #f4ede0;        /* newsprint page (+ fixed grain overlay) */
+--color-paper-light: #fffaf2;  /* card stock */
+--color-paper-dark: #e8dfcd;   /* kraft / plates */
+--color-ink: #1d1932;          /* indigo-black ink, never pure black */
+--color-pink: #ff4f9a;         /* riso fluorescent pink — primary keys, spots */
+--color-pink-ink: #c4145c;     /* pink as text */
+--color-blue: #2b4ee0;         /* riso blue — ballpen, focus ring */
+--color-yellow: #ffd23a;       /* riso yellow — highlighter, signboard */
+--color-red: #e2402b;          /* jeepney red — kickers, VS, stamps */
+--color-screen: #1b33c2;       /* videoke CRT */
 ```
-Threat levels each have `color` (bars/glows), `ink` (text — dark enough for white) and `soft` (tint behind the ink): CRITICAL #e11d48, SEVERE #f2542d, ELEVATED #f59e0b, MODERATE #eab308, LOW #10b981. Always render threat text in `ink`, never the bright `color`.
+Legacy names (`bg-primary`, `text-secondary`, `accent`…) map onto these. Threat levels each have `color`, `ink` and `soft`; stamps use `color`, text uses `ink`.
 
 ### Typography
-- **Display / Headings:** Bricolage Grotesque (`font-display`)
-- **Body:** Outfit (`font-body`)
-- **Monospace:** JetBrains Mono — numbers only, sparingly. No uppercase monospace labels or "01/02" section numbering.
+- **Big Shoulders** (`font-display`) — condensed signage grotesk for headlines, labels and keys (uppercase for signage/tabloid moments). Loaded with the `opsz` axis so small labels get the open "Text" cut.
+- **Archivo** (`font-body`) — body copy.
+- **Fraunces** (`font-serif`) italic — the model's quoted lines (verdict, score reason, pull quotes).
+- **Martian Mono** (`font-mono`, `fontStretch: 87.5%`) — receipts, codes, counters.
+- **Gochi Hand** (`font-hand`) — margin notes, the J-card tracklist, asides. Sparingly.
+- **Doto** (`font-dot`) — dot-matrix digits (videoke score, LCD, tape counter).
+
+### Surfaces & utilities (`globals.css`, components layer)
+`.paper` card stock · `.slab` ink-ruled block · `.receipt` zig-zag torn edges (mask; lift with `.lift` drop-shadow) · `.ticket` side notches · `.ruled` notebook paper · `.tape` washi tape · `.stamp` rubber stamp (speckled mask, colour from `color`) · `.halftone` · `.hl` highlighter swipe · `.misprint` riso offset shadow · `.signpaint` jeepney signwriting · `.leader` dotted receipt leader · `.crt` videoke screen. Element defaults are in `@layer base` and these in `@layer components` — never add unlayered rules that set layout properties, they silently beat every Tailwind utility.
+
+### Objects (what each piece is printed on)
+Landing = tabloid front page + komiks strip · progress = jeepney route board · songs = cassette J-card + videoke songbook · MBTI = remote keypad with LCD · attachment/love language = exam answer sheet (shade the bubble) · zodiac = tabloid horoscope column, sign circled in ballpen · context = notebook page + order-summary receipt · loader = cassette · results = front page, videoke score, official resibo, Rx pad, government warning, LED level meters, barangay blotter, J-card liner notes, "Toxic Facts" label, banderitas red flags, "Admit One" challenge ticket · match = fight poster + tale of the tape · leaderboard = standings with rosettes · history = patient chart on graph paper · rate limit = sari-sari "SARADO" sign.
 
 ### Visual Effects
-- **Background:** `AuroraBackground` (in the root layout) — 3 large blurred colour fields drifting via CSS keyframes, plus faint grain. No canvas, no per-frame JS.
-- **Cards:** `.glass` — translucent white, 16–28px radius.
-- **Buttons:** Dusk gradient with a soft rose glow; muted lilac when disabled. Use `LinkButton` for navigation (never a `<Button>` inside a `<Link>`).
+- **Buttons:** keys — ink rim, 4px bottom shadow, travel down on press; pink primary, card-stock secondary. Use `LinkButton` for navigation (never a `<Button>` inside a `<Link>`).
+- **Icons:** `icons.tsx` — bold ink line art over an offset spot-colour shape (two riso passes). Spot colour via `tone` or `--icon-spot`.
 - **Step transitions:** Direction-aware slide (forward slides left, Back slides right) via `pageVariants` + `useStepDirection`. Never put `filter`/blur on the page wrapper — it breaks the fixed share bar.
-- **Selections:** Springy pops; auto-advance ~260ms after a single-choice pick.
-- **Loader:** Spinning record labelled with the heaviest track, one message at a time, progress bar, trail of completed checks.
-- **Results reveal:** Headline delivered word by word (`RevealText`), threat badge "stamps" in, score ring sweeps, meters and stats count up on scroll.
+- **Selections:** keys press down, bubbles get pencil-shaded (pathLength), signs get circled in ballpen; auto-advance ~260ms after a single-choice pick.
+- **Results reveal:** headline words drop in like set type (`RevealText`), threat stamp slams in, videoke digits roll up, LED meters tick on segment by segment, banderitas sway.
 - **Share card:** `ShareCard.tsx`, 540×960 inline-styled, captured at 2× (1080×1920). Off-screen positioning must stay on the wrapper, never on the captured node (html-to-image copies `inset-inline` and the PNG comes out blank).
 
 ### Responsive Design
@@ -683,7 +687,6 @@ src/
 │       └── share-card/
 │           └── route.ts                # Server-side image generation (optional, if using satori)
 ├── components/
-│   ├── GlitchText.tsx
 │   ├── StepIndicator.tsx
 │   ├── RateLimitBlock.tsx              # The "'D ako bobo" screen
 │   ├── steps/
@@ -701,9 +704,14 @@ src/
 │   ├── MatchReport.tsx                 # Side-by-side comparison view
 │   ├── HistoryChart.tsx
 │   └── ui/
-│       ├── ThreatMeter.tsx
+│       ├── ThreatMeter.tsx             # LED level meter (20 segments)
+│       ├── VideokeScore.tsx            # Score as a videoke score screen
 │       ├── StatBox.tsx
-│       ├── SongChip.tsx
+│       ├── SongChip.tsx                # Cassette-label song tag
+│       ├── OptionCard.tsx              # Answer-sheet row + AnswerSheet
+│       ├── PageHeader.tsx              # Masthead for standalone pages
+│       ├── BrandMark.tsx               # Cassette mark + Wordmark
+│       ├── icons.tsx                   # Custom riso two-pass icon set
 │       ├── Button.tsx
 │       └── SoundToggle.tsx
 ├── data/

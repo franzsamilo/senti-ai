@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import BrandMark from "@/components/ui/BrandMark";
 import {
   IconArrowRight,
+  IconEdit,
   IconHistory,
   IconMusic,
   IconShare,
-  IconSparkle,
   IconTrophy,
 } from "@/components/ui/icons";
 import { headerVariants, itemVariants, listVariants } from "@/components/ui/motion";
@@ -26,29 +26,125 @@ interface LandingStepProps {
   hasDraft?: boolean;
 }
 
-const STEPS = [
-  { Icon: IconMusic, title: "Add your songs", body: "The ones on repeat. Search the library or tap a quick pick." },
-  { Icon: IconSparkle, title: "Answer five things", body: "Type, attachment, love language, sign — and, if you want, what happened." },
-  { Icon: IconShare, title: "Get read. Share it.", body: "A full report, story-ready for IG — then dare a friend to beat it." },
+/** How it works, as a three-panel komiks strip. */
+const PANELS: { Icon: typeof IconMusic; caption: string; body: string; says: string }[] = [
+  {
+    Icon: IconMusic,
+    caption: "Una: ilista ang kanta",
+    body: "The ones on repeat. Search the library or tap a quick pick.",
+    says: "Paubaya lang, promise.",
+  },
+  {
+    Icon: IconEdit,
+    caption: "Pangalawa: sagutin ang lima",
+    body: "Type, attachment, love language, sign — and, if you want, what happened.",
+    says: "INFP. Anxious. Okay lang ako.",
+  },
+  {
+    Icon: IconShare,
+    caption: "Pangatlo: ma-roast, i-share",
+    body: "A full report, story-ready for IG — then dare a friend to beat it.",
+    says: "Huy. Totoo 'to.",
+  },
 ];
 
-/** Decorative sample cards. Labelled as samples; never a real user's result. */
-const SAMPLES = [
-  {
-    level: "CRITICAL" as const,
-    score: "8.7",
-    line: "“Paubaya on repeat pero ‘okay ka na’ raw. Pick one.”",
-    tilt: -6,
-    x: -10,
-  },
-  {
-    level: "ELEVATED" as const,
-    score: "6.1",
-    line: "“May spreadsheet ka ng reply time niya. Standard deviation: 47 minutes.”",
-    tilt: 5,
-    x: 18,
-  },
-];
+function SpeechBubble({ children }: { children: ReactNode }) {
+  return (
+    <span className="relative inline-block self-end max-w-[85%]">
+      <span className="relative z-10 block rounded-[18px] border-2 border-ink bg-paper-light px-3 py-1.5 font-hand text-[17px] leading-tight text-ink">
+        {children}
+      </span>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 16"
+        className="absolute -bottom-[12px] left-6 w-5 h-4 z-20"
+      >
+        <path d="M2 0 L7 14 L14 0" fill="#fffaf2" stroke="#1d1932" strokeWidth={2} strokeLinejoin="round" />
+        <path d="M1 0 H15" stroke="#fffaf2" strokeWidth={3} />
+      </svg>
+    </span>
+  );
+}
+
+/** Clipping samples — labelled as samples; never a real user's result. */
+function SampleClippings() {
+  const tone = THREAT.CRITICAL;
+  return (
+    <div className="relative h-[400px] sm:h-[420px] w-full max-w-[420px] mx-auto" aria-hidden="true">
+      {/* Receipt */}
+      <motion.div
+        className="absolute left-[2%] top-2 w-[66%] lift"
+        style={{ rotate: -5 }}
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="receipt px-4 pt-6 pb-7">
+          <p className="text-center font-display font-black uppercase tracking-[0.08em] text-[17px] leading-none">
+            Senti.AI
+          </p>
+          <p className="text-center font-mono text-[9.5px] text-text-muted mt-1" style={{ fontStretch: "87.5%" }}>
+            OFFICIAL RESIBO · SAMPLE
+          </p>
+          <div className="my-2.5 border-t-2 border-dashed border-ink/30" />
+          {[
+            ["Paubaya x14", "9.8"],
+            ["Multo x9", "8.0"],
+            ["Drunk text", "87%"],
+            ["Delulu", "76%"],
+          ].map(([k, v]) => (
+            <p key={k} className="flex items-baseline gap-1.5 font-mono text-[11px] leading-[1.9]" style={{ fontStretch: "87.5%" }}>
+              {k}
+              <span className="leader" />
+              {v}
+            </p>
+          ))}
+          <div className="my-2 border-t-2 border-dashed border-ink/30" />
+          <p className="flex items-baseline gap-1.5 font-mono text-[12.5px] font-bold" style={{ fontStretch: "87.5%" }}>
+            TOTAL DAMAGE <span className="leader" /> 8.7
+          </p>
+          <div className="mt-3 flex justify-start">
+            <span className="stamp text-[18px] -rotate-[7deg]" style={{ color: tone.color }}>
+              {tone.label}
+            </span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Videoke score */}
+      <motion.div
+        className="absolute right-0 top-[190px] w-[60%]"
+        style={{ rotate: 4 }}
+        animate={{ y: [0, 7, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <span className="tape -top-3 left-1/2 -translate-x-1/2 rotate-[-4deg]" />
+        <div className="rounded-[14px] border-2 border-ink bg-ink p-2 shadow-[var(--shadow-hard)]">
+          <div className="crt rounded-[8px] px-3 py-3 text-center">
+            <p className="font-mono text-[9px] tracking-[0.12em] opacity-80" style={{ fontStretch: "87.5%" }}>
+              YOUR SCORE
+            </p>
+            <p className="font-dot font-black text-[64px] leading-[0.9] crt-glow">87</p>
+            <p className="font-display font-extrabold uppercase text-[14px] text-yellow leading-tight">
+              Pang-champion na sawi!
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Quote clipping */}
+      <motion.div
+        className="absolute left-[6%] bottom-0 w-[58%] paper px-3.5 py-3"
+        style={{ rotate: -2 }}
+        animate={{ y: [0, -4, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <p className="font-serif italic text-[15px] leading-snug text-ink">
+          &ldquo;May spreadsheet ka ng reply time niya. Standard deviation: 47 minutes.&rdquo;
+        </p>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function LandingStep({
   onStart,
@@ -75,67 +171,83 @@ export default function LandingStep({
       animate="show"
       className="flex flex-col min-h-[100dvh] px-4 sm:px-6 max-w-[1080px] mx-auto w-full"
     >
-      {/* ── Nav ── */}
-      <motion.nav variants={headerVariants} className="flex items-center justify-between py-5">
-        <span className="inline-flex items-center gap-2.5">
-          <BrandMark size={34} />
-          <span className="font-display font-bold text-[19px] tracking-tight text-text-primary">Senti.AI</span>
-        </span>
-        <span className="flex items-center gap-1">
-          {[
-            { href: "/leaderboard", label: "Leaderboard", Icon: IconTrophy },
-            { href: "/history", label: "History", Icon: IconHistory },
-          ].map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[14px] text-text-secondary hover:text-text-primary hover:bg-white/60 transition-colors"
-            >
-              <Icon size={16} />
-              <span className="hidden sm:inline">{label}</span>
-            </Link>
-          ))}
-        </span>
-      </motion.nav>
+      {/* ── Masthead ── */}
+      <motion.header variants={headerVariants} className="pt-3">
+        <nav className="flex items-center justify-between gap-3 pb-2 border-b-2 border-ink">
+          <span className="font-display font-extrabold uppercase tracking-[0.06em] text-[13px] text-ink">
+            3AM Edition
+          </span>
+          <span className="flex items-center gap-1">
+            {[
+              { href: "/leaderboard", label: "Leaderboard", Icon: IconTrophy },
+              { href: "/history", label: "History", Icon: IconHistory },
+            ].map(({ href, label, Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-2 font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
+              >
+                <Icon size={22} />
+                <span className="hidden sm:inline">{label}</span>
+              </Link>
+            ))}
+          </span>
+        </nav>
 
-      {/* ── Hero ── */}
-      <section className="flex-1 grid lg:grid-cols-[1.1fr_0.9fr] items-center gap-10 lg:gap-6 py-8 sm:py-12">
-        <div className="flex flex-col items-start gap-6">
-          <motion.span
+        <div className="flex items-center justify-center gap-3 sm:gap-4 py-3 sm:py-4">
+          <BrandMark size={56} />
+          <h1 className="font-display font-black uppercase leading-[0.82] text-[64px] sm:text-[96px] tracking-[-0.01em] text-ink misprint">
+            Senti<span className="text-pink">.</span>AI
+          </h1>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 py-1.5 border-y-[5px] border-double border-ink font-display font-extrabold uppercase tracking-[0.05em] text-[13px] sm:text-[14px] text-ink">
+          <span>Vol. VI · Blg. 9</span>
+          <span className="text-center">Pahayagan ng mga sawi</span>
+          <span>Libre</span>
+        </div>
+      </motion.header>
+
+      {/* ── Front page ── */}
+      <section className="flex-1 grid lg:grid-cols-[1.15fr_0.85fr] items-center gap-10 lg:gap-8 py-8 sm:py-10">
+        <div className="flex flex-col items-start gap-5">
+          <motion.p variants={itemVariants} className="flex flex-wrap items-center gap-2.5">
+            <span className="bg-red text-paper-light font-display font-black uppercase tracking-[0.06em] text-[15px] leading-none px-2.5 py-1.5 -rotate-1">
+              Exclusive
+            </span>
+            <span className="font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-text-secondary">
+              Emotional Damage Assessment v6.9
+            </span>
+          </motion.p>
+
+          <motion.h2
             variants={itemVariants}
-            className="inline-flex items-center gap-2 rounded-full bg-white/70 border border-white px-3.5 py-1.5 text-[13px] text-text-secondary"
+            className="font-display font-black uppercase leading-[0.86] text-[54px] sm:text-[84px] tracking-[-0.005em] text-ink"
           >
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            Emotional Damage Assessment · v6.9
-          </motion.span>
+            Ano&apos;ng sinasabi ng <span className="hl">playlist mo</span>{" "}tungkol sa&apos;yo?
+          </motion.h2>
 
-          <motion.h1
-            variants={itemVariants}
-            className="text-[42px] leading-[1.02] sm:text-[60px] font-extrabold text-text-primary"
-          >
-            Ano&apos;ng sinasabi ng <span className="text-shimmer">playlist mo</span>{" "}tungkol sa&apos;yo?
-          </motion.h1>
-
-          <motion.p variants={itemVariants} className="text-[17px] text-text-secondary leading-relaxed max-w-[46ch]">
+          <motion.p variants={itemVariants} className="font-serif italic text-[19px] sm:text-[21px] text-ink/85 leading-snug max-w-[40ch]">
             Add the songs you have on repeat, answer five quick things about how you love, and get a
             brutally honest, very Filipino read of your love life. Taglish roast included.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
-            <Button onClick={onStart} disabled={locked} className="text-[16px] py-4 px-7 sm:min-w-[220px]">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto pt-1">
+            <Button onClick={onStart} disabled={locked} className="text-[20px] py-4 px-7 sm:min-w-[250px] min-h-[58px]">
               {hasDraft ? "Continue my scan" : "Start my scan"}
-              {!locked && <IconArrowRight size={19} />}
+              {!locked && <IconArrowRight size={21} />}
             </Button>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-text-muted">
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] text-text-secondary">
             <span>≈ 2 minutes</span>
             <span aria-hidden>·</span>
             <span>Free</span>
             {remaining !== null && Number.isFinite(remaining) && (
               <>
                 <span aria-hidden>·</span>
-                <span className={locked ? "text-accent-ink font-medium" : ""}>
+                <span className={locked ? "text-pink-ink font-semibold" : ""}>
                   {locked
                     ? "No scans left today — balik bukas"
                     : `${remaining}/${DAILY_ANALYSIS_LIMIT} scans left today`}
@@ -145,73 +257,57 @@ export default function LandingStep({
             {onOpenLastReport && (
               <>
                 <span aria-hidden>·</span>
-                <button onClick={onOpenLastReport} className="text-accent-ink font-medium hover:underline cursor-pointer">
-                  See your last report →
+                <button
+                  onClick={onOpenLastReport}
+                  className="font-semibold text-pink-ink underline decoration-2 underline-offset-4 hover:text-ink cursor-pointer min-h-[44px]"
+                >
+                  See your last report
                 </button>
               </>
             )}
           </motion.div>
         </div>
 
-        {/* Sample report cards — show the payoff before asking for anything */}
-        <motion.div variants={itemVariants} className="relative h-[380px] sm:h-[390px] w-full max-w-[420px] mx-auto" aria-hidden="true">
-          {SAMPLES.map((sample, i) => {
-            const tone = THREAT[sample.level];
-            return (
-              <motion.div
-                key={sample.level}
-                className="absolute left-1/2 w-[86%] glass rounded-3xl p-5 flex flex-col gap-3"
-                style={{ top: i === 0 ? 0 : 172, x: "-50%", marginLeft: sample.x, rotate: sample.tilt, zIndex: i }}
-                animate={{ y: [0, i === 0 ? -8 : 8, 0] }}
-                transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="flex items-center justify-between">
-                  <span
-                    className="text-[12px] font-semibold rounded-full px-2.5 py-1"
-                    style={{ color: tone.ink, background: tone.soft }}
-                  >
-                    Threat level: {tone.label}
-                  </span>
-                  <span className="text-[11px] text-text-muted">Sample</span>
-                </div>
-                <p className="font-display text-[17px] font-semibold leading-snug text-text-primary">{sample.line}</p>
-                <div className="flex items-end justify-between">
-                  <span className="text-[12px] text-text-muted">Emotional damage</span>
-                  <span className="font-display text-[26px] font-bold leading-none" style={{ color: tone.ink }}>
-                    {sample.score}
-                    <span className="text-[13px] text-text-muted font-semibold">/10</span>
-                  </span>
-                </div>
-              </motion.div>
-            );
-          })}
+        <motion.div variants={itemVariants}>
+          <SampleClippings />
         </motion.div>
       </section>
 
-      {/* ── How it works ── */}
-      <motion.section variants={itemVariants} className="grid sm:grid-cols-3 gap-3 pb-6">
-        {STEPS.map(({ Icon, title, body }, i) => (
-          <div key={title} className="glass rounded-2xl p-4 flex gap-3.5 items-start">
-            <span className="grid place-items-center w-10 h-10 rounded-xl text-white shrink-0" style={{ background: "var(--dusk-button)" }}>
-              <Icon size={19} />
+      {/* ── How it works: komiks strip ── */}
+      <motion.section variants={itemVariants} className="grid sm:grid-cols-3 gap-3 pb-8" aria-label="How it works">
+        {PANELS.map(({ Icon, caption, body, says }, i) => (
+          <div
+            key={caption}
+            className="relative flex flex-col gap-3 border-2 border-ink bg-paper-light p-3 pb-4 overflow-hidden"
+            style={{ rotate: `${[-0.6, 0.4, -0.3][i]}deg` }}
+          >
+            <span className="self-start bg-yellow border-2 border-ink px-2 py-1 font-display font-extrabold uppercase tracking-[0.03em] text-[14px] leading-none text-ink">
+              {caption}
             </span>
-            <span className="flex flex-col gap-1">
-              <span className="text-[12px] text-text-muted">Step {i + 1}</span>
-              <span className="font-display text-[16px] font-semibold text-text-primary">{title}</span>
-              <span className="text-[14px] text-text-secondary leading-relaxed">{body}</span>
-            </span>
+            <div className="relative flex items-center justify-between gap-3 min-h-[86px]">
+              <span className="halftone absolute inset-0 text-pink/30" aria-hidden />
+              <Icon size={68} className="relative text-ink shrink-0" />
+              <SpeechBubble>{says}</SpeechBubble>
+            </div>
+            <p className="text-[14.5px] text-text-secondary leading-snug pt-1">{body}</p>
           </div>
         ))}
       </motion.section>
 
-      {/* ── Footer ── */}
+      {/* ── Footer: the government warning ── */}
       <motion.footer
         variants={itemVariants}
-        className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 border-t border-border-subtle text-[13px] text-text-muted"
+        className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-8"
       >
-        <p>Warning: brutally honest. Proceed at your own emotional risk.</p>
-        <Link href="/leaderboard" className="inline-flex items-center gap-1.5 hover:text-accent-ink transition-colors">
-          <IconTrophy size={15} /> Most damaged leaderboard
+        <p className="border-2 border-ink px-3 py-2 text-[13px] text-ink leading-snug bg-paper-light">
+          <span className="font-display font-black uppercase tracking-[0.06em]">Babala:</span> This
+          system is brutally honest. Proceed at your own emotional risk.
+        </p>
+        <Link
+          href="/leaderboard"
+          className="inline-flex items-center justify-center gap-2 min-h-[44px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-ink hover:text-pink-ink transition-colors"
+        >
+          <IconTrophy size={22} /> Most damaged leaderboard
         </Link>
       </motion.footer>
     </motion.div>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import BrandMark from "@/components/ui/BrandMark";
+import PageHeader from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/Button";
-import { IconArrowRight } from "@/components/ui/icons";
+import { IconArrowRight, IconTrophy } from "@/components/ui/icons";
 import { useCountUp } from "@/components/ui/StatBox";
 import type { ThreatLevel } from "@/lib/types";
 import type { LeaderboardEntry } from "@/app/api/leaderboard/route";
@@ -48,10 +48,9 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors cursor-pointer border ${
-        active ? "text-white border-transparent" : "text-text-secondary bg-white/70 border-white hover:bg-white"
+      className={`shrink-0 rounded-[6px] px-2.5 py-1.5 min-h-[36px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] transition-colors cursor-pointer border-[1.5px] border-ink ${
+        active ? "bg-ink text-yellow" : "text-ink bg-paper-light hover:bg-yellow-soft"
       }`}
-      style={active ? { background: "var(--dusk-button)" } : undefined}
     >
       {label}
     </button>
@@ -61,7 +60,9 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
 function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-0.5">
-      <span className="text-[12px] font-medium text-text-muted shrink-0 w-[68px]">{label}</span>
+      <span className="font-display font-extrabold uppercase tracking-[0.06em] text-[12px] text-text-muted shrink-0 w-[78px]">
+        {label}
+      </span>
       {children}
     </div>
   );
@@ -78,23 +79,28 @@ function PodiumCard({ entry, rank, delay }: { entry: LeaderboardEntry; rank: num
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, type: "spring", stiffness: 260, damping: 24 }}
-      className={`glass rounded-3xl flex flex-col items-center gap-2 p-4 sm:p-5 text-center ${
+      className={`paper flex flex-col items-center gap-2 p-4 sm:p-5 text-center ${
         first ? "sm:order-2 order-1 sm:-translate-y-3" : rank === 2 ? "sm:order-1 order-2" : "sm:order-3 order-3"
       }`}
-      style={{ flex: first ? "1.2" : "1", boxShadow: `var(--shadow-lift), inset 0 0 0 1.5px ${medal}66` }}
+      style={{ flex: first ? "1.2" : "1" }}
     >
+      {/* rosette */}
       <span
-        className={`grid place-items-center rounded-full font-bold text-white ${first ? "w-12 h-12 text-lg" : "w-10 h-10 text-sm"}`}
-        style={{ background: medal }}
+        className={`grid place-items-center rounded-full border-[3px] border-ink font-display font-black text-ink ${
+          first ? "w-14 h-14 text-[24px]" : "w-11 h-11 text-[19px]"
+        }`}
+        style={{ background: medal, boxShadow: "0 3px 0 #1d1932" }}
       >
-        #{rank}
+        {rank}
       </span>
-      <p className={`font-display font-extrabold tabular-nums ${first ? "text-[40px]" : "text-[32px]"} leading-none`} style={{ color: tone.ink }}>
+      <p className={`font-display font-black tabular-nums ${first ? "text-[54px]" : "text-[42px]"} leading-[0.85] text-ink`}>
         {score.toFixed(1)}
       </p>
-      <p className="text-[12px] text-text-muted">Emotional damage</p>
-      <p className="font-display text-[15px] font-semibold text-text-primary">{getFunnyTitle(entry)}</p>
-      <p className="text-[12px] text-text-secondary">
+      <span className="stamp text-[13px] -rotate-6" style={{ color: tone.color }}>
+        {tone.label}
+      </span>
+      <p className="font-display font-black uppercase text-[18px] leading-none text-ink mt-1">{getFunnyTitle(entry)}</p>
+      <p className="text-[13px] text-text-secondary">
         {entry.mbti} · {ATTACHMENT_LABELS[entry.attachmentStyle] ?? entry.attachmentStyle} · {cap(entry.zodiac)}
       </p>
     </motion.div>
@@ -110,20 +116,21 @@ function EntryRow({ entry, rank, index }: { entry: LeaderboardEntry; rank: numbe
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index, 12) * 0.04, type: "spring", stiffness: 300, damping: 28 }}
-      className="glass rounded-2xl flex items-center gap-3 px-4 py-3"
+      className="grid grid-cols-[34px_1fr_auto] items-center gap-3 px-3 py-3 border-b border-dashed border-ink/25"
     >
-      <span className="w-7 text-center text-[14px] font-bold text-text-muted tabular-nums shrink-0">{rank}</span>
-      <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-medium text-text-primary truncate">
+      <span className="font-display font-black text-[22px] text-text-muted tabular-nums text-center">{rank}</span>
+      <div className="min-w-0">
+        <p className="text-[15px] font-semibold text-ink truncate">
           {entry.mbti} · {ATTACHMENT_LABELS[entry.attachmentStyle] ?? entry.attachmentStyle} · {cap(entry.zodiac)}
         </p>
-        <p className="text-[12px] text-text-muted">
-          <span className="font-semibold" style={{ color: tone.ink }}>{tone.label}</span>{" "}· {date}
+        <p className="font-mono text-[11px] text-text-muted" style={{ fontStretch: "87.5%" }}>
+          <span className="font-bold" style={{ color: tone.ink }}>
+            {tone.label.toUpperCase()}
+          </span>{" "}
+          · {date}
         </p>
       </div>
-      <span className="font-display text-[20px] font-bold tabular-nums shrink-0" style={{ color: tone.ink }}>
-        {entry.score.toFixed(1)}
-      </span>
+      <span className="font-display font-black text-[28px] leading-none tabular-nums text-ink">{entry.score.toFixed(1)}</span>
     </motion.div>
   );
 }
@@ -180,34 +187,28 @@ export default function LeaderboardPage() {
 
   return (
     <main className="min-h-screen max-w-2xl mx-auto px-4 pb-16 flex flex-col gap-6">
-      <nav className="py-5">
-        <Link href="/" className="inline-flex items-center gap-2.5">
-          <BrandMark size={32} />
-          <span className="font-display font-bold text-[18px] text-text-primary">Senti.AI</span>
-        </Link>
-      </nav>
-
-      <header className="flex flex-col gap-2">
-        <h1 className="text-[34px] sm:text-[44px] font-extrabold leading-[1.05] text-text-primary">
-          Most <span className="text-dusk">emotionally damaged</span>
-        </h1>
-        <p className="text-[15px] text-text-secondary">
-          {entries.length} anonymous profile{entries.length !== 1 ? "s" : ""} · no names, just damage
-        </p>
-      </header>
+      <PageHeader
+        kicker="Standings"
+        title={
+          <>
+            Pinaka-<span className="hl">sawi</span>
+          </>
+        }
+        subtitle={`${entries.length} anonymous profile${entries.length !== 1 ? "s" : ""} · no names, just damage`}
+      />
 
       <section className="flex flex-col gap-2.5">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowFilters((v) => !v)}
             aria-expanded={showFilters}
-            className="rounded-full px-4 py-2 text-[14px] font-medium bg-white/80 border border-white text-text-primary cursor-pointer hover:bg-white"
+            className="rounded-[8px] px-3.5 py-2 min-h-[42px] font-display font-extrabold uppercase tracking-[0.04em] text-[15px] bg-paper-light border-2 border-ink text-ink cursor-pointer hover:bg-yellow-soft"
           >
             {showFilters ? "Hide filters" : "Filter"}
             {hasFilters ? " · on" : ""}
           </button>
           {hasFilters && (
-            <button onClick={clearFilters} className="text-[13px] font-medium text-accent-ink hover:underline cursor-pointer">
+            <button onClick={clearFilters} className="min-h-[42px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-pink-ink underline decoration-2 underline-offset-4 cursor-pointer">
               Clear all
             </button>
           )}
@@ -247,17 +248,18 @@ export default function LeaderboardPage() {
 
       {loading && (
         <div className="flex flex-col items-center gap-3 py-16">
-          <BrandMark size={44} />
-          <p className="text-[14px] text-text-secondary">Loading the rankings…</p>
+          <BrandMark size={56} />
+          <p className="font-display font-extrabold uppercase tracking-[0.05em] text-[15px] text-text-secondary">Loading the rankings…</p>
         </div>
       )}
 
-      {!loading && error && <p className="text-center py-16 text-[15px] text-accent-ink">{error}</p>}
+      {!loading && error && <p className="text-center py-16 text-[16px] font-semibold text-pink-ink">{error}</p>}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-3">
-          <p className="font-display text-[20px] font-bold text-text-primary">No emotional damage detected…</p>
-          <p className="text-[14px] text-text-secondary">…suspicious. Be the first on the board.</p>
+        <div className="paper p-8 text-center flex flex-col items-center gap-3">
+          <IconTrophy size={56} className="text-ink" />
+          <p className="font-display font-black uppercase text-[28px] leading-none text-ink">No emotional damage detected…</p>
+          <p className="font-hand text-[18px] text-text-secondary">…suspicious. Be the first on the board.</p>
           <LinkButton href="/">
             Take your scan <IconArrowRight size={18} />
           </LinkButton>
@@ -274,7 +276,7 @@ export default function LeaderboardPage() {
             </div>
           )}
           {rest.length > 0 && (
-            <div className="flex flex-col gap-2">
+            <div className="paper flex flex-col px-1 py-1">
               {rest.map((entry, i) => (
                 <EntryRow key={`entry-${entry.timestamp}-${entry.score}-${entry.mbti}`} entry={entry} rank={i + 4} index={i} />
               ))}

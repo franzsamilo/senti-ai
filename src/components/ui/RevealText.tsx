@@ -13,9 +13,9 @@ interface RevealTextProps {
 }
 
 /**
- * Words arrive one at a time, de-blurring into place — the headline is
- * delivered like a line read, not dumped on the page. Screen readers get the
- * full sentence at once via aria-label.
+ * Words are set one at a time, like slugs of type dropped into a forme: each
+ * falls in from above with a slight tilt and lands square. Screen readers get
+ * the full sentence at once via aria-label.
  */
 export default function RevealText({
   text,
@@ -32,9 +32,14 @@ export default function RevealText({
           key={`${word}-${i}`}
           aria-hidden="true"
           className="inline-block whitespace-pre"
-          initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: delay + i * stagger, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: -18, rotate: i % 2 ? 4 : -4 }}
+          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          transition={{
+            delay: delay + i * stagger,
+            y: { type: "spring", stiffness: 520, damping: 22 },
+            rotate: { type: "spring", stiffness: 520, damping: 22 },
+            opacity: { duration: 0.12 },
+          }}
         >
           {word}
           {i < words.length - 1 ? " " : ""}

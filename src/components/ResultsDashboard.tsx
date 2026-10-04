@@ -2,11 +2,11 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import type { Song, AttachmentStyle, LoveLanguage, ProfileResult } from "@/lib/types";
 import RevealText from "@/components/ui/RevealText";
-import ScoreRing from "@/components/ui/ScoreRing";
-import StatBox from "@/components/ui/StatBox";
+import VideokeScore from "@/components/ui/VideokeScore";
+import { useCountUp } from "@/components/ui/StatBox";
 import ThreatMeter from "@/components/ui/ThreatMeter";
 import SongChip from "@/components/ui/SongChip";
 import Button from "@/components/ui/Button";
@@ -18,15 +18,9 @@ import {
   IconDownload,
   IconEdit,
   IconFlag,
-  IconHeart,
   IconHistory,
-  IconMusic,
   IconRefresh,
-  IconSearch,
   IconShare,
-  IconSignal,
-  IconSparkle,
-  IconTarget,
 } from "@/components/ui/icons";
 import { itemVariants, listVariants, popSpring } from "@/components/ui/motion";
 import { captureCard, downloadBlob, shareOrDownload } from "@/lib/shareImage";
@@ -48,13 +42,17 @@ interface ResultsDashboardProps {
   onHome?: () => void;
 }
 
+/**
+ * A section of the report, headed like a newspaper section: a heavy rule,
+ * the name in signage caps, and an optional pencilled aside.
+ */
 function Section({
   title,
-  icon,
+  aside,
   children,
 }: {
   title: string;
-  icon: React.ReactNode;
+  aside?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -63,21 +61,63 @@ function Section({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-60px" }}
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-3.5"
     >
-      <h3 className="flex items-center gap-2.5 text-[19px] font-bold text-text-primary">
-        <span className="grid place-items-center w-8 h-8 rounded-xl bg-[rgba(139,63,217,0.1)] text-accent-secondary">
-          {icon}
+      <h3 className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-t-[3px] border-ink pt-2">
+        <span className="font-display font-black uppercase text-[28px] sm:text-[32px] leading-none tracking-[0.005em] text-ink">
+          {title}
         </span>
-        {title}
+        {aside && <span className="font-hand text-[18px] text-pink-ink leading-none">{aside}</span>}
       </h3>
       {children}
     </motion.section>
   );
 }
 
-function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`glass rounded-3xl p-5 ${className}`}>{children}</div>;
+/** A number that counts up the first time it scrolls into view. */
+function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-30px" });
+  const counted = useCountUp(value, decimals, inView, 1200);
+  return (
+    <span ref={ref} className="tabular-nums">
+      {counted.toFixed(decimals)}
+    </span>
+  );
+}
+
+/** Bunting strung across the top of the red-flag card. */
+function Banderitas() {
+  const colors = ["#e2402b", "#ffd23a", "#2b4ee0", "#ff4f9a"];
+  const flags = 11;
+  return (
+    <svg viewBox="0 0 330 54" preserveAspectRatio="none" className="w-full h-[54px]" aria-hidden="true">
+      <path d="M0 6 Q165 30 330 6" fill="none" stroke="#1d1932" strokeWidth={1.6} />
+      {Array.from({ length: flags }, (_, i) => {
+        const x = 15 + i * 30;
+        const t = x / 330;
+        const y = 6 + 4 * 24 * t * (1 - t) - 1;
+        return (
+          <g key={i} className="sway" style={{ animationDelay: `${(i % 4) * -0.7}s` }}>
+            <path
+              d={`M${x - 12} ${y} L${x + 12} ${y} L${x} ${y + 30} Z`}
+              fill={colors[i % colors.length]}
+              stroke="#1d1932"
+              strokeWidth={1.6}
+              strokeLinejoin="round"
+            />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Headline size steps down as the model's line gets longer. */
+function headlineSize(text: string) {
+  if (text.length > 95) return "text-[32px] sm:text-[44px]";
+  if (text.length > 65) return "text-[37px] sm:text-[52px]";
+  return "text-[44px] sm:text-[62px]";
 }
 
 /** Stable per-report identifier — deterministic so it survives re-renders. */
@@ -160,12 +200,19 @@ export default function ResultsDashboard({
     }
   }
 
+  const receiptLines: { label: string; value: number; decimals?: number; suffix: string }[] = [
+    { label: "Drunk text probability", value: result.drunk_text_probability, suffix: "%" },
+    { label: "Pain index (top-heavy)", value: painIndex, decimals: 1, suffix: "/10" },
+    { label: "Delulu index", value: metrics.delulu.value, suffix: "%" },
+    { label: "Tracks scanned", value: songs.length, suffix: "" },
+  ];
+
   return (
     <motion.div
       variants={listVariants}
       initial="hidden"
       animate="show"
-      className="w-full max-w-[680px] mx-auto px-4 pt-5 pb-36 flex flex-col gap-7"
+      className="w-full max-w-[680px] mx-auto px-4 pt-4 pb-36 flex flex-col gap-9"
     >
       <ShareCard
         ref={shareCardRef}
@@ -177,62 +224,77 @@ export default function ResultsDashboard({
       />
 
       {/* ── Top bar ── */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between gap-3">
+      <motion.div variants={itemVariants} className="flex items-center justify-between gap-3 -mb-4">
         {onHome ? (
           <button
             onClick={onHome}
-            className="inline-flex items-center gap-1.5 rounded-full pl-2 pr-3.5 py-2 text-[13px] font-medium text-text-secondary hover:text-text-primary bg-white/60 hover:bg-white border border-white/90 cursor-pointer"
+            className="inline-flex items-center gap-1.5 min-h-[44px] -ml-1 px-1 font-display font-extrabold uppercase tracking-[0.04em] text-[15px] text-text-secondary hover:text-ink cursor-pointer"
           >
-            <IconArrowLeft size={16} /> Home
+            <IconArrowLeft size={18} /> Home
           </button>
         ) : (
           <span />
         )}
-        <span className="text-[12px] text-text-muted tabular-nums">{caseId}</span>
+        <span className="font-mono text-[11px] text-text-muted tabular-nums" style={{ fontStretch: "87.5%" }}>
+          {caseId}
+        </span>
       </motion.div>
 
-      {/* ── Hero: the reveal ── */}
-      <motion.header
-        variants={itemVariants}
-        className="relative overflow-hidden rounded-[28px] px-5 pt-6 pb-6 sm:px-7 sm:pt-8 text-white shadow-[var(--shadow-lift)]"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 100% 0%, rgba(224,48,107,0.55) 0%, transparent 55%), radial-gradient(90% 70% at 0% 100%, rgba(139,63,217,0.5) 0%, transparent 60%), linear-gradient(160deg, #3b1d4a 0%, #2a1834 60%, #1f1228 100%)",
-        }}
-      >
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-[13px] font-medium text-white/70">Emotional Damage Report</span>
-          <motion.span
-            initial={{ scale: 2.4, rotate: -18, opacity: 0 }}
-            animate={{ scale: 1, rotate: -4, opacity: 1 }}
-            transition={{ ...popSpring, delay: 0.9 }}
-            className="text-[12px] font-extrabold tracking-wide rounded-lg px-2.5 py-1 border-2 uppercase"
-            style={{ color: tone.color, borderColor: tone.color, background: `${tone.color}1f` }}
-          >
-            {tone.label}
-          </motion.span>
+      {/* ── Hero: the front page ── */}
+      <motion.header variants={itemVariants} className="paper overflow-hidden" style={{ borderRadius: 4 }}>
+        <div className="px-4 sm:px-6 pt-3.5">
+          <div className="flex items-center justify-between gap-2 pb-1.5 border-b-2 border-ink font-display font-extrabold uppercase tracking-[0.06em] text-[13px] text-ink">
+            <span>
+              Senti<span className="text-pink">.</span>AI
+            </span>
+            <span className="text-center">Emotional Damage Report</span>
+            <span className="hidden sm:inline">Libre</span>
+          </div>
+          <div className="mt-[3px] border-t-[5px] border-double border-ink" />
+
+          <div className="flex items-center justify-between gap-3 pt-4">
+            <span className="bg-red text-paper-light font-display font-black uppercase tracking-[0.06em] text-[14px] leading-none px-2 py-1.5 -rotate-1">
+              Breaking
+            </span>
+            <motion.span
+              initial={{ scale: 2.6, rotate: -24, opacity: 0 }}
+              animate={{ scale: 1, rotate: -8, opacity: 1 }}
+              transition={{ ...popSpring, delay: 1.0 }}
+              className="stamp text-[24px] sm:text-[28px]"
+              style={{ color: tone.color }}
+              aria-label={`Threat level: ${tone.label}`}
+            >
+              {tone.label}
+            </motion.span>
+          </div>
+
+          <RevealText
+            text={result.headline}
+            as="h1"
+            delay={0.15}
+            stagger={0.05}
+            className={`mt-3 font-display font-black uppercase leading-[0.9] tracking-[-0.005em] text-ink ${headlineSize(result.headline)}`}
+          />
         </div>
 
-        <RevealText
-          text={result.headline}
-          as="h1"
-          delay={0.15}
-          className="mt-4 text-[26px] sm:text-[32px] font-extrabold leading-[1.12] text-white"
-        />
-
-        <div className="mt-6 flex flex-col sm:flex-row items-center sm:items-end gap-5">
-          <ScoreRing value={result.emotional_damage_score} color={tone.color} delay={0.6} />
-          <div className="flex flex-col gap-3 text-center sm:text-left flex-1">
-            <p className="text-[13px] text-white/60">
-              Threat level <span className="font-semibold text-white">{tone.label}</span>{" "}· Emotional damage
-            </p>
+        <div className="mt-5 grid sm:grid-cols-[1.05fr_1fr] gap-5 px-4 sm:px-6 pb-5 sm:items-center">
+          <VideokeScore value={result.emotional_damage_score} delay={0.6} />
+          <div className="flex flex-col gap-3">
             {result.score_reason && (
-              <p className="text-[15px] text-white/90 leading-relaxed">{result.score_reason}</p>
+              <p className="font-serif italic text-[18px] leading-snug text-ink">
+                <span className="not-italic font-display font-black uppercase text-[14px] tracking-[0.06em] text-pink-ink mr-1.5">
+                  Dahil:
+                </span>
+                {result.score_reason}
+              </p>
             )}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {[mbti, ATTACHMENT_LABELS[attachmentStyle] ?? attachmentStyle, cap(zodiac), `${songs.length} tracks`].map(
                 (chip) => (
-                  <span key={chip} className="rounded-full bg-white/10 border border-white/15 px-2.5 py-1 text-[12px] text-white/85">
+                  <span
+                    key={chip}
+                    className="rounded-[5px] border-[1.5px] border-ink px-2 py-1 font-display font-extrabold uppercase tracking-[0.04em] text-[13px] leading-none text-ink"
+                  >
                     {chip}
                   </span>
                 )
@@ -247,69 +309,142 @@ export default function ResultsDashboard({
       {result.degraded && (
         <motion.div
           variants={itemVariants}
-          className="flex items-start gap-3 rounded-2xl px-4 py-3 text-[13px] leading-relaxed"
-          style={{ background: "#fff1d6", border: "1px solid rgba(180,83,9,0.25)", color: "#8a4407" }}
+          className="relative bg-yellow-soft border-2 border-ink px-4 py-3 text-[14px] leading-relaxed text-ink"
         >
-          <IconTarget size={16} className="shrink-0 mt-0.5" />
-          <span>
-            <strong className="font-semibold">Offline assessment.</strong> The analysis engine couldn&apos;t be
-            reached, so this is the generic profile — not a full read of your answers. Try again in a moment.
-          </span>
+          <span className="font-display font-black uppercase tracking-[0.06em]">Paunawa:</span> The analysis
+          engine couldn&apos;t be reached, so this is the generic profile — not a full read of your answers.
+          Try again in a moment.
         </motion.div>
       )}
 
-      {/* ── Quick stats ── */}
-      <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2.5">
-        <StatBox label="Drunk text chance" value={result.drunk_text_probability} suffix="%" animate />
-        <StatBox label="Pain index" value={painIndex} suffix="/10" decimals={1} animate />
-        <StatBox label="Delulu index" value={metrics.delulu.value} suffix="%" animate />
+      {/* ── The receipt ── */}
+      <motion.div variants={itemVariants} className="lift">
+        <div className="receipt px-5 sm:px-7 pt-8 pb-9 max-w-[440px] mx-auto">
+          <p className="text-center font-display font-black uppercase text-[24px] tracking-[0.08em] leading-none text-ink">
+            Senti<span className="text-pink">.</span>AI
+          </p>
+          <p className="text-center font-mono text-[10px] leading-relaxed text-text-muted mt-1.5" style={{ fontStretch: "87.5%" }}>
+            OFFICIAL RESIBO · {caseId.replace("Case ", "")}
+            <br />
+            THIS DOCUMENT IS NOT VALID FOR CLAIM OF EMOTIONAL SUPPORT
+          </p>
+          <div className="my-3 border-t-2 border-dashed border-ink/35" />
+          {receiptLines.map((line) => (
+            <p
+              key={line.label}
+              className="flex items-baseline gap-2 font-mono text-[12.5px] leading-[2.1] text-ink"
+              style={{ fontStretch: "87.5%" }}
+            >
+              <span className="shrink-0">{line.label}</span>
+              <span className="leader" />
+              <span className="shrink-0">
+                <CountUp value={line.value} decimals={line.decimals} />
+                {line.suffix}
+              </span>
+            </p>
+          ))}
+          <div className="my-3 border-t-2 border-dashed border-ink/35" />
+          <p className="flex items-baseline gap-2 font-mono text-[15px] font-bold text-ink" style={{ fontStretch: "87.5%" }}>
+            <span className="shrink-0">TOTAL DAMAGE</span>
+            <span className="leader" />
+            <span className="shrink-0 text-[20px]">
+              <CountUp value={result.emotional_damage_score} decimals={1} />
+            </span>
+          </p>
+          <div className="my-3 border-t-2 border-dashed border-ink/35" />
+          <div
+            aria-hidden
+            className="h-[46px] mx-auto w-[80%]"
+            style={{
+              background:
+                "repeating-linear-gradient(90deg, #1d1932 0 2px, transparent 2px 4px, #1d1932 4px 5px, transparent 5px 8px, #1d1932 8px 11px, transparent 11px 12px, #1d1932 12px 13px, transparent 13px 16px)",
+            }}
+          />
+          <p className="text-center font-mono text-[11px] text-ink mt-2" style={{ fontStretch: "87.5%" }}>
+            Salamat po! Balik kayo. (&apos;Wag na.)
+          </p>
+        </div>
       </motion.div>
 
-      <Section title="Final verdict" icon={<IconTarget size={16} />}>
-        <Card className="!bg-white/85">
-          <p className="font-display text-[19px] font-semibold leading-snug text-text-primary">{result.final_verdict}</p>
-          <div className="mt-5 grid sm:grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-accent-soft px-4 py-3">
-              <p className="text-[12px] font-semibold text-accent-ink mb-1">Recommended action</p>
-              <p className="text-[14px] text-text-primary leading-relaxed">{result.recommended_action}</p>
+      <Section title="Final verdict" aside="walang awa">
+        <blockquote className="relative paper px-5 sm:px-6 pt-9 pb-5">
+          <span aria-hidden className="absolute -top-2 left-3 font-serif font-black text-[104px] leading-none text-pink">
+            &ldquo;
+          </span>
+          <p className="relative font-serif italic text-[22px] sm:text-[26px] leading-[1.25] text-ink">
+            {result.final_verdict}
+          </p>
+          <footer className="mt-3 font-display font-extrabold uppercase tracking-[0.05em] text-[14px] text-text-muted">
+            — Senti.AI
+          </footer>
+        </blockquote>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {/* Prescription pad */}
+          <div className="paper px-4 pt-3 pb-4 flex flex-col" style={{ borderRadius: 4 }}>
+            <div className="flex items-end justify-between gap-3 border-b-2 border-ink pb-2">
+              <span className="font-serif font-black italic text-[44px] leading-[0.8] text-ink">Rx</span>
+              <span className="text-right font-display font-extrabold uppercase tracking-[0.05em] text-[12px] leading-tight text-ink">
+                Klinika ng mga Sawi
+                <br />
+                <span className="text-text-muted">Recommended action</span>
+              </span>
             </div>
-            <div className="rounded-2xl px-4 py-3" style={{ background: tone.soft }}>
-              <p className="text-[12px] font-semibold mb-1" style={{ color: tone.ink }}>
-                Warning for future jowa
-              </p>
-              <p className="text-[14px] text-text-primary leading-relaxed">{result.compatibility_warning}</p>
-            </div>
+            <p className="pt-3 text-[15px] text-ink leading-relaxed flex-1">{result.recommended_action}</p>
+            <p className="mt-3 self-end border-t border-ink/50 pt-1 font-hand text-[17px] text-blue-ink">
+              Dr. Senti, MD (Master of Drama)
+            </p>
           </div>
-        </Card>
+          {/* Government warning */}
+          <div className="border-[3px] border-ink bg-paper-light px-4 py-3.5 flex flex-col gap-2">
+            <p className="font-display font-black uppercase tracking-[0.04em] text-[20px] leading-none text-ink">
+              Government warning:
+            </p>
+            <p className="text-[15px] font-semibold text-ink leading-snug">{result.compatibility_warning}</p>
+            <p className="text-[11.5px] text-text-muted leading-snug">
+              Para sa sinumang magbabalak i-date ang taong ito.
+            </p>
+          </div>
+        </div>
       </Section>
 
-      <Section title="Threat assessment" icon={<IconSignal size={16} />}>
-        <Card className="flex flex-col gap-5">
+      <Section title="Threat assessment" aside="levels, live">
+        <div className="paper p-4 sm:p-5 flex flex-col gap-5">
           {METRIC_KEYS.map((key, i) => (
             <ThreatMeter
               key={key}
               label={METRIC_LABELS[key]}
               value={metrics[key].value}
               note={metrics[key].note}
-              color={key === "healing" ? "#10b981" : i % 2 === 0 ? "#e0306b" : "#8b3fd9"}
-              delay={i * 0.08}
+              delay={i * 0.06}
             />
           ))}
-        </Card>
+        </div>
       </Section>
 
-      <Section title="Surveillance pattern" icon={<IconSearch size={16} />}>
-        <Card>
-          <p className="text-[15px] text-text-primary leading-relaxed">{result.ex_stalking_frequency}</p>
-        </Card>
+      <Section title="Surveillance log">
+        <div className="paper overflow-hidden" style={{ borderRadius: 4 }}>
+          <p
+            className="flex justify-between gap-3 px-4 py-2 bg-ink font-mono text-[10.5px] text-paper-light"
+            style={{ fontStretch: "87.5%" }}
+          >
+            <span>BARANGAY BLOTTER</span>
+            <span>ENTRY {caseId.slice(-4)}</span>
+          </p>
+          <p className="px-4 py-4 text-[16px] text-ink leading-relaxed">{result.ex_stalking_frequency}</p>
+        </div>
       </Section>
 
-      <Section title="What your playlist says" icon={<IconMusic size={16} />}>
-        <Card>
-          <p className="text-[15px] text-text-primary leading-relaxed">{result.song_diagnosis}</p>
+      <Section title="Liner notes" aside="what your playlist says">
+        <div className="paper overflow-hidden" style={{ borderRadius: 4 }}>
+          <div className="flex items-center justify-between gap-3 px-4 py-2 bg-pink border-b-2 border-ink">
+            <span className="font-hand text-[19px] leading-none text-ink">Side A — the evidence</span>
+            <span className="font-mono text-[11px] text-ink" style={{ fontStretch: "87.5%" }}>
+              {songs.length} TRACKS
+            </span>
+          </div>
+          <p className="px-4 pt-4 text-[16px] text-ink leading-relaxed">{result.song_diagnosis}</p>
           {songs.length > 0 && (
-            <div className="flex flex-col gap-3 mt-5 pt-4 border-t border-border-subtle">
-              <p className="text-[13px] text-text-muted">Evidence · {songs.length} tracks · pain index</p>
+            <div className="flex flex-col gap-3 px-4 pb-4 mt-4 pt-3 border-t-2 border-dashed border-ink/20">
               <div className="flex flex-wrap gap-2">
                 {(showAllSongs ? songs : songs.slice(0, SONG_PREVIEW_COUNT)).map((s, i) => (
                   <SongChip key={`${s.title}-${s.artist}-${i}`} song={s} showPainIndex />
@@ -318,87 +453,101 @@ export default function ResultsDashboard({
               {songs.length > SONG_PREVIEW_COUNT && (
                 <button
                   onClick={() => setShowAllSongs((v) => !v)}
-                  className="self-start text-[13px] font-medium text-accent-ink hover:underline cursor-pointer"
+                  className="self-start min-h-[40px] font-display font-extrabold uppercase tracking-[0.04em] text-[14px] text-pink-ink underline decoration-2 underline-offset-4 cursor-pointer"
                 >
                   {showAllSongs ? "Show less" : `Show ${songs.length - SONG_PREVIEW_COUNT} more`}
                 </button>
               )}
             </div>
           )}
-        </Card>
+        </div>
       </Section>
 
-      <Section title="Behavioral predictions" icon={<IconSparkle size={16} />}>
-        <div className="flex flex-col gap-2.5">
+      <Section title={`${result.behavioral_predictions.length} hula para sa'yo`} aside="mangyayari 'to">
+        <ol className="paper px-4 sm:px-5 py-1">
           {result.behavioral_predictions.map((pred, i) => (
-            <motion.div
+            <motion.li
               key={i}
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ type: "spring", stiffness: 260, damping: 26, delay: i * 0.06 }}
-              className="glass rounded-2xl p-4 flex gap-3.5"
+              transition={{ type: "spring", stiffness: 260, damping: 26, delay: i * 0.05 }}
+              className="grid grid-cols-[46px_1fr] gap-3 py-4 border-b-2 border-dashed border-ink/15 last:border-b-0"
             >
-              <span
-                className="shrink-0 grid place-items-center w-7 h-7 rounded-full text-[13px] font-bold text-white"
-                style={{ background: "var(--dusk-button)" }}
-              >
+              <span className="signpaint font-display font-black text-[52px] leading-[0.82] text-center" style={{ color: "var(--pink)" }}>
                 {i + 1}
               </span>
-              <p className="text-[15px] text-text-primary leading-relaxed">{pred}</p>
-            </motion.div>
+              <p className="text-[16px] text-ink leading-relaxed">{pred}</p>
+            </motion.li>
           ))}
+        </ol>
+      </Section>
+
+      <Section title="Risk factors">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+          {/* Toxic Facts — a nutrition label */}
+          <div className="border-[3px] border-ink bg-paper-light px-3 pt-2 pb-3 text-ink">
+            <p className="font-body font-black text-[38px] leading-[0.95] tracking-[-0.02em]" style={{ fontStretch: "75%" }}>
+              Toxic Facts
+            </p>
+            <p className="text-[13px] border-b border-ink pb-1">Serving size: 1 situationship</p>
+            <div className="h-[10px] bg-ink my-1" />
+            <p className="flex justify-between text-[12px] font-bold border-b border-ink pb-1">
+              <span>Amount per serving</span>
+              <span>% Daily Value*</span>
+            </p>
+            {result.toxic_traits.map((trait, i) => (
+              <div key={i} className="flex justify-between gap-3 py-2 border-b border-ink/70 text-[14px] leading-snug">
+                <span>{trait}</span>
+                <span className="font-black shrink-0">{["180%", "250%", "999%"][i] ?? "∞"}</span>
+              </div>
+            ))}
+            <div className="h-[6px] bg-ink mt-1" />
+            <p className="text-[11px] mt-1.5 leading-snug">
+              *Percent Daily Values are based on a 2,000-overthink diet.
+            </p>
+          </div>
+
+          {/* Red flags under banderitas */}
+          <div className="paper overflow-hidden">
+            <Banderitas />
+            <div className="px-4 pb-4">
+              <p className="font-display font-black uppercase text-[26px] leading-none text-ink">Red flags</p>
+              <p className="font-hand text-[17px] text-pink-ink">para sa future jowa</p>
+              <ul className="mt-2 flex flex-col gap-3">
+                {result.red_flags.map((flag, i) => (
+                  <li key={i} className="flex gap-2.5 text-[15px] text-ink leading-snug">
+                    <IconFlag size={20} className="shrink-0 mt-0.5 text-ink" />
+                    {flag}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </Section>
 
-      <Section title="Risk factors" icon={<IconFlag size={16} />}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Card>
-            <p className="text-[14px] font-semibold text-text-primary mb-3">Toxic traits</p>
-            <ul className="flex flex-col gap-3">
-              {result.toxic_traits.map((trait, i) => (
-                <li key={i} className="flex gap-2.5 text-[14px] text-text-primary leading-relaxed">
-                  <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-accent" />
-                  {trait}
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card>
-            <p className="text-[14px] font-semibold text-text-primary mb-3">Red flags for the future jowa</p>
-            <ul className="flex flex-col gap-3">
-              {result.red_flags.map((flag, i) => (
-                <li key={i} className="flex gap-2.5 text-[14px] text-text-primary leading-relaxed">
-                  <IconFlag size={14} className="shrink-0 mt-1 text-threat-critical" />
-                  {flag}
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
-      </Section>
-
-      <Section title="Pass it on" icon={<IconHeart size={16} />}>
-        <div className="flex flex-col gap-3">
+      <Section title="Pass it on" aside="i-share mo na">
+        <div className="flex flex-col gap-4">
           <MatchChallenge profile={profile} />
           <LeaderboardSubmit result={result} mbti={mbti} attachmentStyle={attachmentStyle} zodiac={zodiac} />
         </div>
       </Section>
 
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-2.5 pt-2">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 pt-1">
         <Button variant="secondary" className="flex-1" onClick={onRunAgain}>
-          <IconRefresh size={17} /> New scan
+          <IconRefresh size={19} /> New scan
         </Button>
         {onEditAnswers && (
           <Button variant="secondary" className="flex-1" onClick={onEditAnswers}>
-            <IconEdit size={17} /> Tweak answers
+            <IconEdit size={19} /> Tweak answers
           </Button>
         )}
         <Link
           href="/history"
-          className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl min-h-[48px] px-5 text-[15px] font-semibold text-text-secondary hover:text-text-primary hover:bg-white/50 transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-2 min-h-[50px] px-5 font-display font-extrabold uppercase tracking-[0.04em] text-[17px] text-text-secondary hover:text-ink transition-colors"
         >
-          <IconHistory size={17} /> History
+          <IconHistory size={19} /> History
         </Link>
       </motion.div>
 
@@ -407,13 +556,12 @@ export default function ResultsDashboard({
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 28, delay: 1.4 }}
-        className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.9rem,env(safe-area-inset-bottom))] pt-3"
+        className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.9rem,env(safe-area-inset-bottom))] pt-4"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(241,235,251,0) 0%, rgba(241,235,251,0.9) 40%, rgba(241,235,251,0.98) 100%)",
+          background: "linear-gradient(180deg, rgba(244,237,224,0) 0%, rgba(244,237,224,0.94) 40%, #f4ede0 100%)",
         }}
       >
-        <div className="max-w-[680px] mx-auto flex gap-2">
+        <div className="max-w-[680px] mx-auto flex gap-2.5">
           <Button className="flex-1 py-4" disabled={sharing === "busy"} onClick={handleShare}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
@@ -427,12 +575,12 @@ export default function ResultsDashboard({
                 {sharing === "busy" ? (
                   "Packaging your damage…"
                 ) : sharing === "shared" ? (
-                  "Shared! 🔥"
+                  "Shared!"
                 ) : sharing === "downloaded" ? (
-                  "Saved — post it to your story 🔥"
+                  "Saved — post it to your story"
                 ) : (
                   <>
-                    <IconShare size={18} /> Share to IG / FB story
+                    <IconShare size={20} /> Share to IG / FB story
                   </>
                 )}
               </motion.span>
@@ -446,7 +594,7 @@ export default function ResultsDashboard({
             aria-label="Save image"
             title="Save image"
           >
-            <IconDownload size={19} />
+            <IconDownload size={22} />
           </Button>
         </div>
       </motion.div>

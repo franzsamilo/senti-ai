@@ -1,35 +1,58 @@
 @import "tailwindcss";
 
 /*
- * Takipsilim — the dusk palette.
+ * Resibo — the print-ephemera system (Oct 2026, v2).
  *
- * Light, warm and a little sentimental: a sunset sky over Manila Bay rather
- * than a situation room. Ink is a deep plum instead of black so the page
- * never reads as cold; the one saturated move is the rose → violet "dusk"
- * gradient, reserved for primary actions and the brand.
+ * "Resibo" is Taglish for receipts, as in "show me the receipts": the app
+ * hands you proof of your own emotional damage. Every surface is a piece
+ * of Pinoy printed matter instead of a glass card: newsprint paper, riso
+ * inks (fluorescent pink, blue, yellow) slightly out of register, cassette
+ * J-cards, thermal receipts, exam answer sheets, a jeepney route board, a
+ * videoke score screen, rubber stamps.
  *
- * Token names are kept from the original dark theme so every Tailwind class
- * already in the codebase (bg-bg-primary, text-text-secondary, ...) picks up
- * the new values without a rename.
+ * Rules of thumb:
+ *   - Paper, not glass. No backdrop blur, no aurora, no gradient buttons.
+ *   - Flat spot colour. If two inks overlap they misregister a little.
+ *   - Small radii (4–12px). Paper is cut, not inflated.
+ *   - Hard, physical shadows on things you press; soft paper shadows on
+ *     things that lie on the table.
+ *
+ * Legacy token names (bg-primary, text-secondary, accent...) are kept so
+ * existing utility classes map onto the new values.
  */
 @theme inline {
-  --color-bg-primary: #fcf3f5;
-  --color-bg-card: rgba(255, 255, 255, 0.72);
-  --color-surface: #ffffff;
-  --color-surface-sunk: #f6eef3;
-  --color-border-subtle: rgba(74, 30, 82, 0.1);
-  --color-border-strong: rgba(74, 30, 82, 0.2);
+  --color-paper: #f4ede0;
+  --color-paper-light: #fffaf2;
+  --color-paper-dark: #e8dfcd;
+  --color-ink: #1d1932;
+  --color-pink: #ff4f9a;
+  --color-pink-ink: #c4145c;
+  --color-pink-soft: #ffd9e8;
+  --color-blue: #2b4ee0;
+  --color-blue-ink: #2340c4;
+  --color-blue-soft: #dfe5ff;
+  --color-yellow: #ffd23a;
+  --color-yellow-soft: #fff0a6;
+  --color-red: #e2402b;
+  --color-screen: #1b33c2;
 
-  --color-accent: #e0306b;
-  --color-accent-ink: #c21f59;
-  --color-accent-secondary: #8b3fd9;
-  --color-accent-warm: #ff7a59;
-  --color-accent-soft: #ffe6ee;
-  --color-accent-success: #0e9f6e;
+  --color-bg-primary: #f4ede0;
+  --color-bg-card: #fffaf2;
+  --color-surface: #fffaf2;
+  --color-surface-sunk: #efe7d8;
+  --color-border-subtle: rgba(29, 25, 50, 0.14);
+  --color-border-strong: rgba(29, 25, 50, 0.32);
 
-  --color-text-primary: #2a1834;
-  --color-text-secondary: #5e4a6b;
-  --color-text-muted: #7b6987;
+  --color-accent: #ff4f9a;
+  --color-accent-ink: #c4145c;
+  --color-accent-secondary: #2b4ee0;
+  --color-accent-warm: #ffd23a;
+  --color-accent-soft: #ffd9e8;
+  --color-accent-success: #148a5a;
+
+  --color-text-primary: #1d1932;
+  --color-text-secondary: #4a4560;
+  --color-text-muted: #6c6680;
 
   --color-threat-critical: #e11d48;
   --color-threat-severe: #f2542d;
@@ -37,33 +60,63 @@
   --color-threat-moderate: #eab308;
   --color-threat-low: #10b981;
 
-  --font-display: var(--font-bricolage);
-  --font-body: var(--font-outfit);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-display: var(--font-shoulders);
+  --font-body: var(--font-archivo);
+  --font-serif: var(--font-fraunces);
+  --font-hand: var(--font-gochi);
+  --font-mono: var(--font-martian);
+  --font-dot: var(--font-doto);
 }
 
 :root {
   color-scheme: light;
-  --dusk: linear-gradient(120deg, #ff7a59 0%, #e0306b 48%, #8b3fd9 100%);
-  --dusk-button: linear-gradient(135deg, #e0306b 0%, #b0359f 55%, #8b3fd9 100%);
-  --shadow-card: 0 1px 2px rgba(74, 30, 82, 0.06), 0 8px 24px -12px rgba(74, 30, 82, 0.18);
-  --shadow-lift: 0 2px 4px rgba(74, 30, 82, 0.06), 0 18px 40px -16px rgba(74, 30, 82, 0.28);
-  --shadow-glow: 0 10px 28px -10px rgba(224, 48, 107, 0.6);
+  --ink: #1d1932;
+  --paper: #f4ede0;
+  --paper-light: #fffaf2;
+  --pink: #ff4f9a;
+  --blue: #2b4ee0;
+  --yellow: #ffd23a;
+
+  /* Lying on the table. */
+  --shadow-paper: 0 1px 0 rgba(29, 25, 50, 0.07), 0 14px 24px -18px rgba(29, 25, 50, 0.5);
+  /* Pressable: a key that sits proud of its plate. */
+  --shadow-key: 0 4px 0 #1d1932;
+  --shadow-key-down: 0 1px 0 #1d1932;
+  /* A sticker or a printed block, offset like a second ink pass. */
+  --shadow-hard: 4px 4px 0 #1d1932;
+
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.2 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --grain-soft: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.2 0 0 0 0.12 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* Speckled alpha for rubber stamps — ink that didn't quite take. */
+  --stamp-texture: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4.2 0 0 0 -0.75'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
 }
 
+/* Element defaults live in the base layer so utilities can override them
+   (unlayered rules beat every layered utility, whatever the specificity). */
+@layer base {
 html {
-  background: #fcf3f5;
+  background: var(--paper);
 }
 
 body {
-  /* The sky. Fixed so long pages scroll over it instead of through it. */
-  background:
-    linear-gradient(180deg, #fff0ea 0%, #fcecf3 38%, #f1ebfb 100%) fixed;
+  background: var(--paper);
   color: var(--color-text-primary);
   font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
   max-width: 100vw;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Newsprint tooth over everything. Fixed so it doesn't scroll-shimmer. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: 0.2;
+  mix-blend-mode: multiply;
 }
 
 *,
@@ -77,104 +130,197 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display), var(--font-body), sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.005em;
+  font-weight: 800;
 }
 
 ::selection {
-  background: rgba(224, 48, 107, 0.2);
+  background: var(--yellow);
+  color: var(--ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: 2.5px solid var(--blue);
+  outline-offset: 3px;
+}
+}
+
+/* ── Paper objects ──────────────────────────────────────── */
+
+/* In the components layer so utilities (absolute, rounded-*, etc.) still win. */
+@layer components {
+
+/* Card stock lying on the table. */
+.paper {
+  position: relative;
+  background-color: var(--paper-light);
+  background-image: var(--grain-soft);
+  background-size: 220px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-paper);
+}
+
+/* Printed block with an ink rule and a second-pass offset. */
+.slab {
+  position: relative;
+  background: var(--paper-light);
+  border: 2px solid var(--ink);
   border-radius: 10px;
+  box-shadow: var(--shadow-hard);
 }
 
-/* ── Surfaces ───────────────────────────────────────────── */
-
-.glass {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+/* Thermal receipt: zig-zag tear top and bottom. Mask clips box-shadow, so
+   lift it with a drop-shadow filter on a wrapper instead. */
+.receipt {
+  position: relative;
+  background-color: #fffdf8;
+  background-image: var(--grain-soft);
+  background-size: 220px;
+  --tooth: 12px;
+  -webkit-mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51% repeat-x,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) 51% repeat-x;
+  mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51% repeat-x,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) 51% repeat-x;
 }
 
-.text-dusk {
-  background: var(--dusk);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.lift {
+  filter: drop-shadow(0 10px 12px rgba(29, 25, 50, 0.16)) drop-shadow(0 1px 0 rgba(29, 25, 50, 0.1));
 }
 
-/* Slow light sweep across the wordmark. */
-.text-shimmer {
-  background: linear-gradient(
-    100deg,
-    #e0306b 0%,
-    #8b3fd9 30%,
-    #ff7a59 50%,
-    #e0306b 70%,
-    #8b3fd9 100%
-  );
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 9s ease-in-out infinite;
+/* Ticket stub: half-moon notches on both sides. */
+.ticket {
+  -webkit-mask:
+    radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
 }
 
-@keyframes shimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+/* Notebook paper: blue rules, red margin. */
+.ruled {
+  background-color: #fffdf6;
+  background-image:
+    linear-gradient(to right, transparent 38px, rgba(226, 64, 43, 0.45) 38px 39.5px, transparent 39.5px),
+    repeating-linear-gradient(to bottom, transparent 0 31px, rgba(43, 78, 224, 0.2) 31px 32px);
+  background-attachment: local;
 }
 
-/* ── Aurora background ──────────────────────────────────── */
-
-.aurora-blob {
+/* Washi tape holding a clipping down. */
+.tape {
   position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  opacity: 0.55;
-  will-change: transform;
+  width: 84px;
+  height: 22px;
+  background: rgba(255, 210, 58, 0.72);
+  box-shadow: 0 1px 2px rgba(29, 25, 50, 0.12);
+  -webkit-mask: conic-gradient(from 90deg at 4px 50%, #0000 25%, #000 0) 0 0 / 51% 6px repeat-y,
+    conic-gradient(from -90deg at calc(100% - 4px) 50%, #0000 25%, #000 0) 100% 0 / 51% 6px repeat-y;
+  mask: conic-gradient(from 90deg at 4px 50%, #0000 25%, #000 0) 0 0 / 51% 6px repeat-y,
+    conic-gradient(from -90deg at calc(100% - 4px) 50%, #0000 25%, #000 0) 100% 0 / 51% 6px repeat-y;
+  mix-blend-mode: multiply;
+  z-index: 2;
 }
 
-@keyframes drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(8vw, 6vh, 0) scale(1.15);
+/* Rubber stamp. Colour comes from `color`. */
+.stamp {
+  display: inline-block;
+  border: 3px solid currentColor;
+  border-radius: 6px;
+  padding: 0.1em 0.45em 0.04em;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  -webkit-mask-image: var(--stamp-texture);
+  mask-image: var(--stamp-texture);
+  -webkit-mask-size: 120px;
+  mask-size: 120px;
+  mix-blend-mode: multiply;
+}
+
+/* Halftone dot field — decoration only. Colour from `color`. */
+.halftone {
+  background-image: radial-gradient(circle at center, currentColor 1px, transparent 1.4px);
+  background-size: 7px 7px;
+}
+
+/* Highlighter swipe behind inline text. */
+.hl {
+  background: linear-gradient(
+    176deg,
+    transparent 0 46%,
+    var(--yellow) 46% 90%,
+    transparent 90%
+  );
+  padding: 0 0.12em;
+  margin: 0 -0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.hl-pink {
+  background: linear-gradient(176deg, transparent 0 46%, var(--color-pink-soft) 46% 90%, transparent 90%);
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Riso misregistration: the pink pass landed a hair off. */
+.misprint {
+  text-shadow: 0.045em 0.04em 0 var(--pink);
+}
+
+.misprint-blue {
+  text-shadow: 0.045em 0.04em 0 var(--blue);
+}
+
+/* Jeepney signwriting: fill, ink outline, hard drop. */
+.signpaint {
+  color: var(--yellow);
+  -webkit-text-stroke: 0.06em var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0.07em 0.07em 0 var(--ink);
+}
+
+/* Dotted leader between a receipt label and its amount. */
+.leader {
+  flex: 1;
+  border-bottom: 2px dotted rgba(29, 25, 50, 0.35);
+  transform: translateY(-0.3em);
+  min-width: 16px;
+}
+
+/* Videoke CRT: scanlines and a little bloom. */
+.crt {
+  background-color: var(--color-screen);
+  background-image:
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 90% at 50% 40%, rgba(120, 150, 255, 0.35), transparent 70%);
+  color: #fff;
+}
+
+.crt-glow {
+  text-shadow: 0 0 10px rgba(180, 200, 255, 0.75), 0 0 2px rgba(255, 255, 255, 0.9);
+}
+}
+
+/* ── Motion ─────────────────────────────────────────────── */
+
+@keyframes reel-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@keyframes drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-10vw, 4vh, 0) scale(0.95);
-  }
+.reel-spin {
+  animation: reel-spin 2.4s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-@keyframes drift-c {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(5vw, -8vh, 0) scale(1.2);
-  }
-}
-
-/* Equalizer bars — used by the loader and the brand mark. */
 @keyframes eq {
   0%,
   100% {
@@ -190,90 +336,24 @@ h3 {
   animation: eq 1.1s ease-in-out infinite;
 }
 
-/* Vinyl spin for the loader. */
-@keyframes spin-slow {
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes marquee {
   to {
-    transform: rotate(360deg);
+    transform: translateX(-50%);
   }
 }
 
-.spin-slow {
-  animation: spin-slow 3.2s linear infinite;
-}
-
-/* ── Glitch (kept for the rate-limit screen — it's the joke there) ── */
-
-.glitch {
-  position: relative;
-}
-
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-}
-
-.glitch::before {
-  color: #e0306b;
-  opacity: 0.5;
-  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  transform: translate(-1px, -1px);
-  animation: glitch-top 5s infinite linear;
-}
-
-.glitch::after {
-  color: #8b3fd9;
-  opacity: 0.4;
-  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  transform: translate(1px, 1px);
-  animation: glitch-bottom 5s infinite linear;
-}
-
-@keyframes glitch-top {
-  0%,
-  90%,
-  100% {
-    transform: translate(-1px, -1px);
-    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  }
-  92% {
-    transform: translate(3px, -1px);
-    clip-path: polygon(0 5%, 100% 5%, 100% 40%, 0 40%);
-  }
-  94% {
-    transform: translate(-1px, 2px);
-    clip-path: polygon(0 15%, 100% 15%, 100% 25%, 0 25%);
-  }
-  96% {
-    transform: translate(2px, -3px);
-    clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
-  }
-}
-
-@keyframes glitch-bottom {
-  0%,
-  90%,
-  100% {
-    transform: translate(1px, 1px);
-    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  }
-  92% {
-    transform: translate(-3px, 1px);
-    clip-path: polygon(0 60%, 100% 60%, 100% 95%, 0 95%);
-  }
-  94% {
-    transform: translate(1px, -2px);
-    clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
-  }
-  96% {
-    transform: translate(-2px, 3px);
-    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  }
+.marquee {
+  animation: marquee 28s linear infinite;
 }
 
 /* ── Scrollbars ─────────────────────────────────────────── */
@@ -288,7 +368,7 @@ h3 {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(139, 63, 217, 0.35) transparent;
+  scrollbar-color: rgba(29, 25, 50, 0.35) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -301,18 +381,12 @@ h3 {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(139, 63, 217, 0.35);
+  background: rgba(29, 25, 50, 0.35);
   border-radius: 3px;
 }
 
 /* Honour the OS-level reduced-motion preference across the whole app. */
 @media (prefers-reduced-motion: reduce) {
-  .glitch::before,
-  .glitch::after {
-    animation: none;
-    opacity: 0.25;
-  }
-
   *,
   *::before,
   *::after {
@@ -320,4 +394,21 @@ h3 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Bunting swaying on its string. */
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+.sway {
+  animation: sway 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
 }
